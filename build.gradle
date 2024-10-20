@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id 'application'
 }
 
 group = 'com.peew.notesr.cli'
@@ -7,6 +7,10 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+}
+
+application {
+    mainClass = 'com.peew.notesr.cli.App'
 }
 
 dependencies {
