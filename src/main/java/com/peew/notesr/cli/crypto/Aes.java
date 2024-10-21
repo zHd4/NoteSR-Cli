@@ -18,7 +18,7 @@ public class Aes {
     public static final int SALT_SIZE = 16;
 
     public static final String KEY_GENERATOR_ALGORITHM = "AES";
-    private static final String MAIN_ALGORITHM = "AES/CBC/PKCS5Padding";
+    private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
 
     private final SecretKey key;
     private final byte[] salt;
@@ -30,7 +30,7 @@ public class Aes {
 
     public static Cipher createCipher(SecretKey key, byte[] iv, int mode) throws NoSuchPaddingException,
             NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
-        Cipher cipher = Cipher.getInstance(MAIN_ALGORITHM);
+        Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         SecretKeySpec keySpec = new SecretKeySpec(key.getEncoded(), KEY_GENERATOR_ALGORITHM);
 
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
