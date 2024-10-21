@@ -13,6 +13,7 @@ repositories {
 
 application {
     mainClass = 'com.peew.notesr.cli.App'
+    applicationName = 'notesr-cli'
 }
 
 checkstyle {
