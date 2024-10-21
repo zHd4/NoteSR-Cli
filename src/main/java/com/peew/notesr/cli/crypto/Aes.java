@@ -13,7 +13,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-public class Aes {
+public final class Aes {
     public static final int KEY_SIZE = 256;
     public static final int SALT_SIZE = 16;
 
