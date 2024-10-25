@@ -1,4 +1,4 @@
-package com.peew.notesr.cli;
+package app.notesr.cli;
 
 public class App {
     public static void main(String[] args) {

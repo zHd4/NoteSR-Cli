@@ -1,4 +1,4 @@
-package com.peew.notesr.cli.crypto;
+package app.notesr.cli.crypto;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;

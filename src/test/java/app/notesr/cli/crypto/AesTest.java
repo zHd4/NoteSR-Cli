@@ -1,4 +1,4 @@
-package com.peew.notesr.cli.crypto;
+package app.notesr.cli.crypto;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
