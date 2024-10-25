@@ -4,7 +4,7 @@ plugins {
     id 'jacoco'
 }
 
-group = 'com.peew.notesr.cli'
+group = 'app.notesr.cli'
 version = '1.0'
 
 repositories {
@@ -12,7 +12,7 @@ repositories {
 }
 
 application {
-    mainClass = 'com.peew.notesr.cli.App'
+    mainClass = 'app.notesr.cli.App'
     applicationName = 'notesr-cli'
 }
 
