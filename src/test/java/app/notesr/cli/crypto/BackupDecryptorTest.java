@@ -48,7 +48,7 @@ class BackupDecryptorTest {
         decryptor.decrypt(encryptedBackupInputStream, tempDecryptedBackupOutputStream);
 
         String actualHash = getSha256(tempDecryptedBackupFilePath.toString());
-        assertEquals(DECRYPTED_BACKUP_HASH, actualHash);
+        assertEquals(DECRYPTED_BACKUP_HASH, actualHash, "Decrypted backup hash not matching with expected");
     }
 
     @AfterEach
