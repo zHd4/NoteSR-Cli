@@ -18,7 +18,6 @@ class BackupDecryptorTest {
 
     private static FileInputStream encryptedBackupInputStream;
     private static FileOutputStream tempDecryptedBackupOutputStream;
-
     private static Path tempDecryptedBackupFilePath;
 
     @BeforeAll
@@ -27,9 +26,7 @@ class BackupDecryptorTest {
 
         key = new SecretKeySpec(keyBytes, 0, keyBytes.length, Aes.KEY_GENERATOR_ALGORITHM);
         salt = readFixture("aes256-salt");
-
-        encryptedBackupInputStream = (FileInputStream)
-                Files.newInputStream(generateFixturePath("encrypted.notesr.bak"));
+        encryptedBackupInputStream = new FileInputStream(generateFixturePath("encrypted.notesr.bak").toString());
 
         String tempPath = System.getProperty("java.io.tmpdir");
 
