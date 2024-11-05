@@ -21,17 +21,24 @@ checkstyle {
     configFile = rootProject.file('config/checkstyle/checkstyle.xml')
 }
 
+tasks.check.dependsOn tasks.checkstyleMain, tasks.checkstyleTest
+
+tasks.build {
+    dependsOn 'test' // Run tests as part of the build task
+}
+
 tasks.named('test', Test) {
     useJUnitPlatform()
 
     maxHeapSize = '1G'
 
     testLogging {
-        events "passed"
+        events "passed", "skipped", "failed"
     }
 }
 
 test {
+    useJUnitPlatform()
     finalizedBy jacocoTestReport
 }
 
@@ -53,8 +60,4 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-}
-
-test {
-    useJUnitPlatform()
 }
