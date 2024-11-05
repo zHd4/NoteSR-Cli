@@ -42,6 +42,6 @@ public class AesTest {
         byte[] actualEncryptedData = aesInstance.encrypt(plainData);
         byte[] actualDecryptedData = aesInstance.decrypt(actualEncryptedData);
 
-        assertArrayEquals(plainData, actualDecryptedData);
+        assertArrayEquals(plainData, actualDecryptedData, "The original and decrypted data do not match");
     }
 }
