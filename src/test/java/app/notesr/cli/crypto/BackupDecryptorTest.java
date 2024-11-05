@@ -31,7 +31,7 @@ class BackupDecryptorTest {
 
         String tempPath = System.getProperty("java.io.tmpdir");
 
-        tempDecryptedBackupFilePath = Path.of(tempPath, "test-decrypted.notesr.bak");
+        tempDecryptedBackupFilePath = Path.of(tempPath, "test-decrypted.json");
         tempDecryptedBackupOutputStream = (FileOutputStream) Files.newOutputStream(tempDecryptedBackupFilePath);
     }
 
