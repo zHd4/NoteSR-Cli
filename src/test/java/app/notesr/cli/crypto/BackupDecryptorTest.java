@@ -1,7 +1,8 @@
 package app.notesr.cli.crypto;
 
 import app.notesr.cli.crypto.exception.BackupDecryptionException;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.crypto.SecretKey;
@@ -27,8 +28,8 @@ class BackupDecryptorTest {
     private static FileOutputStream tempDecryptedBackupOutputStream;
     private static Path tempDecryptedBackupFilePath;
 
-    @BeforeAll
-    public static void beforeAll() throws IOException {
+    @BeforeEach
+    public void beforeEach() throws IOException {
         byte[] keyBytes = readFixture("aes256-key");
 
         key = new SecretKeySpec(keyBytes, 0, keyBytes.length, Aes.KEY_GENERATOR_ALGORITHM);
@@ -49,7 +50,13 @@ class BackupDecryptorTest {
         String actualHash = sha256OfFile(tempDecryptedBackupFilePath.toString());
 
         assertEquals(DECRYPTED_BACKUP_HASH, actualHash);
-        Files.delete(tempDecryptedBackupFilePath);
+    }
+
+    @AfterEach
+    public void afterEach() throws IOException {
+        if (Files.exists(tempDecryptedBackupFilePath)) {
+            Files.delete(tempDecryptedBackupFilePath);
+        }
     }
 
     private static byte[] readFixture(String filename) throws IOException {
