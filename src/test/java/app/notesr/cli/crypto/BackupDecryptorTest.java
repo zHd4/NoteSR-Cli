@@ -47,7 +47,7 @@ class BackupDecryptorTest {
         BackupDecryptor decryptor = new BackupDecryptor(key, salt);
         decryptor.decrypt(encryptedBackupInputStream, tempDecryptedBackupOutputStream);
 
-        String actualHash = sha256OfFile(tempDecryptedBackupFilePath.toString());
+        String actualHash = getSha256(tempDecryptedBackupFilePath.toString());
 
         assertEquals(DECRYPTED_BACKUP_HASH, actualHash);
     }
@@ -67,10 +67,10 @@ class BackupDecryptorTest {
         return Path.of("src/test/resources/fixtures", filename);
     }
 
-    private static String sha256OfFile(String path) throws NoSuchAlgorithmException, IOException {
+    private static String getSha256(String filePath) throws NoSuchAlgorithmException, IOException {
         MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
 
-        try (FileInputStream stream = new FileInputStream(path)) {
+        try (FileInputStream stream = new FileInputStream(filePath)) {
             byte[] buffer = new byte[4096];
             int bytesRead;
 
@@ -79,12 +79,12 @@ class BackupDecryptorTest {
             }
         }
 
-        StringBuilder hexString = new StringBuilder();
+        StringBuilder hexDigestBuilder = new StringBuilder();
 
         for (byte b : sha256.digest()) {
-            hexString.append(String.format("%02x", b));
+            hexDigestBuilder.append(String.format("%02x", b));
         }
 
-        return hexString.toString();
+        return hexDigestBuilder.toString();
     }
 }
