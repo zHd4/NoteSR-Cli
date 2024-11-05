@@ -21,7 +21,7 @@ public class BackupDecryptor {
     private SecretKey key;
     private byte[] salt;
 
-    private void decrypt(FileInputStream inputStream, FileOutputStream outputStream) throws BackupDecryptionException {
+    public void decrypt(FileInputStream inputStream, FileOutputStream outputStream) throws BackupDecryptionException {
         try {
             Cipher cipher = Aes.createCipher(key, salt, Cipher.DECRYPT_MODE);
             CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher);
