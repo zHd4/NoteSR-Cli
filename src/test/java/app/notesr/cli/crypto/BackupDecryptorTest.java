@@ -1,6 +1,8 @@
 package app.notesr.cli.crypto;
 
+import app.notesr.cli.crypto.exception.BackupDecryptionException;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -33,6 +35,12 @@ class BackupDecryptorTest {
 
         tempDecryptedBackupFilePath = Path.of(tempPath, "test-decrypted.json");
         tempDecryptedBackupOutputStream = (FileOutputStream) Files.newOutputStream(tempDecryptedBackupFilePath);
+    }
+
+    @Test
+    public void testDecrypt() throws BackupDecryptionException {
+        BackupDecryptor decryptor = new BackupDecryptor(key, salt);
+        decryptor.decrypt(encryptedBackupInputStream, tempDecryptedBackupOutputStream);
     }
 
     private static byte[] readFixture(String filename) throws IOException {
