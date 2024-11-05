@@ -32,11 +32,7 @@ class BackupDecryptorTest {
         String tempPath = System.getProperty("java.io.tmpdir");
 
         tempDecryptedBackupFilePath = Path.of(tempPath, "test-decrypted.notesr.bak");
-        tempDecryptedBackupOutputStream = getFileOutputStream(tempDecryptedBackupFilePath);
-    }
-
-    private static FileOutputStream getFileOutputStream(Path path) throws IOException {
-        return (FileOutputStream) Files.newOutputStream(path);
+        tempDecryptedBackupOutputStream = (FileOutputStream) Files.newOutputStream(tempDecryptedBackupFilePath);
     }
 
     private static byte[] readFixture(String filename) throws IOException {
