@@ -1,6 +1,5 @@
 package app.notesr.cli.crypto;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +11,8 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class AesTest {
     private static final int MIN_DATA_SIZE = 4096;
@@ -41,6 +42,6 @@ public class AesTest {
         byte[] actualEncryptedData = aesInstance.encrypt(plainData);
         byte[] actualDecryptedData = aesInstance.decrypt(actualEncryptedData);
 
-        Assertions.assertArrayEquals(plainData, actualDecryptedData);
+        assertArrayEquals(plainData, actualDecryptedData);
     }
 }
