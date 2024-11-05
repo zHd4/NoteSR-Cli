@@ -14,6 +14,8 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class BackupDecryptorTest {
     private static final String DECRYPTED_BACKUP_HASH =
             "b7c8a729d50b341abdedcc731a409b5dd46456b2719889ff9cf004abbb8054cf";
@@ -40,9 +42,14 @@ class BackupDecryptorTest {
     }
 
     @Test
-    public void testDecrypt() throws BackupDecryptionException {
+    public void testDecrypt() throws BackupDecryptionException, NoSuchAlgorithmException, IOException {
         BackupDecryptor decryptor = new BackupDecryptor(key, salt);
         decryptor.decrypt(encryptedBackupInputStream, tempDecryptedBackupOutputStream);
+
+        String actualHash = sha256OfFile(tempDecryptedBackupFilePath.toString());
+
+        assertEquals(DECRYPTED_BACKUP_HASH, actualHash);
+        Files.delete(tempDecryptedBackupFilePath);
     }
 
     private static byte[] readFixture(String filename) throws IOException {
