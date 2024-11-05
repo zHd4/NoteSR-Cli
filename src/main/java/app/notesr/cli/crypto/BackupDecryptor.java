@@ -15,7 +15,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 @AllArgsConstructor
-public class BackupDecryptor {
+public final class BackupDecryptor {
     private static final int CHUNK_SIZE = 100000;
 
     private SecretKey key;
@@ -45,8 +45,8 @@ public class BackupDecryptor {
                 }
             }
 
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException |
-                 InvalidKeyException | IOException e) {
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException
+                 | InvalidKeyException | IOException e) {
             throw new BackupDecryptionException(e);
         }
     }
