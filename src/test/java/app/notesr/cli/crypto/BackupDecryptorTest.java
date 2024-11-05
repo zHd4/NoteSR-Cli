@@ -64,7 +64,7 @@ class BackupDecryptorTest {
     }
 
     private static Path generateFixturePath(String filename) {
-        return Path.of("src/test/resources/fixtures/" + filename);
+        return Path.of("src/test/resources/fixtures", filename);
     }
 
     private static String sha256OfFile(String path) throws NoSuchAlgorithmException, IOException {
