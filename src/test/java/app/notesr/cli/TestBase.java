@@ -9,7 +9,7 @@ public class TestBase {
         return Files.readAllBytes(getFixturePath(filename));
     }
 
-    protected static Path getFixturePath(String filename) {
-        return Path.of("src/test/resources/fixtures", filename);
+    protected static Path getFixturePath(String pathPart) {
+        return Path.of("src/test/resources/fixtures", pathPart);
     }
 }
