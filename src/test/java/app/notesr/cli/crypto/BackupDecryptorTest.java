@@ -1,5 +1,6 @@
 package app.notesr.cli.crypto;
 
+import app.notesr.cli.TestBase;
 import app.notesr.cli.crypto.exception.BackupDecryptionException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +18,7 @@ import java.security.NoSuchAlgorithmException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BackupDecryptorTest {
+class BackupDecryptorTest extends TestBase {
     private static final String DECRYPTED_BACKUP_HASH =
             "b7c8a729d50b341abdedcc731a409b5dd46456b2719889ff9cf004abbb8054cf";
 
@@ -34,7 +35,7 @@ class BackupDecryptorTest {
 
         key = new SecretKeySpec(keyBytes, 0, keyBytes.length, Aes.KEY_GENERATOR_ALGORITHM);
         salt = readFixture("aes256-salt");
-        encryptedBackupInputStream = new FileInputStream(generateFixturePath("encrypted.notesr.bak").toString());
+        encryptedBackupInputStream = new FileInputStream(getFixturePath("encrypted.notesr.bak").toString());
 
         String tempPath = System.getProperty("java.io.tmpdir");
 
@@ -56,14 +57,6 @@ class BackupDecryptorTest {
         if (Files.exists(tempDecryptedBackupFilePath)) {
             Files.delete(tempDecryptedBackupFilePath);
         }
-    }
-
-    private static byte[] readFixture(String filename) throws IOException {
-        return Files.readAllBytes(generateFixturePath(filename));
-    }
-
-    private static Path generateFixturePath(String filename) {
-        return Path.of("src/test/resources/fixtures", filename);
     }
 
     private static String computeSha256(String filePath) throws NoSuchAlgorithmException, IOException {
