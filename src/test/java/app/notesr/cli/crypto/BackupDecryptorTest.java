@@ -31,11 +31,12 @@ class BackupDecryptorTest extends TestBase {
 
     @BeforeEach
     public void beforeEach() throws IOException {
-        byte[] keyBytes = readFixture("aes256-key");
+        byte[] keyBytes = readFixture("crypto/backup_decryptor/aes256-key");
 
         key = new SecretKeySpec(keyBytes, 0, keyBytes.length, Aes.KEY_GENERATOR_ALGORITHM);
-        salt = readFixture("aes256-salt");
-        encryptedBackupInputStream = new FileInputStream(getFixturePath("encrypted.notesr.bak").toString());
+        salt = readFixture("crypto/backup_decryptor/aes256-salt");
+        encryptedBackupInputStream = new FileInputStream(
+                getFixturePath("crypto/backup_decryptor/encrypted.notesr.bak").toString());
 
         String tempPath = System.getProperty("java.io.tmpdir");
 
