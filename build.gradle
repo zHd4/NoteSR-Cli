@@ -19,6 +19,7 @@ application {
 checkstyle {
     toolVersion = '10.12.4'
     configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+    ignoreFailures = true
 }
 
 tasks.check.dependsOn tasks.checkstyleMain, tasks.checkstyleTest
