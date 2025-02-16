@@ -27,7 +27,7 @@ public class ZipUtilsTest extends TestBase {
         ZipUtils.unzip(ZIP_PATH, TEMP_EXTRACTED_DIR_PATH, null);
         File dir = new File(TEMP_EXTRACTED_DIR_PATH);
 
-        assertTrue(dir.exists(), "Extract directory not found");
+        assertTrue(dir.exists(), "Directory " + dir.getAbsolutePath() + " not found");
         assertTrue(isDirsIdentical(DIR_PATH, TEMP_EXTRACTED_DIR_PATH), "Dirs not identical");
     }
 
@@ -42,9 +42,7 @@ public class ZipUtilsTest extends TestBase {
         assertFalse(ZipUtils.isZipArchive(nonZipFile.getAbsolutePath()));
         assertFalse(ZipUtils.isZipArchive(DIR_PATH));
         assertTrue(ZipUtils.isZipArchive(ZIP_PATH));
-
-        boolean nonZipFileDeleted = nonZipFile.delete();
-        assertTrue(nonZipFileDeleted);
+        assertTrue(nonZipFile.delete());
     }
 
     @AfterAll
@@ -101,7 +99,7 @@ public class ZipUtilsTest extends TestBase {
         }
 
         if (!dir.delete()) {
-            throw new RuntimeException("Cannot delete directory: " + dir.getAbsolutePath());
+            throw new RuntimeException("Cannot delete directory " + dir.getAbsolutePath());
         }
     }
 }
