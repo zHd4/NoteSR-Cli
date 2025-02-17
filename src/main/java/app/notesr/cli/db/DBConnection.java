@@ -33,6 +33,7 @@ public class DBConnection {
             String sql = getInitDbScript();
 
             try (Statement stmt = connection.createStatement()) {
+                stmt.execute("PRAGMA foreign_keys = ON;");
                 stmt.execute(sql);
             }
         } catch (URISyntaxException | IOException | SQLException e) {
