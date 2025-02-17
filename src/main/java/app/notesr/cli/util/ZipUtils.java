@@ -27,7 +27,7 @@ public class ZipUtils {
         return false;
     }
 
-    public static void unzip(String zipPath, String destDir, Thread thread) throws IOException {
+    public static void unzip(String zipPath, String destDir) throws IOException {
         File destDirectory = new File(destDir);
 
         if (!destDirectory.exists()) {
@@ -41,10 +41,6 @@ public class ZipUtils {
             ZipEntry zipEntry;
 
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
-                if (thread != null && thread.isInterrupted()) {
-                    break;
-                }
-
                 File newFile = unzipFile(destDirectory, zipEntry);
 
                 if (zipEntry.isDirectory()) {

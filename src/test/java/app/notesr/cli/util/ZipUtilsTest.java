@@ -24,7 +24,7 @@ public class ZipUtilsTest extends TestBase {
 
     @Test
     public void testUnzip() throws IOException {
-        ZipUtils.unzip(ZIP_PATH, TEMP_EXTRACTED_DIR_PATH, null);
+        ZipUtils.unzip(ZIP_PATH, TEMP_EXTRACTED_DIR_PATH);
         File dir = new File(TEMP_EXTRACTED_DIR_PATH);
 
         assertTrue(dir.exists(), "Directory " + dir.getAbsolutePath() + " not found");
