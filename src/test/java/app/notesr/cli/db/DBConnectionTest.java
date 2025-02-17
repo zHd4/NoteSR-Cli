@@ -1,6 +1,7 @@
 package app.notesr.cli.db;
 
 import app.notesr.cli.TestBase;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -47,6 +48,12 @@ public class DBConnectionTest extends TestBase {
         for (String table : tables) {
             assertTrue(isTableExists(table), "Table " + table + " wasn't created");
         }
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        File dbFile = new File(dbPath);
+        assertTrue(dbFile.delete());
     }
 
     private boolean isTableExists(String name) throws SQLException {
