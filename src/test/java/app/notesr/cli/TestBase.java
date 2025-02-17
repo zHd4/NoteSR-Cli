@@ -12,4 +12,8 @@ public class TestBase {
     protected static Path getFixturePath(String pathPart) {
         return Path.of("src/test/resources/fixtures", pathPart);
     }
+
+    protected static String getTempPath(String pathPart) {
+        return Path.of(System.getProperty("java.io.tmpdir"), pathPart).toString();
+    }
 }

@@ -83,10 +83,6 @@ public class ZipUtilsTest extends TestBase {
         return true;
     }
 
-    private static String getTempPath(String pathPart) {
-        return Path.of(System.getProperty("java.io.tmpdir"), pathPart).toString();
-    }
-
     private static void removeDir(File dir) {
         if (dir.isDirectory()) {
             File[] children = dir.listFiles();
