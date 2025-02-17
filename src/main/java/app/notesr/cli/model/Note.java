@@ -1,13 +1,15 @@
 package app.notesr.cli.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 
-@AllArgsConstructor
-@Getter
-@EqualsAndHashCode
+import java.time.LocalDateTime;
+
+@Data
+@Builder
 public class Note {
-    private long id;
-    private String title;
+    private String id;
+    private String name;
+    private String text;
+    private LocalDateTime updatedAt;
 }
