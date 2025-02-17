@@ -25,7 +25,7 @@ checkstyle {
 tasks.check.dependsOn tasks.checkstyleMain, tasks.checkstyleTest
 
 tasks.build {
-    dependsOn 'test' // Run tests as part of the build task
+    dependsOn 'test'
 }
 
 tasks.named('test', Test) {
@@ -57,6 +57,7 @@ compileJava {
 
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+    implementation 'org.xerial:sqlite-jdbc:3.49.0.0'
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
     testImplementation platform('org.junit:junit-bom:5.10.0')
