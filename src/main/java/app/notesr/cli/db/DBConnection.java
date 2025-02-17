@@ -41,6 +41,7 @@ public class DBConnection {
 
                 while ((line = reader.readLine()) != null) {
                     sql.append(line).append("\n");
+
                     if (line.trim().endsWith(";")) {
                         stmt.executeUpdate(sql.toString());
                         sql.setLength(0);
