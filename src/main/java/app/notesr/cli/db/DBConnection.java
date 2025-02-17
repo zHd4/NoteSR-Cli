@@ -2,11 +2,10 @@ package app.notesr.cli.db;
 
 import lombok.Getter;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -16,7 +15,7 @@ import static java.util.Objects.requireNonNull;
 
 @Getter
 public class DBConnection {
-    private static final String INIT_DB_SCRIPT_RES_FILE_NAME = "init_db_struct.sql";
+    private static final String INIT_DB_SCRIPT_RES_PATH = "/init_db_struct.sql";
 
     private final String dbPath;
     private final Connection connection;
@@ -30,20 +29,27 @@ public class DBConnection {
 
     private void createStructure() {
         try {
-            String sql = getInitDbScript();
+            InputStream scriptStream =
+                    requireNonNull(DBConnection.class.getResourceAsStream(INIT_DB_SCRIPT_RES_PATH));
 
-            try (Statement stmt = connection.createStatement()) {
+            try (Statement stmt = connection.createStatement();
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(scriptStream))) {
                 stmt.execute("PRAGMA foreign_keys = ON;");
-                stmt.execute(sql);
+
+                StringBuilder sql = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    sql.append(line).append("\n");
+                    if (line.trim().endsWith(";")) {
+                        stmt.executeUpdate(sql.toString());
+                        sql.setLength(0);
+                    }
+                }
             }
-        } catch (URISyntaxException | IOException | SQLException e) {
+        } catch (IOException | SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private String getInitDbScript() throws URISyntaxException, IOException {
-        URL url = requireNonNull(DBConnection.class.getClassLoader().getResource(INIT_DB_SCRIPT_RES_FILE_NAME));
-        return Files.readString(Paths.get(url.toURI()));
     }
 
     private static Connection connect(String dbPath) {
