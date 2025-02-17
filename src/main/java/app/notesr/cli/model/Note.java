@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 @EqualsAndHashCode
-public class NoteInfo {
+public class Note {
     private long id;
     private String title;
 }
