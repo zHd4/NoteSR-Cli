@@ -5,9 +5,13 @@ import app.notesr.cli.model.Note;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import static app.notesr.cli.db.DbUtils.dateTimeToString;
+import static app.notesr.cli.db.DbUtils.parseDateTime;
 
 @RequiredArgsConstructor
 public final class NoteDao {
@@ -24,5 +28,27 @@ public final class NoteDao {
 
             stmt.executeUpdate();
         }
+    }
+
+    public Set<Note> getAll() throws SQLException {
+        Set<Note> results = new LinkedHashSet<>();
+
+        String sql = "SELECT * FROM notes;";
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Note note = Note.builder()
+                        .id(rs.getString(1))
+                        .name(rs.getString(2))
+                        .text(rs.getString(3))
+                        .updatedAt(parseDateTime(rs.getString(4)))
+                        .build();
+
+                results.add(note);
+            }
+        }
+
+        return results;
     }
 }
