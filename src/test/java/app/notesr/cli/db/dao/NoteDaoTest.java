@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 
 import static app.notesr.cli.db.DbUtils.parseDateTime;
 import static app.notesr.cli.db.DbUtils.truncateDateTime;
@@ -23,12 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class NoteDaoTest {
     private static final Faker FAKER = new Faker();
+    private static final int TEST_NOTES_COUNT = 5;
 
     private File dbFile;
     private DbConnection dbConnection;
 
     private NoteDao noteDao;
-    private Note testNote;
+    private LinkedHashSet<Note> testNotes;
 
     @BeforeEach
     public void beforeEach() {
@@ -38,26 +40,34 @@ public final class NoteDaoTest {
         dbConnection = new DbConnection(dbPath);
 
         noteDao = new NoteDao(dbConnection);
-        testNote = Note.builder()
-                .id(randomUUID().toString())
-                .name(FAKER.text().text(5, 15))
-                .text(FAKER.text().text())
-                .updatedAt(truncateDateTime(LocalDateTime.now()))
-                .build();
+        testNotes = new LinkedHashSet<>();
+
+        for (int i = 0; i < TEST_NOTES_COUNT; i++) {
+            Note testNote = Note.builder()
+                    .id(randomUUID().toString())
+                    .name(FAKER.text().text(5, 15))
+                    .text(FAKER.text().text())
+                    .updatedAt(truncateDateTime(LocalDateTime.now()))
+                    .build();
+
+            testNotes.add(testNote);
+        }
     }
 
     @Test
     public void testAdd() throws SQLException {
-        noteDao.add(testNote);
-        Note actualNote = null;
+        Note expected = testNotes.getFirst();
+        Note actual = null;
+
+        noteDao.add(expected);
 
         String sql = "SELECT * FROM notes WHERE id = ?";
         try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
-            stmt.setString(1, testNote.getId());
+            stmt.setString(1, expected.getId());
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                actualNote = Note.builder()
+                actual = Note.builder()
                         .id(rs.getString(1))
                         .name(rs.getString(2))
                         .text(rs.getString(3))
@@ -66,8 +76,8 @@ public final class NoteDaoTest {
             }
         }
 
-        assertNotNull(actualNote, "Actual note is null");
-        assertEquals(testNote, actualNote, "Notes are different");
+        assertNotNull(actual, "Actual note is null");
+        assertEquals(expected, actual, "Notes are different");
     }
 
     @AfterEach
