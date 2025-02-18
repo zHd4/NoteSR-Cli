@@ -19,18 +19,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DBConnectionTest extends TestBase {
 
-    private static String dbPath;
+    private static File dbFile;
     private static DBConnection dbConnection;
 
     @BeforeAll
     public static void beforeAll() {
-        dbPath = getTempPath(randomUUID().toString());
+        String dbPath = getTempPath(randomUUID().toString());
+
+        dbFile = new File(dbPath);
         dbConnection = new DBConnection(dbPath);
     }
 
     @Test
     public void testDbExists() {
-        File dbFile = new File(dbPath);
         assertTrue(dbFile.exists(), dbFile.getAbsolutePath() + " not found");
     }
 
@@ -52,7 +53,6 @@ public class DBConnectionTest extends TestBase {
 
     @AfterAll
     public static void afterAll() {
-        File dbFile = new File(dbPath);
         assertTrue(dbFile.delete());
     }
 
