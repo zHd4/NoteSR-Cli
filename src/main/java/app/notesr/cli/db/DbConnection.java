@@ -14,13 +14,13 @@ import java.sql.Statement;
 import static java.util.Objects.requireNonNull;
 
 @Getter
-public class DBConnection {
+public class DbConnection {
     private static final String INIT_DB_SCRIPT_RES_PATH = "/init_db_struct.sql";
 
     private final String dbPath;
     private final Connection connection;
 
-    public DBConnection(String dbPath) {
+    public DbConnection(String dbPath) {
         this.dbPath = dbPath;
         this.connection = connect(dbPath);
 
@@ -30,7 +30,7 @@ public class DBConnection {
     private void createStructure() {
         try {
             InputStream scriptStream =
-                    requireNonNull(DBConnection.class.getResourceAsStream(INIT_DB_SCRIPT_RES_PATH));
+                    requireNonNull(DbConnection.class.getResourceAsStream(INIT_DB_SCRIPT_RES_PATH));
 
             try (Statement stmt = connection.createStatement();
                  BufferedReader reader = new BufferedReader(new InputStreamReader(scriptStream))) {
