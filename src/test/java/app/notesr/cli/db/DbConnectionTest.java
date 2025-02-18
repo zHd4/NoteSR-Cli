@@ -17,17 +17,17 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DBConnectionTest extends TestBase {
+public class DbConnectionTest extends TestBase {
 
     private static File dbFile;
-    private static DBConnection dbConnection;
+    private static DbConnection dbConnection;
 
     @BeforeAll
     public static void beforeAll() {
         String dbPath = getTempPath(randomUUID().toString());
 
         dbFile = new File(dbPath);
-        dbConnection = new DBConnection(dbPath);
+        dbConnection = new DbConnection(dbPath);
     }
 
     @Test
