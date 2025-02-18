@@ -91,6 +91,23 @@ public final class NoteDaoTest {
         assertEquals(testNotes, actual, "Notes are different");
     }
 
+    @Test
+    public void testGetById() throws SQLException {
+        insertTestNotes();
+
+        Note firstExpected = testNotes.getFirst();
+        Note lastExpected = testNotes.getLast();
+
+        Note firstActual = noteDao.getById(firstExpected.getId());
+        Note lastActual = noteDao.getById(lastExpected.getId());
+
+        assertNotNull(firstActual, "Actual note is null");
+        assertNotNull(lastActual, "Actual note is null");
+
+        assertEquals(firstExpected, firstActual, "Notes are different");
+        assertEquals(lastExpected, lastActual, "Notes are different");
+    }
+
     @AfterEach
     public void afterEach() {
         assertTrue(dbFile.delete());
