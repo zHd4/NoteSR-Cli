@@ -84,6 +84,19 @@ public final class NoteDaoTest {
 
     @Test
     public void testGetAll() throws SQLException {
+        insertTestNotes();
+        Set<Note> actual = noteDao.getAll();
+
+        assertNotNull(actual, "Actual notes is null");
+        assertEquals(testNotes, actual, "Notes are different");
+    }
+
+    @AfterEach
+    public void afterEach() {
+        assertTrue(dbFile.delete());
+    }
+
+    private void insertTestNotes() {
         testNotes.forEach(testNote -> {
             String sql = "INSERT INTO notes (id, name, text, updated_at) VALUES (?, ?, ?, ?)";
 
@@ -98,15 +111,5 @@ public final class NoteDaoTest {
                 throw new RuntimeException(e);
             }
         });
-
-        Set<Note> actual = noteDao.getAll();
-
-        assertNotNull(actual, "Actual notes is null");
-        assertEquals(testNotes, actual, "Notes are different");
-    }
-
-    @AfterEach
-    public void afterEach() {
-        assertTrue(dbFile.delete());
     }
 }
