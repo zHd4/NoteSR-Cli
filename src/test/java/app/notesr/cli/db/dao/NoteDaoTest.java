@@ -1,6 +1,5 @@
 package app.notesr.cli.db.dao;
 
-import app.notesr.cli.TestBase;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.model.Note;
 import net.datafaker.Faker;
@@ -16,12 +15,13 @@ import java.time.LocalDateTime;
 
 import static app.notesr.cli.db.DbUtils.parseDateTime;
 import static app.notesr.cli.db.DbUtils.truncateDateTime;
+import static app.notesr.cli.util.PathUtils.getTempPath;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NoteDaoTest extends TestBase {
+public class NoteDaoTest {
     private static final Faker FAKER = new Faker();
 
     private File dbFile;

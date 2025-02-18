@@ -1,6 +1,5 @@
 package app.notesr.cli.util;
 
-import app.notesr.cli.TestBase;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
@@ -10,11 +9,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
 
+import static app.notesr.cli.util.FixtureUtils.getFixturePath;
+import static app.notesr.cli.util.PathUtils.getTempPath;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ZipUtilsTest extends TestBase {
+public class ZipUtilsTest {
     private static final Random RANDOM = new Random();
 
     private static final String DIR_PATH = getFixturePath("util/zip_utils/exported").toString();

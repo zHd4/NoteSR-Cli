@@ -1,6 +1,5 @@
 package app.notesr.cli.crypto;
 
-import app.notesr.cli.TestBase;
 import app.notesr.cli.crypto.exception.BackupDecryptionException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,9 +15,11 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import static app.notesr.cli.util.FixtureUtils.getFixturePath;
+import static app.notesr.cli.util.FixtureUtils.readFixture;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BackupDecryptorTest extends TestBase {
+class BackupDecryptorTest {
     private static final String DECRYPTED_BACKUP_HASH =
             "b7c8a729d50b341abdedcc731a409b5dd46456b2719889ff9cf004abbb8054cf";
 
