@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS notes(
     id varchar(255) PRIMARY KEY,
     name text NOT NULL,
-    data text NOT NULL,
+    text text NOT NULL,
     updated_at varchar(255) NOT NULL
 );
 
