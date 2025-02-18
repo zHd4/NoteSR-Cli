@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import static app.notesr.cli.db.DbUtils.dateTimeToString;
 
 @RequiredArgsConstructor
-public class NoteDao {
+public final class NoteDao {
     private final DbConnection db;
 
     public void add(Note note) throws SQLException {
