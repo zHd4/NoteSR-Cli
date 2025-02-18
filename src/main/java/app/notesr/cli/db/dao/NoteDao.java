@@ -51,4 +51,24 @@ public final class NoteDao {
 
         return results;
     }
+
+    public Note getById(String id) throws SQLException {
+        String sql = "SELECT * FROM notes WHERE id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return Note.builder()
+                        .id(rs.getString(1))
+                        .name(rs.getString(2))
+                        .text(rs.getString(3))
+                        .updatedAt(parseDateTime(rs.getString(4)))
+                        .build();
+            }
+        }
+
+        return null;
+    }
 }
