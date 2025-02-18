@@ -13,7 +13,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
+import static app.notesr.cli.db.DbUtils.dateTimeToString;
 import static app.notesr.cli.db.DbUtils.parseDateTime;
 import static app.notesr.cli.db.DbUtils.truncateDateTime;
 import static app.notesr.cli.util.PathUtils.getTempPath;
@@ -78,6 +80,29 @@ public final class NoteDaoTest {
 
         assertNotNull(actual, "Actual note is null");
         assertEquals(expected, actual, "Notes are different");
+    }
+
+    @Test
+    public void testGetAll() throws SQLException {
+        testNotes.forEach(testNote -> {
+            String sql = "INSERT INTO notes (id, name, text, updated_at) VALUES (?, ?, ?, ?)";
+
+            try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
+                stmt.setString(1, testNote.getId());
+                stmt.setString(2, testNote.getName());
+                stmt.setString(3, testNote.getText());
+                stmt.setString(4, dateTimeToString(testNote.getUpdatedAt()));
+
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        Set<Note> actual = noteDao.getAll();
+
+        assertNotNull(actual, "Actual notes is null");
+        assertEquals(testNotes, actual, "Notes are different");
     }
 
     @AfterEach
