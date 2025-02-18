@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class NoteDaoTest {
+public final class NoteDaoTest {
     private static final Faker FAKER = new Faker();
 
     private File dbFile;
