@@ -67,7 +67,7 @@ public final class FileInfoDaoTest {
             testFileInfos.add(fileInfo);
         }
 
-        insertTestNote();
+        insertNote(testNote);
     }
 
     @Test
@@ -102,7 +102,7 @@ public final class FileInfoDaoTest {
 
     @Test
     public void testGetAllByNoteId() throws SQLException {
-        insertTestFileInfos();
+        insertFilesInfos(testFileInfos);
         Set<FileInfo> actual = fileInfoDao.getAllByNoteId(testNote.getId());
 
         assertNotNull(actual, "Actual files infos are null");
@@ -115,7 +115,7 @@ public final class FileInfoDaoTest {
 
     @Test
     public void testGetById() throws SQLException {
-        insertTestFileInfos();
+        insertFilesInfos(testFileInfos);
 
         FileInfo firstExpected = testFileInfos.getFirst();
         FileInfo lastExpected = testFileInfos.getLast();
@@ -144,14 +144,14 @@ public final class FileInfoDaoTest {
                 .build();
     }
 
-    private void insertTestNote() {
+    private void insertNote(Note note) {
         String sql = "INSERT INTO notes (id, name, text, updated_at) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
-            stmt.setString(1, testNote.getId());
-            stmt.setString(2, testNote.getName());
-            stmt.setString(3, testNote.getText());
-            stmt.setString(4, dateTimeToString(testNote.getUpdatedAt()));
+            stmt.setString(1, note.getId());
+            stmt.setString(2, note.getName());
+            stmt.setString(3, note.getText());
+            stmt.setString(4, dateTimeToString(note.getUpdatedAt()));
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -159,8 +159,8 @@ public final class FileInfoDaoTest {
         }
     }
 
-    private void insertTestFileInfos() {
-        testFileInfos.forEach(testFileInfo -> {
+    private void insertFilesInfos(Set<FileInfo> filesInfos) {
+        filesInfos.forEach(testFileInfo -> {
             String sql = "INSERT INTO files_info (id, note_id, size, name, created_at, updated_at)"
                     + " VALUES (?, ?, ?, ?, ?, ?)";
 
