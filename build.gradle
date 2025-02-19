@@ -52,7 +52,7 @@ jacocoTestReport {
 }
 
 compileJava {
-    options.release = 20
+    options.release = 21
 }
 
 dependencies {
