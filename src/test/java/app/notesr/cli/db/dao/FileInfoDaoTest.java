@@ -101,12 +101,16 @@ public final class FileInfoDaoTest {
     }
 
     @Test
-    public void testGetAll() throws SQLException {
+    public void testGetAllByNoteId() throws SQLException {
         insertTestFileInfos();
-        Set<FileInfo> actual = fileInfoDao.getAll();
+        Set<FileInfo> actual = fileInfoDao.getAllByNoteId(testNote.getId());
 
         assertNotNull(actual, "Actual files infos are null");
         assertEquals(testFileInfos, actual, "Files infos are different");
+
+        for (FileInfo fileInfo : actual) {
+            assertEquals(testNote.getId(), fileInfo.getNoteId(), "Unexpected note id");
+        }
     }
 
     @Test
