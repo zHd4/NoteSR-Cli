@@ -24,11 +24,7 @@ public class FileInfoDao {
             stmt.setLong(3, fileInfo.getSize());
             stmt.setString(4, fileInfo.getName());
             stmt.setString(5, fileInfo.getType());
-
-            Blob thumbnailBlob = dbConnection.getConnection().createBlob();
-            thumbnailBlob.setBytes(1, fileInfo.getThumbnail());
-
-            stmt.setBlob(6, thumbnailBlob);
+            stmt.setBytes(6, fileInfo.getThumbnail());
             stmt.setString(7, dateTimeToString(fileInfo.getCreatedAt()));
             stmt.setString(8, dateTimeToString(fileInfo.getUpdatedAt()));
 
