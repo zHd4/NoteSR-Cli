@@ -35,11 +35,12 @@ public final class FileInfoDao {
         }
     }
 
-    public Set<FileInfo> getAll() throws SQLException {
+    public Set<FileInfo> getAllByNoteId(String noteId) throws SQLException {
         Set<FileInfo> results = new LinkedHashSet<>();
 
-        String sql = "SELECT * FROM files_info";
+        String sql = "SELECT * FROM files_info WHERE note_id = ?";
         try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, noteId);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
