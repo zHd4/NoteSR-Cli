@@ -76,7 +76,7 @@ public class FileInfoDaoTest {
 
         fileInfoDao.add(expected);
 
-        String sql = "SELECT id, noteId, size, name, created_at, updated_at FROM files_info WHERE id = ?";
+        String sql = "SELECT id, note_id, size, name, created_at, updated_at FROM files_info WHERE id = ?";
         try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
             stmt.setString(1, expected.getId());
             ResultSet rs = stmt.executeQuery();
