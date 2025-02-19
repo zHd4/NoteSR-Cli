@@ -103,6 +103,7 @@ public final class FileInfoDaoTest {
     @Test
     public void testGetAllByNoteId() throws SQLException {
         insertFilesInfos(testFileInfos);
+
         Set<FileInfo> actual = fileInfoDao.getAllByNoteId(testNote.getId());
 
         assertNotNull(actual, "Actual files infos are null");
@@ -111,6 +112,14 @@ public final class FileInfoDaoTest {
         for (FileInfo fileInfo : actual) {
             assertEquals(testNote.getId(), fileInfo.getNoteId(), "Unexpected note id");
         }
+
+        Note additionalTestNote = getTestNote();
+        insertNote(additionalTestNote);
+
+        actual = fileInfoDao.getAllByNoteId(additionalTestNote.getId());
+
+        assertNotNull(actual, "Actual files infos are null");
+        assertTrue(actual.isEmpty(), "Actual must be empty");
     }
 
     @Test
