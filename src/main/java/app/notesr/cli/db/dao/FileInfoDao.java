@@ -4,19 +4,18 @@ import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.model.FileInfo;
 import lombok.RequiredArgsConstructor;
 
-import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import static app.notesr.cli.db.DbUtils.dateTimeToString;
 
 @RequiredArgsConstructor
-public class FileInfoDao {
+public final class FileInfoDao {
     private final DbConnection dbConnection;
 
     public void add(FileInfo fileInfo) throws SQLException {
-        String sql = "INSERT INTO files_info (id, note_id, size, name, type, thumbnail, created_at, updated_at)" +
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO files_info (id, note_id, size, name, type, thumbnail, created_at, updated_at)"
+                + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
             stmt.setString(1, fileInfo.getId());
