@@ -60,4 +60,28 @@ public final class FileInfoDao {
 
         return results;
     }
+
+    public FileInfo getById(String id) throws SQLException {
+        String sql = "SELECT * FROM files_info WHERE id = ?";
+
+        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return FileInfo.builder()
+                        .id(rs.getString(1))
+                        .noteId(rs.getString(2))
+                        .name(rs.getString(3))
+                        .type(rs.getString(4))
+                        .thumbnail(rs.getBytes(5))
+                        .size(rs.getLong(6))
+                        .createdAt(parseDateTime(rs.getString(7)))
+                        .updatedAt(parseDateTime(rs.getString(8)))
+                        .build();
+            }
+        }
+
+        return null;
+    }
 }
