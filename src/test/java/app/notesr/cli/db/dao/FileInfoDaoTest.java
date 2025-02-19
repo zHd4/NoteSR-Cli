@@ -109,6 +109,23 @@ public final class FileInfoDaoTest {
         assertEquals(testFileInfos, actual, "Files infos are different");
     }
 
+    @Test
+    public void testGetById() throws SQLException {
+        insertTestFileInfos();
+
+        FileInfo firstExpected = testFileInfos.getFirst();
+        FileInfo lastExpected = testFileInfos.getLast();
+
+        FileInfo firstActual = fileInfoDao.getById(firstExpected.getId());
+        FileInfo lastActual = fileInfoDao.getById(lastExpected.getId());
+
+        assertNotNull(firstActual, "Actual file info is null");
+        assertNotNull(lastActual, "Actual file info is null");
+
+        assertEquals(firstExpected, firstActual, "Files infos are different");
+        assertEquals(lastExpected, lastActual, "Files infos are different");
+    }
+
     @AfterEach
     public void afterEach() {
         assertTrue(dbFile.delete());
