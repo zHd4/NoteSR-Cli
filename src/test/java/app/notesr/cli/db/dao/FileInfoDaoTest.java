@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Random;
+import java.util.Set;
 
 import static app.notesr.cli.db.DbUtils.dateTimeToString;
 import static app.notesr.cli.db.DbUtils.parseDateTime;
@@ -97,6 +98,15 @@ public final class FileInfoDaoTest {
 
         assertNotNull(actual, "Actual file info is null");
         assertEquals(expected, actual, "Files infos are different");
+    }
+
+    @Test
+    public void testGetAll() throws SQLException {
+        insertTestFileInfos();
+        Set<FileInfo> actual = fileInfoDao.getAll();
+
+        assertNotNull(actual, "Actual files infos are null");
+        assertEquals(testFileInfos, actual, "Files infos are different");
     }
 
     @AfterEach
