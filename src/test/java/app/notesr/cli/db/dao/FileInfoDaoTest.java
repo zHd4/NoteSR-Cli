@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FileInfoDaoTest {
+public final class FileInfoDaoTest {
     private static final int TEST_FILE_INFOS_COUNT = 5;
     private static final long MIN_FILE_SIZE = 1024;
     private static final long MAX_FILE_SIZE = 1024 * 10;
@@ -130,8 +130,8 @@ public class FileInfoDaoTest {
 
     private void insertTestFileInfos() {
         testFileInfos.forEach(testFileInfo -> {
-            String sql = "INSERT INTO files_info (id, note_id, size, name, created_at, updated_at)" +
-                    " VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO files_info (id, note_id, size, name, created_at, updated_at)"
+                    + " VALUES (?, ?, ?, ?, ?, ?)";
 
             try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
                 stmt.setString(1, testFileInfo.getId());
