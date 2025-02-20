@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static app.notesr.cli.db.DbUtils.dateTimeToString;
 import static app.notesr.cli.db.DbUtils.parseDateTime;
 import static app.notesr.cli.db.DbUtils.truncateDateTime;
+import static app.notesr.cli.util.FixtureUtils.insertNote;
 import static app.notesr.cli.util.PathUtils.getTempPath;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -114,19 +114,6 @@ public final class NoteDaoTest {
     }
 
     private void insertTestNotes() {
-        testNotes.forEach(testNote -> {
-            String sql = "INSERT INTO notes (id, name, text, updated_at) VALUES (?, ?, ?, ?)";
-
-            try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
-                stmt.setString(1, testNote.getId());
-                stmt.setString(2, testNote.getName());
-                stmt.setString(3, testNote.getText());
-                stmt.setString(4, dateTimeToString(testNote.getUpdatedAt()));
-
-                stmt.executeUpdate();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        testNotes.forEach(testNote -> insertNote(dbConnection.getConnection(), testNote));
     }
 }
