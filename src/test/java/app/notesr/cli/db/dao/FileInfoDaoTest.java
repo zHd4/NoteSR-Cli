@@ -3,6 +3,7 @@ package app.notesr.cli.db.dao;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
+import app.notesr.cli.util.FixtureUtils;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +18,6 @@ import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
 
-import static app.notesr.cli.db.DbUtils.dateTimeToString;
 import static app.notesr.cli.db.DbUtils.parseDateTime;
 import static app.notesr.cli.db.DbUtils.truncateDateTime;
 import static app.notesr.cli.util.PathUtils.getTempPath;
@@ -67,7 +67,7 @@ public final class FileInfoDaoTest {
             testFileInfos.add(fileInfo);
         }
 
-        insertNote(testNote);
+        FixtureUtils.insertNote(dbConnection.getConnection(), testNote);
     }
 
     @Test
@@ -114,7 +114,7 @@ public final class FileInfoDaoTest {
         }
 
         Note additionalTestNote = getTestNote();
-        insertNote(additionalTestNote);
+        FixtureUtils.insertNote(dbConnection.getConnection(), additionalTestNote);
 
         actual = fileInfoDao.getAllByNoteId(additionalTestNote.getId());
 
@@ -153,38 +153,8 @@ public final class FileInfoDaoTest {
                 .build();
     }
 
-    private void insertNote(Note note) {
-        String sql = "INSERT INTO notes (id, name, text, updated_at) VALUES (?, ?, ?, ?)";
-
-        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
-            stmt.setString(1, note.getId());
-            stmt.setString(2, note.getName());
-            stmt.setString(3, note.getText());
-            stmt.setString(4, dateTimeToString(note.getUpdatedAt()));
-
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private void insertFilesInfos(Set<FileInfo> filesInfos) {
-        filesInfos.forEach(testFileInfo -> {
-            String sql = "INSERT INTO files_info (id, note_id, size, name, created_at, updated_at)"
-                    + " VALUES (?, ?, ?, ?, ?, ?)";
-
-            try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
-                stmt.setString(1, testFileInfo.getId());
-                stmt.setString(2, testFileInfo.getNoteId());
-                stmt.setLong(3, testFileInfo.getSize());
-                stmt.setString(4, testFileInfo.getName());
-                stmt.setString(5, dateTimeToString(testFileInfo.getCreatedAt()));
-                stmt.setString(6, dateTimeToString(testFileInfo.getUpdatedAt()));
-
-                stmt.executeUpdate();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        filesInfos.forEach(testFileInfo ->
+                FixtureUtils.insertFileInfo(dbConnection.getConnection(), testFileInfo));
     }
 }
