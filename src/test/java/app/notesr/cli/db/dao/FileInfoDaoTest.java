@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class FileInfoDaoTest {
-    private static final int TEST_FILE_INFOS_COUNT = 5;
+    private static final int TEST_FILES_INFOS_COUNT = 5;
     private static final long MIN_FILE_SIZE = 1024;
     private static final long MAX_FILE_SIZE = 1024 * 10;
 
@@ -54,7 +54,7 @@ public final class FileInfoDaoTest {
         testNote = getTestNote();
         testFileInfos = new LinkedHashSet<>();
 
-        for (int i = 0; i < TEST_FILE_INFOS_COUNT; i++) {
+        for (int i = 0; i < TEST_FILES_INFOS_COUNT; i++) {
             FileInfo fileInfo = FileInfo.builder()
                     .id(randomUUID().toString())
                     .noteId(testNote.getId())
