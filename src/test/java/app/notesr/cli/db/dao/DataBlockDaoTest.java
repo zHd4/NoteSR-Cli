@@ -4,9 +4,14 @@ import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
+import app.notesr.cli.util.FixtureUtils;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -15,6 +20,8 @@ import java.util.Random;
 
 import static app.notesr.cli.db.DbUtils.truncateDateTime;
 import static java.util.UUID.randomUUID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public final class DataBlockDaoTest {
     public static final int TEST_BLOCK_SIZE = 1000;
@@ -40,6 +47,41 @@ public final class DataBlockDaoTest {
         testNote = getTestNote();
         testFileInfo = getTestFileInfo();
         testDataBlocks = generateRandomDataBlocks(testFileInfo);
+    }
+
+    @Test
+    public void testAdd() throws SQLException {
+        FixtureUtils.insertNote(dbConnection.getConnection(), testNote);
+        FixtureUtils.insertFileInfo(dbConnection.getConnection(), testFileInfo);
+
+        for (DataBlock testDataBlock : testDataBlocks) {
+            dataBlockDao.add(testDataBlock);
+        }
+
+        List<DataBlock> actualList = new ArrayList<>();
+
+        String sql = "SELECT * FROM data_blocks WHERE file_id = ?";
+
+        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, testFileInfo.getId());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                DataBlock dataBlock = DataBlock.builder()
+                        .id(rs.getString(1))
+                        .fileId(rs.getString(2))
+                        .order(rs.getLong(3))
+                        .data(rs.getBytes(4))
+                        .build();
+
+                actualList.add(dataBlock);
+            }
+        }
+
+        LinkedHashSet<DataBlock> actual = new LinkedHashSet<>(actualList);
+
+        assertFalse(actual.isEmpty(), "Actual must be not empty");
+        assertEquals(testDataBlocks, actual, "Data blocks are different");
     }
 
     private Note getTestNote() {
