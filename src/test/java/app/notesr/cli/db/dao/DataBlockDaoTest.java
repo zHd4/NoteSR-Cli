@@ -5,10 +5,8 @@ import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
 import net.datafaker.Faker;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -16,11 +14,9 @@ import java.util.List;
 import java.util.Random;
 
 import static app.notesr.cli.db.DbUtils.truncateDateTime;
-import static app.notesr.cli.util.PathUtils.getTempPath;
 import static java.util.UUID.randomUUID;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DataBlockDaoTest {
+public final class DataBlockDaoTest {
     public static final int TEST_BLOCK_SIZE = 1000;
 
     public static final int MIN_TEST_FILE_SIZE = 1024;
@@ -29,9 +25,7 @@ public class DataBlockDaoTest {
     private static final Faker FAKER = new Faker();
     private static final Random RANDOM = new Random();
 
-    private File dbFile;
     private DbConnection dbConnection;
-
     private DataBlockDao dataBlockDao;
 
     private Note testNote;
@@ -40,21 +34,12 @@ public class DataBlockDaoTest {
 
     @BeforeEach
     public void beforeEach() {
-        String dbPath = getTempPath(randomUUID().toString());
-
-        dbFile = new File(dbPath);
-        dbConnection = new DbConnection(dbPath);
-
+        dbConnection = new DbConnection(":memory:");
         dataBlockDao = new DataBlockDao(dbConnection);
 
         testNote = getTestNote();
         testFileInfo = getTestFileInfo();
         testDataBlocks = generateRandomDataBlocks(testFileInfo);
-    }
-
-    @AfterEach
-    public void afterEach() {
-        assertTrue(dbFile.delete());
     }
 
     private Note getTestNote() {

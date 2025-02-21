@@ -5,11 +5,9 @@ import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
 import app.notesr.cli.util.FixtureUtils;
 import net.datafaker.Faker;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,7 +18,6 @@ import java.util.Set;
 
 import static app.notesr.cli.db.DbUtils.parseDateTime;
 import static app.notesr.cli.db.DbUtils.truncateDateTime;
-import static app.notesr.cli.util.PathUtils.getTempPath;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,9 +31,7 @@ public final class FileInfoDaoTest {
     private static final Faker FAKER = new Faker();
     private static final Random RANDOM = new Random();
 
-    private File dbFile;
     private DbConnection dbConnection;
-
     private FileInfoDao fileInfoDao;
 
     private Note testNote;
@@ -44,10 +39,7 @@ public final class FileInfoDaoTest {
 
     @BeforeEach
     public void beforeEach() {
-        String dbPath = getTempPath(randomUUID().toString());
-
-        dbFile = new File(dbPath);
-        dbConnection = new DbConnection(dbPath);
+        dbConnection = new DbConnection(":memory:");
 
         fileInfoDao = new FileInfoDao(dbConnection);
 
@@ -137,11 +129,6 @@ public final class FileInfoDaoTest {
 
         assertEquals(firstExpected, firstActual, "Files infos are different");
         assertEquals(lastExpected, lastActual, "Files infos are different");
-    }
-
-    @AfterEach
-    public void afterEach() {
-        assertTrue(dbFile.delete());
     }
 
     private Note getTestNote() {

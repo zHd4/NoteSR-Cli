@@ -1,38 +1,24 @@
 package app.notesr.cli.db;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static app.notesr.cli.util.PathUtils.getTempPath;
-import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DbConnectionTest {
-
-    private static File dbFile;
     private static DbConnection dbConnection;
 
     @BeforeAll
     public static void beforeAll() {
-        String dbPath = getTempPath(randomUUID().toString());
-
-        dbFile = new File(dbPath);
-        dbConnection = new DbConnection(dbPath);
-    }
-
-    @Test
-    public void testDbExists() {
-        assertTrue(dbFile.exists(), dbFile.getAbsolutePath() + " not found");
+        dbConnection = new DbConnection(":memory:");
     }
 
     @Test
@@ -49,11 +35,6 @@ public class DbConnectionTest {
         for (String table : tables) {
             assertTrue(isTableExists(table), "Table " + table + " wasn't created");
         }
-    }
-
-    @AfterAll
-    public static void afterAll() {
-        assertTrue(dbFile.delete());
     }
 
     private boolean isTableExists(String name) throws SQLException {
