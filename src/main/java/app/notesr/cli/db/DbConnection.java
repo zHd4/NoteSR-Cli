@@ -17,12 +17,12 @@ import static java.util.Objects.requireNonNull;
 public class DbConnection {
     private static final String INIT_DB_SCRIPT_RES_PATH = "/init_db_struct.sql";
 
-    private final String dbPath;
+    private final String subname;
     private final Connection connection;
 
-    public DbConnection(String dbPath) {
-        this.dbPath = dbPath;
-        this.connection = connect(dbPath);
+    public DbConnection(String subname) {
+        this.subname = subname;
+        this.connection = connect(subname);
 
         createStructure();
     }
@@ -53,9 +53,9 @@ public class DbConnection {
         }
     }
 
-    private static Connection connect(String dbPath) {
+    private static Connection connect(String subname) {
         try {
-            String url = "jdbc:sqlite:" + dbPath;
+            String url = "jdbc:sqlite:" + subname;
             return DriverManager.getConnection(url);
         } catch (SQLException e) {
             throw new ConnectionException(e);
