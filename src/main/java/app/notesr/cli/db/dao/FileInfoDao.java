@@ -15,13 +15,13 @@ import static app.notesr.cli.db.DbUtils.parseDateTime;
 
 @RequiredArgsConstructor
 public final class FileInfoDao {
-    private final DbConnection dbConnection;
+    private final DbConnection db;
 
     public void add(FileInfo fileInfo) throws SQLException {
         String sql = "INSERT INTO files_info (id, note_id, size, name, type, thumbnail, created_at, updated_at)"
                 + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, fileInfo.getId());
             stmt.setString(2, fileInfo.getNoteId());
             stmt.setLong(3, fileInfo.getSize());
@@ -39,7 +39,7 @@ public final class FileInfoDao {
         Set<FileInfo> results = new LinkedHashSet<>();
 
         String sql = "SELECT * FROM files_info WHERE note_id = ?";
-        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, noteId);
             ResultSet rs = stmt.executeQuery();
 
@@ -65,7 +65,7 @@ public final class FileInfoDao {
     public FileInfo getById(String id) throws SQLException {
         String sql = "SELECT * FROM files_info WHERE id = ?";
 
-        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, id);
             ResultSet rs = stmt.executeQuery();
 
