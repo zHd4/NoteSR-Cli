@@ -66,7 +66,7 @@ public final class DataBlockDaoTest {
             stmt.setString(1, testFileInfo.getId());
             ResultSet rs = stmt.executeQuery();
 
-            if (rs.next()) {
+            while (rs.next()) {
                 DataBlock dataBlock = DataBlock.builder()
                         .id(rs.getString(1))
                         .fileId(rs.getString(2))
