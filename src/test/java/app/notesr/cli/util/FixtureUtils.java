@@ -57,7 +57,7 @@ public class FixtureUtils {
 
     public static void insertDataBlock(Connection connection, DataBlock dataBlock) {
         String sql = "INSERT INTO data_blocks (id, file_id, block_order, data)"
-                + " VALUES (?, ?, ?, ?, ?, ?)";
+                + " VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, dataBlock.getId());
