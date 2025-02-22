@@ -5,7 +5,10 @@ import app.notesr.cli.model.DataBlock;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @RequiredArgsConstructor
 public final class DataBlockDao {
@@ -22,5 +25,21 @@ public final class DataBlockDao {
 
             stmt.executeUpdate();
         }
+    }
+
+    public Set<String> getIdsByFileId(String fileId) throws SQLException {
+        LinkedHashSet<String> results = new LinkedHashSet<>();
+
+        String sql = "SELECT id FROM data_blocks WHERE file_id = ? ORDER BY block_order";
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, fileId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                results.add(rs.getString(1));
+            }
+        }
+
+        return results;
     }
 }
