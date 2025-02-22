@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static app.notesr.cli.db.DbUtils.truncateDateTime;
 import static java.util.UUID.randomUUID;
@@ -32,7 +33,7 @@ public final class DataBlockDaoTest {
     private static final Faker FAKER = new Faker();
     private static final Random RANDOM = new Random();
 
-    private DbConnection dbConnection;
+    private DbConnection db;
     private DataBlockDao dataBlockDao;
 
     private Note testNote;
@@ -41,19 +42,19 @@ public final class DataBlockDaoTest {
 
     @BeforeEach
     public void beforeEach() {
-        dbConnection = new DbConnection(":memory:");
-        dataBlockDao = new DataBlockDao(dbConnection);
+        db = new DbConnection(":memory:");
+        dataBlockDao = new DataBlockDao(db);
 
         testNote = getTestNote();
         testFileInfo = getTestFileInfo();
         testDataBlocks = generateRandomDataBlocks(testFileInfo);
+
+        FixtureUtils.insertNote(db.getConnection(), testNote);
+        FixtureUtils.insertFileInfo(db.getConnection(), testFileInfo);
     }
 
     @Test
     public void testAdd() throws SQLException {
-        FixtureUtils.insertNote(dbConnection.getConnection(), testNote);
-        FixtureUtils.insertFileInfo(dbConnection.getConnection(), testFileInfo);
-
         for (DataBlock testDataBlock : testDataBlocks) {
             dataBlockDao.add(testDataBlock);
         }
@@ -62,7 +63,7 @@ public final class DataBlockDaoTest {
 
         String sql = "SELECT * FROM data_blocks WHERE file_id = ?";
 
-        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, testFileInfo.getId());
             ResultSet rs = stmt.executeQuery();
 
@@ -82,6 +83,27 @@ public final class DataBlockDaoTest {
 
         assertFalse(actual.isEmpty(), "Actual must be not empty");
         assertEquals(testDataBlocks, actual, "Data blocks are different");
+    }
+
+    @Test
+    public void testGetIdsByFileId() throws SQLException {
+        testDataBlocks.forEach(dataBlock -> FixtureUtils.insertDataBlock(db.getConnection(), dataBlock));
+
+        FileInfo additionalTestFileInfo = getTestFileInfo();
+        FixtureUtils.insertFileInfo(db.getConnection(), additionalTestFileInfo);
+
+        LinkedHashSet<DataBlock> additionalTestDataBlocks = generateRandomDataBlocks(additionalTestFileInfo);
+        additionalTestDataBlocks.forEach(dataBlock ->
+                FixtureUtils.insertDataBlock(db.getConnection(), dataBlock));
+
+        List<String> expected = testDataBlocks.stream()
+                .map(DataBlock::getId)
+                .collect(Collectors.toList());
+
+        List<String> actual = new ArrayList<>(dataBlockDao.getIdsByFileId(testFileInfo.getId()));
+
+        assertFalse(actual.isEmpty(), "Actual data blocks ids must not be empty");
+        assertEquals(expected, actual, "Data blocks ids are different");
     }
 
     private Note getTestNote() {
