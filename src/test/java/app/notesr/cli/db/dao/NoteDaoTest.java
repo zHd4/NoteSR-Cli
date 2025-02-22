@@ -76,7 +76,7 @@ public final class NoteDaoTest {
 
     @Test
     public void testGetAll() throws SQLException {
-        insertTestNotes();
+        testNotes.forEach(testNote -> insertNote(db.getConnection(), testNote));
         Set<Note> actual = noteDao.getAll();
 
         assertNotNull(actual, "Actual notes must not be null");
@@ -85,22 +85,12 @@ public final class NoteDaoTest {
 
     @Test
     public void testGetById() throws SQLException {
-        insertTestNotes();
+        for (Note expected : testNotes) {
+            insertNote(db.getConnection(), expected);
+            Note actual = noteDao.getById(expected.getId());
 
-        Note firstExpected = testNotes.getFirst();
-        Note lastExpected = testNotes.getLast();
-
-        Note firstActual = noteDao.getById(firstExpected.getId());
-        Note lastActual = noteDao.getById(lastExpected.getId());
-
-        assertNotNull(firstActual, "Actual note must not be null");
-        assertNotNull(lastActual, "Actual note must not be null");
-
-        assertEquals(firstExpected, firstActual, "Notes are different");
-        assertEquals(lastExpected, lastActual, "Notes are different");
-    }
-
-    private void insertTestNotes() {
-        testNotes.forEach(testNote -> insertNote(db.getConnection(), testNote));
+            assertNotNull(actual, "Actual note must not be null");
+            assertEquals(expected, actual, "Notes are different");
+        }
     }
 }
