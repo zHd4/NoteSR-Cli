@@ -31,7 +31,7 @@ public final class FileInfoDaoTest {
     private static final Faker FAKER = new Faker();
     private static final Random RANDOM = new Random();
 
-    private DbConnection dbConnection;
+    private DbConnection db;
     private FileInfoDao fileInfoDao;
 
     private Note testNote;
@@ -39,9 +39,9 @@ public final class FileInfoDaoTest {
 
     @BeforeEach
     public void beforeEach() {
-        dbConnection = new DbConnection(":memory:");
+        db = new DbConnection(":memory:");
 
-        fileInfoDao = new FileInfoDao(dbConnection);
+        fileInfoDao = new FileInfoDao(db);
 
         testNote = getTestNote();
         testFileInfos = new LinkedHashSet<>();
@@ -59,7 +59,7 @@ public final class FileInfoDaoTest {
             testFileInfos.add(fileInfo);
         }
 
-        FixtureUtils.insertNote(dbConnection.getConnection(), testNote);
+        FixtureUtils.insertNote(db.getConnection(), testNote);
     }
 
     @Test
@@ -70,7 +70,7 @@ public final class FileInfoDaoTest {
         fileInfoDao.add(expected);
 
         String sql = "SELECT id, note_id, size, name, created_at, updated_at FROM files_info WHERE id = ?";
-        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, expected.getId());
             ResultSet rs = stmt.executeQuery();
 
@@ -88,7 +88,7 @@ public final class FileInfoDaoTest {
             throw new RuntimeException(e);
         }
 
-        assertNotNull(actual, "Actual file info is null");
+        assertNotNull(actual, "Actual file info must not be null");
         assertEquals(expected, actual, "Files infos are different");
     }
 
@@ -98,7 +98,7 @@ public final class FileInfoDaoTest {
 
         Set<FileInfo> actual = fileInfoDao.getAllByNoteId(testNote.getId());
 
-        assertNotNull(actual, "Actual files infos are null");
+        assertNotNull(actual, "Actual files infos must not be null");
         assertEquals(testFileInfos, actual, "Files infos are different");
 
         for (FileInfo fileInfo : actual) {
@@ -106,11 +106,11 @@ public final class FileInfoDaoTest {
         }
 
         Note additionalTestNote = getTestNote();
-        FixtureUtils.insertNote(dbConnection.getConnection(), additionalTestNote);
+        FixtureUtils.insertNote(db.getConnection(), additionalTestNote);
 
         actual = fileInfoDao.getAllByNoteId(additionalTestNote.getId());
 
-        assertNotNull(actual, "Actual files infos are null");
+        assertNotNull(actual, "Actual files infos must not be null");
         assertTrue(actual.isEmpty(), "Actual must be empty");
     }
 
@@ -124,8 +124,8 @@ public final class FileInfoDaoTest {
         FileInfo firstActual = fileInfoDao.getById(firstExpected.getId());
         FileInfo lastActual = fileInfoDao.getById(lastExpected.getId());
 
-        assertNotNull(firstActual, "Actual file info is null");
-        assertNotNull(lastActual, "Actual file info is null");
+        assertNotNull(firstActual, "Actual file info must not be null");
+        assertNotNull(lastActual, "Actual file info must not be null");
 
         assertEquals(firstExpected, firstActual, "Files infos are different");
         assertEquals(lastExpected, lastActual, "Files infos are different");
@@ -142,6 +142,6 @@ public final class FileInfoDaoTest {
 
     private void insertFilesInfos(Set<FileInfo> filesInfos) {
         filesInfos.forEach(testFileInfo ->
-                FixtureUtils.insertFileInfo(dbConnection.getConnection(), testFileInfo));
+                FixtureUtils.insertFileInfo(db.getConnection(), testFileInfo));
     }
 }
