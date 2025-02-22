@@ -94,7 +94,7 @@ public final class FileInfoDaoTest {
 
     @Test
     public void testGetAllByNoteId() throws SQLException {
-        insertFilesInfos(testFileInfos);
+        testFileInfos.forEach(fileInfo -> FixtureUtils.insertFileInfo(db.getConnection(), fileInfo));
 
         Set<FileInfo> actual = fileInfoDao.getAllByNoteId(testNote.getId());
 
@@ -116,19 +116,13 @@ public final class FileInfoDaoTest {
 
     @Test
     public void testGetById() throws SQLException {
-        insertFilesInfos(testFileInfos);
+        for (FileInfo expected : testFileInfos) {
+            FixtureUtils.insertFileInfo(db.getConnection(), expected);
+            FileInfo actual = fileInfoDao.getById(expected.getId());
 
-        FileInfo firstExpected = testFileInfos.getFirst();
-        FileInfo lastExpected = testFileInfos.getLast();
-
-        FileInfo firstActual = fileInfoDao.getById(firstExpected.getId());
-        FileInfo lastActual = fileInfoDao.getById(lastExpected.getId());
-
-        assertNotNull(firstActual, "Actual file info must not be null");
-        assertNotNull(lastActual, "Actual file info must not be null");
-
-        assertEquals(firstExpected, firstActual, "Files infos are different");
-        assertEquals(lastExpected, lastActual, "Files infos are different");
+            assertNotNull(actual, "Actual file info must not be null");
+            assertEquals(expected, actual, "Files infos are different");
+        }
     }
 
     private Note getTestNote() {
@@ -138,10 +132,5 @@ public final class FileInfoDaoTest {
                 .text(FAKER.text().text())
                 .updatedAt(truncateDateTime(LocalDateTime.now()))
                 .build();
-    }
-
-    private void insertFilesInfos(Set<FileInfo> filesInfos) {
-        filesInfos.forEach(testFileInfo ->
-                FixtureUtils.insertFileInfo(db.getConnection(), testFileInfo));
     }
 }
