@@ -23,6 +23,7 @@ import static app.notesr.cli.db.DbUtils.truncateDateTime;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public final class DataBlockDaoTest {
     public static final int TEST_BLOCK_SIZE = 1000;
@@ -101,6 +102,17 @@ public final class DataBlockDaoTest {
 
         assertFalse(actual.isEmpty(), "Actual data blocks ids must not be empty");
         assertEquals(expected, actual, "Data blocks ids are different");
+    }
+
+    @Test
+    public void testGetById() throws SQLException {
+        for (DataBlock expected : testDataBlocks) {
+            FixtureUtils.insertDataBlock(db.getConnection(), expected);
+            DataBlock actual = dataBlockDao.getById(expected.getId());
+
+            assertNotNull(actual, "Actual data block must not be null");
+            assertEquals(expected, actual, "Data blocks are different");
+        }
     }
 
     private Note getTestNote() {
