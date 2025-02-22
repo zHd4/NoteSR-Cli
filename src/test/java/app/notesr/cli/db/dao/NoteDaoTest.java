@@ -24,16 +24,16 @@ public final class NoteDaoTest {
     private static final Faker FAKER = new Faker();
     private static final int TEST_NOTES_COUNT = 5;
 
-    private DbConnection dbConnection;
+    private DbConnection db;
     private NoteDao noteDao;
 
     private LinkedHashSet<Note> testNotes;
 
     @BeforeEach
     public void beforeEach() {
-        dbConnection = new DbConnection(":memory:");
+        db = new DbConnection(":memory:");
 
-        noteDao = new NoteDao(dbConnection);
+        noteDao = new NoteDao(db);
         testNotes = new LinkedHashSet<>();
 
         for (int i = 0; i < TEST_NOTES_COUNT; i++) {
@@ -56,7 +56,7 @@ public final class NoteDaoTest {
         noteDao.add(expected);
 
         String sql = "SELECT * FROM notes WHERE id = ?";
-        try (PreparedStatement stmt = dbConnection.getConnection().prepareStatement(sql)) {
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, expected.getId());
             ResultSet rs = stmt.executeQuery();
 
@@ -70,7 +70,7 @@ public final class NoteDaoTest {
             }
         }
 
-        assertNotNull(actual, "Actual note is null");
+        assertNotNull(actual, "Actual note must not be null");
         assertEquals(expected, actual, "Notes are different");
     }
 
@@ -79,7 +79,7 @@ public final class NoteDaoTest {
         insertTestNotes();
         Set<Note> actual = noteDao.getAll();
 
-        assertNotNull(actual, "Actual notes is null");
+        assertNotNull(actual, "Actual notes must not be null");
         assertEquals(testNotes, actual, "Notes are different");
     }
 
@@ -93,14 +93,14 @@ public final class NoteDaoTest {
         Note firstActual = noteDao.getById(firstExpected.getId());
         Note lastActual = noteDao.getById(lastExpected.getId());
 
-        assertNotNull(firstActual, "Actual note is null");
-        assertNotNull(lastActual, "Actual note is null");
+        assertNotNull(firstActual, "Actual note must not be null");
+        assertNotNull(lastActual, "Actual note must not be null");
 
         assertEquals(firstExpected, firstActual, "Notes are different");
         assertEquals(lastExpected, lastActual, "Notes are different");
     }
 
     private void insertTestNotes() {
-        testNotes.forEach(testNote -> insertNote(dbConnection.getConnection(), testNote));
+        testNotes.forEach(testNote -> insertNote(db.getConnection(), testNote));
     }
 }
