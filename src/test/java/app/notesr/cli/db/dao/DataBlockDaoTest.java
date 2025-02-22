@@ -96,10 +96,7 @@ public final class DataBlockDaoTest {
         additionalTestDataBlocks.forEach(dataBlock ->
                 FixtureUtils.insertDataBlock(db.getConnection(), dataBlock));
 
-        List<String> expected = testDataBlocks.stream()
-                .map(DataBlock::getId)
-                .collect(Collectors.toList());
-
+        List<String> expected = testDataBlocks.stream().map(DataBlock::getId).collect(Collectors.toList());
         List<String> actual = new ArrayList<>(dataBlockDao.getIdsByFileId(testFileInfo.getId()));
 
         assertFalse(actual.isEmpty(), "Actual data blocks ids must not be empty");
