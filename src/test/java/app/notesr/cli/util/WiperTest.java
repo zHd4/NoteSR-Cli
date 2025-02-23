@@ -21,7 +21,7 @@ public class WiperTest {
     @Test
     public void testWipeFile() throws IOException {
         String testFilePath = PathUtils.getTempPath(randomUUID().toString());
-        byte[] testFileContent = new byte[RANDOM.nextInt(MAX_FILE_SIZE, MAX_FILE_SIZE)];
+        byte[] testFileContent = new byte[RANDOM.nextInt(MIN_FILE_SIZE, MAX_FILE_SIZE)];
 
         RANDOM.nextBytes(testFileContent);
         Files.write(Path.of(testFilePath), testFileContent);
