@@ -32,4 +32,27 @@ public class WiperTest {
         assertTrue(result, "Result must be 'true'");
         assertFalse(testFile.exists(), "File must be wiped");
     }
+
+    @Test
+    public void testWipeDir() throws IOException {
+        String testDirPath = PathUtils.getTempPath(randomUUID().toString());
+        String testFilePath = Path.of(testDirPath, randomUUID().toString()).toString();
+
+        byte[] testFileContent = new byte[RANDOM.nextInt(MIN_FILE_SIZE, MAX_FILE_SIZE)];
+        RANDOM.nextBytes(testFileContent);
+
+        File testDir = new File(testDirPath);
+        File testFile = new File(testFilePath);
+
+        boolean isDirCreated = testDir.mkdir();
+        assertTrue(isDirCreated, "Cannot create test directory " + testDirPath);
+
+        Files.write(testFile.toPath(), testFileContent);
+
+        boolean result = Wiper.wipeDir(testDir);
+        assertTrue(result, "Result must be 'true'");
+
+        assertFalse(testDir.exists(), "Dir must be wiped");
+        assertFalse(testFile.exists(), "File must be wiped");
+    }
 }
