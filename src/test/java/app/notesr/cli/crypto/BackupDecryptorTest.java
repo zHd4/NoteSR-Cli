@@ -1,8 +1,7 @@
 package app.notesr.cli.crypto;
 
 import app.notesr.cli.crypto.exception.BackupDecryptionException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import app.notesr.cli.util.PathUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.crypto.SecretKey;
@@ -23,39 +22,25 @@ class BackupDecryptorTest {
     private static final String DECRYPTED_BACKUP_HASH =
             "b7c8a729d50b341abdedcc731a409b5dd46456b2719889ff9cf004abbb8054cf";
 
-    private static SecretKey key;
-    private static byte[] salt;
-
-    private static FileInputStream encryptedBackupInputStream;
-    private static FileOutputStream tempDecryptedBackupOutputStream;
-    private static Path tempDecryptedBackupFilePath;
-
-    @BeforeEach
-    public void beforeEach() throws IOException {
-        byte[] keyBytes = readFixture("crypto/backup_decryptor/aes256-key");
-
-        key = new SecretKeySpec(keyBytes, 0, keyBytes.length, Aes.KEY_GENERATOR_ALGORITHM);
-        salt = readFixture("crypto/backup_decryptor/aes256-salt");
-        encryptedBackupInputStream = new FileInputStream(
-                getFixturePath("crypto/backup_decryptor/encrypted.notesr.bak").toString());
-
-        String tempPath = System.getProperty("java.io.tmpdir");
-
-        tempDecryptedBackupFilePath = Path.of(tempPath, "test-decrypted.json");
-        tempDecryptedBackupOutputStream = new FileOutputStream(tempDecryptedBackupFilePath.toString());
-    }
-
     @Test
     public void testDecrypt() throws BackupDecryptionException, NoSuchAlgorithmException, IOException {
+        byte[] keyBytes = readFixture("crypto/backup_decryptor/aes256-key");
+
+        SecretKey key = new SecretKeySpec(keyBytes, 0, keyBytes.length, Aes.KEY_GENERATOR_ALGORITHM);
+        byte[] salt = readFixture("crypto/backup_decryptor/aes256-salt");
+
+        FileInputStream encryptedBackupInputStream = new FileInputStream(
+                getFixturePath("crypto/backup_decryptor/encrypted.notesr.bak").toString());
+
+        Path tempDecryptedBackupFilePath = Path.of(PathUtils.getTempPath("test-decrypted.json"));
+        FileOutputStream tempDecryptedBackupOutputStream = new FileOutputStream(tempDecryptedBackupFilePath.toString());
+
         BackupDecryptor decryptor = new BackupDecryptor(key, salt);
         decryptor.decrypt(encryptedBackupInputStream, tempDecryptedBackupOutputStream);
 
         String actualHash = computeSha256(tempDecryptedBackupFilePath.toString());
         assertEquals(DECRYPTED_BACKUP_HASH, actualHash, "Decrypted backup hash not matching with expected");
-    }
 
-    @AfterEach
-    public void afterEach() throws IOException {
         if (Files.exists(tempDecryptedBackupFilePath)) {
             Files.delete(tempDecryptedBackupFilePath);
         }
