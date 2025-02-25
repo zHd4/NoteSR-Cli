@@ -29,20 +29,20 @@ class BackupDecryptorTest {
         SecretKey key = new SecretKeySpec(keyBytes, 0, keyBytes.length, Aes.KEY_GENERATOR_ALGORITHM);
         byte[] salt = readFixture("crypto/backup_decryptor/aes256-salt");
 
-        FileInputStream encryptedBackupInputStream = new FileInputStream(
+        FileInputStream inputStream = new FileInputStream(
                 getFixturePath("crypto/backup_decryptor/encrypted.notesr.bak").toString());
 
-        Path tempDecryptedBackupFilePath = Path.of(PathUtils.getTempPath("test-decrypted.json"));
-        FileOutputStream tempDecryptedBackupOutputStream = new FileOutputStream(tempDecryptedBackupFilePath.toString());
+        Path tempBackupPath = Path.of(PathUtils.getTempPath("test-decrypted.json"));
+        FileOutputStream outputStream = new FileOutputStream(tempBackupPath.toString());
 
         BackupDecryptor decryptor = new BackupDecryptor(key, salt);
-        decryptor.decrypt(encryptedBackupInputStream, tempDecryptedBackupOutputStream);
+        decryptor.decrypt(inputStream, outputStream);
 
-        String actualHash = computeSha256(tempDecryptedBackupFilePath.toString());
+        String actualHash = computeSha256(tempBackupPath.toString());
         assertEquals(DECRYPTED_BACKUP_HASH, actualHash, "Decrypted backup hash not matching with expected");
 
-        if (Files.exists(tempDecryptedBackupFilePath)) {
-            Files.delete(tempDecryptedBackupFilePath);
+        if (Files.exists(tempBackupPath)) {
+            Files.delete(tempBackupPath);
         }
     }
 
