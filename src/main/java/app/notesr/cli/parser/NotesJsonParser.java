@@ -76,6 +76,7 @@ public class NotesJsonParser extends BaseJsonParser {
             }
 
             default -> {
+                throw new UnexpectedFieldException("Unexpected field: " + field);
             }
         }
     }
