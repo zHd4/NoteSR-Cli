@@ -1,6 +1,5 @@
 package app.notesr.cli.parser;
 
-import app.notesr.cli.db.DbConnection;
 import com.fasterxml.jackson.core.JsonParser;
 import lombok.RequiredArgsConstructor;
 
