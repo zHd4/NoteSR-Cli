@@ -4,8 +4,6 @@ import app.notesr.cli.crypto.exception.BackupDecryptionException;
 import app.notesr.cli.util.PathUtils;
 import org.junit.jupiter.api.Test;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,11 +22,9 @@ class BackupDecryptorTest {
             "b7c8a729d50b341abdedcc731a409b5dd46456b2719889ff9cf004abbb8054cf";
 
     @Test
-    public void testDecrypt() throws BackupDecryptionException, NoSuchAlgorithmException, IOException {
-        byte[] keyBytes = readFixture("crypto/backup_decryptor/aes256-key");
-
-        SecretKey key = new SecretKeySpec(keyBytes, 0, keyBytes.length, Aes.KEY_GENERATOR_ALGORITHM);
-        byte[] salt = readFixture("crypto/backup_decryptor/aes256-salt");
+    public void testDecrypt() throws IOException, BackupDecryptionException, NoSuchAlgorithmException {
+        String hexCryptoKey = new String(readFixture("crypto/backup_decryptor/crypto_key.txt"));
+        CryptoKey cryptoKey = CryptoKeyUtils.hexToCryptoKey(hexCryptoKey, Aes.KEY_GENERATOR_ALGORITHM);
 
         FileInputStream inputStream = new FileInputStream(
                 getFixturePath("crypto/backup_decryptor/encrypted.notesr.bak").toString());
@@ -36,7 +32,7 @@ class BackupDecryptorTest {
         Path tempBackupPath = Path.of(PathUtils.getTempPath("test-decrypted-" + randomUUID() + ".json"));
         FileOutputStream outputStream = new FileOutputStream(tempBackupPath.toString());
 
-        BackupDecryptor decryptor = new BackupDecryptor(key, salt);
+        BackupDecryptor decryptor = new BackupDecryptor(cryptoKey);
         decryptor.decrypt(inputStream, outputStream);
 
         String actualHash = computeSha256(tempBackupPath.toString());
