@@ -16,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BackupDecryptorTest {
@@ -32,7 +33,7 @@ class BackupDecryptorTest {
         FileInputStream inputStream = new FileInputStream(
                 getFixturePath("crypto/backup_decryptor/encrypted.notesr.bak").toString());
 
-        Path tempBackupPath = Path.of(PathUtils.getTempPath("test-decrypted.json"));
+        Path tempBackupPath = Path.of(PathUtils.getTempPath("test-decrypted-" + randomUUID() + ".json"));
         FileOutputStream outputStream = new FileOutputStream(tempBackupPath.toString());
 
         BackupDecryptor decryptor = new BackupDecryptor(key, salt);
