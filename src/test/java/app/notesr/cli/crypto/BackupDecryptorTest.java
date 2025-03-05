@@ -2,7 +2,9 @@ package app.notesr.cli.crypto;
 
 import app.notesr.cli.crypto.exception.BackupDecryptionException;
 import app.notesr.cli.util.PathUtils;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,27 +20,34 @@ import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BackupDecryptorTest {
-    private static final String DECRYPTED_BACKUP_HASH =
-            "b7c8a729d50b341abdedcc731a409b5dd46456b2719889ff9cf004abbb8054cf";
+    private Path tempBackupPath;
 
-    @Test
-    public void testDecrypt() throws IOException, BackupDecryptionException, NoSuchAlgorithmException {
+    @ParameterizedTest
+    @ValueSource(strings = {"v1", "v2"})
+    public void testDecrypt(String formatVersion) throws IOException, BackupDecryptionException,
+            NoSuchAlgorithmException {
         String hexCryptoKey = new String(readFixture("crypto/backup_decryptor/crypto_key.txt"));
         CryptoKey cryptoKey = CryptoKeyUtils.hexToCryptoKey(hexCryptoKey, Aes.KEY_GENERATOR_ALGORITHM);
 
         FileInputStream inputStream = new FileInputStream(
-                getFixturePath("crypto/backup_decryptor/encrypted.notesr.bak").toString());
+                getFixturePath("crypto/backup_decryptor/encrypted-" + formatVersion + ".notesr.bak").toString());
 
-        Path tempBackupPath = Path.of(PathUtils.getTempPath("test-decrypted-" + randomUUID() + ".json"));
+        tempBackupPath = Path.of(PathUtils.getTempPath("test-decrypted-" + randomUUID()));
         FileOutputStream outputStream = new FileOutputStream(tempBackupPath.toString());
 
         BackupDecryptor decryptor = new BackupDecryptor(cryptoKey);
         decryptor.decrypt(inputStream, outputStream);
 
-        String actualHash = computeSha256(tempBackupPath.toString());
-        assertEquals(DECRYPTED_BACKUP_HASH, actualHash, "Decrypted backup hash not matching with expected");
+        String expectedHash = new String(
+                readFixture("crypto/backup_decryptor/decrypted-" + formatVersion + ".sha256")).trim();
 
-        if (Files.exists(tempBackupPath)) {
+        String actualHash = computeSha256(tempBackupPath.toString());
+        assertEquals(expectedHash, actualHash, "Decrypted backup hash not matching with expected");
+    }
+
+    @AfterEach
+    public void afterEach() throws IOException {
+        if (tempBackupPath != null && Files.exists(tempBackupPath)) {
             Files.delete(tempBackupPath);
         }
     }
