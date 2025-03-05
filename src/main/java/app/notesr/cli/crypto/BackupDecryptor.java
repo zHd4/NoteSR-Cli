@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,12 +17,11 @@ import java.security.NoSuchAlgorithmException;
 public final class BackupDecryptor {
     private static final int CHUNK_SIZE = 100000;
 
-    private SecretKey key;
-    private byte[] salt;
+    private CryptoKey cryptoKey;
 
     public void decrypt(FileInputStream inputStream, FileOutputStream outputStream) throws BackupDecryptionException {
         try {
-            Cipher cipher = Aes.createCipher(key, salt, Cipher.DECRYPT_MODE);
+            Cipher cipher = Aes.createCipher(cryptoKey.getKey(), cryptoKey.getSalt(), Cipher.DECRYPT_MODE);
             CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher);
 
             try (cipherInputStream; outputStream) {
