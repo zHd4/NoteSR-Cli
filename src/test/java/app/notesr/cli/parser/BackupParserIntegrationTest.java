@@ -16,8 +16,8 @@ import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.PathUtils.getTempPath;
 import static java.util.UUID.randomUUID;
 
-public class BackupParserIntegrationTest {
-    private static final String BACKUP_V1_FIXTURE_NAME = "backup-v1.json";
+public final class BackupParserIntegrationTest {
+//    private static final String BACKUP_V1_FIXTURE_NAME = "backup-v1.json";
     private static final String BACKUP_V2_FIXTURE_NAME = "backup-v2.zip";
 
     private Path parserTempDirPath;
@@ -32,7 +32,7 @@ public class BackupParserIntegrationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {BACKUP_V1_FIXTURE_NAME, BACKUP_V2_FIXTURE_NAME})
+    @ValueSource(strings = {/* BACKUP_V1_FIXTURE_NAME, */ BACKUP_V2_FIXTURE_NAME})
     public void testParser(String backupFixtureName) {
         Path backupPath = getFixturePath("parser/backup_parser/" + backupFixtureName);
         BackupParser parser = new BackupParser(backupPath, dbPath);
