@@ -32,7 +32,7 @@ class BackupDecryptorTest {
         FileInputStream inputStream = new FileInputStream(
                 getFixturePath("crypto/backup_decryptor/encrypted-" + formatVersion + ".notesr.bak").toString());
 
-        tempBackupPath = Path.of(PathUtils.getTempPath("test-decrypted-" + randomUUID()));
+        tempBackupPath = PathUtils.getTempPath("test-decrypted-" + randomUUID());
         FileOutputStream outputStream = new FileOutputStream(tempBackupPath.toString());
 
         BackupDecryptor decryptor = new BackupDecryptor(cryptoKey);

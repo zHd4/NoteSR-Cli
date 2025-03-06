@@ -21,7 +21,7 @@ public class ZipUtilsTest {
     private static final String DIR_PATH = getFixturePath("util/zip_utils/exported").toString();
     private static final String ZIP_PATH = getFixturePath("util/zip_utils/exported.zip").toString();
 
-    private static final String TEMP_EXTRACTED_DIR_PATH = getTempPath(randomUUID().toString());
+    private static final String TEMP_EXTRACTED_DIR_PATH = getTempPath(randomUUID().toString()).toString();
 
     @Test
     public void testUnzip() throws IOException {
@@ -34,7 +34,7 @@ public class ZipUtilsTest {
 
     @Test
     public void testIsZipArchive() throws IOException {
-        File nonZipFile = new File(getTempPath(randomUUID().toString()));
+        File nonZipFile = getTempPath(randomUUID().toString()).toFile();
         byte[] nonZipFileData = new byte[1024];
 
         RANDOM.nextBytes(nonZipFileData);

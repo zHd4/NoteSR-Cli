@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
 
+import static app.notesr.cli.util.PathUtils.getTempPath;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,7 +21,7 @@ public class WiperTest {
 
     @Test
     public void testWipeFile() throws IOException {
-        String testFilePath = PathUtils.getTempPath(randomUUID().toString());
+        String testFilePath = getTempPath(randomUUID().toString()).toString();
         byte[] testFileContent = new byte[RANDOM.nextInt(MIN_FILE_SIZE, MAX_FILE_SIZE)];
 
         RANDOM.nextBytes(testFileContent);
@@ -35,7 +36,7 @@ public class WiperTest {
 
     @Test
     public void testWipeDir() throws IOException {
-        String testDirPath = PathUtils.getTempPath(randomUUID().toString());
+        String testDirPath = getTempPath(randomUUID().toString()).toString();
         String testFilePath = Path.of(testDirPath, randomUUID().toString()).toString();
 
         byte[] testFileContent = new byte[RANDOM.nextInt(MIN_FILE_SIZE, MAX_FILE_SIZE)];
