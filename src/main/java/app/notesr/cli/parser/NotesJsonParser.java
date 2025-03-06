@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class NotesJsonParser extends BaseJsonParser {
+    private static final String ROOT_NAME = "notes";
+
     private final NoteDao noteDao;
 
     public NotesJsonParser(DbConnection db, JsonParser parser, DateTimeFormatter timestampFormatter) {
@@ -23,7 +25,7 @@ public class NotesJsonParser extends BaseJsonParser {
         String field;
 
         try {
-            if (!skipTo("notes")) {
+            if (!skipTo(ROOT_NAME)) {
                 throw new BackupParserException("'notes' field not found in json");
             }
 
@@ -76,7 +78,9 @@ public class NotesJsonParser extends BaseJsonParser {
             }
 
             default -> {
-                throw new UnexpectedFieldException("Unexpected field: " + field);
+                if (!field.equals(ROOT_NAME)) {
+                    throw new UnexpectedFieldException("Unexpected field: " + field);
+                }
             }
         }
     }
