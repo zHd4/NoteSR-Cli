@@ -6,7 +6,14 @@ import app.notesr.cli.model.Note;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static app.notesr.cli.db.DbUtils.dateTimeToString;
 
@@ -58,5 +65,28 @@ public class DbUtils {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<Map<String, Object>> getTableData(Connection conn, String tableName) throws SQLException {
+        List<Map<String, Object>> data = new ArrayList<>();
+        String query = "SELECT * FROM " + tableName;
+
+        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+            ResultSetMetaData metaData = rs.getMetaData();
+
+            int columnCount = metaData.getColumnCount();
+
+            while (rs.next()) {
+                Map<String, Object> row = new HashMap<>();
+
+                for (int i = 1; i <= columnCount; i++) {
+                    row.put(metaData.getColumnName(i), rs.getObject(i));
+                }
+
+                data.add(row);
+            }
+        }
+
+        return data;
     }
 }
