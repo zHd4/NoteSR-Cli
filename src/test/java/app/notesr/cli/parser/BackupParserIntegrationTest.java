@@ -55,7 +55,7 @@ public final class BackupParserIntegrationTest {
 
         String expectedNotesJson = new String(readFixture("parser/backup_parser/expected-notes.json"));
 
-        List<Map<String, Object>> expectedNotes = objectMapper.readValue(expectedNotesJson, new TypeReference<>() {});
+        List<Map<String, Object>> expectedNotes = objectMapper.readValue(expectedNotesJson, new TypeReference<>() { });
         List<Map<String, Object>> actualNotes = DbUtils.getTableData(db.getConnection(), NOTES_TABLE_NAME);
 
         assertEquals(expectedNotes, actualNotes, "Notes are different");
