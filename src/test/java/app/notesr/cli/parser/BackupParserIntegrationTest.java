@@ -1,5 +1,9 @@
 package app.notesr.cli.parser;
 
+import app.notesr.cli.db.DbConnection;
+import app.notesr.cli.util.DbUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,10 +15,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
+import static app.notesr.cli.util.FixtureUtils.readFixture;
 import static app.notesr.cli.util.PathUtils.getTempPath;
 import static java.util.UUID.randomUUID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class BackupParserIntegrationTest {
 //    private static final String BACKUP_V1_FIXTURE_NAME = "backup-v1.json";
@@ -33,12 +42,22 @@ public final class BackupParserIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {/* BACKUP_V1_FIXTURE_NAME, */ BACKUP_V2_FIXTURE_NAME})
-    public void testParser(String backupFixtureName) {
+    public void testParser(String backupFixtureName) throws IOException, SQLException {
         Path backupPath = getFixturePath("parser/backup_parser/" + backupFixtureName);
         BackupParser parser = new BackupParser(backupPath, dbPath);
 
         parser.setTempDirPath(parserTempDirPath);
         parser.run();
+
+        DbConnection db = new DbConnection(dbPath.toString());
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String expectedNotesJson = new String(readFixture("parser/backup_parser/expected-notes.json"));
+
+        List<Map<String, Object>> expectedNotes = objectMapper.readValue(expectedNotesJson, new TypeReference<>() {});
+        List<Map<String, Object>> actualNotes = DbUtils.getTableData(db.getConnection(), "notes");
+
+        assertEquals(expectedNotes, actualNotes, "Notes are different");
     }
 
     @AfterEach
