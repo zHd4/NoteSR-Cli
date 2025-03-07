@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public final class BackupParserIntegrationTest {
 //    private static final String BACKUP_V1_FIXTURE_NAME = "backup-v1.json";
     private static final String BACKUP_V2_FIXTURE_NAME = "backup-v2.zip";
+    private static final String NOTES_TABLE_NAME = "notes";
 
     private Path parserTempDirPath;
     private Path dbPath;
@@ -55,7 +56,7 @@ public final class BackupParserIntegrationTest {
         String expectedNotesJson = new String(readFixture("parser/backup_parser/expected-notes.json"));
 
         List<Map<String, Object>> expectedNotes = objectMapper.readValue(expectedNotesJson, new TypeReference<>() {});
-        List<Map<String, Object>> actualNotes = DbUtils.getTableData(db.getConnection(), "notes");
+        List<Map<String, Object>> actualNotes = DbUtils.getTableData(db.getConnection(), NOTES_TABLE_NAME);
 
         assertEquals(expectedNotes, actualNotes, "Notes are different");
     }
