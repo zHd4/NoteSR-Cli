@@ -15,7 +15,7 @@ import java.util.Set;
 
 import static app.notesr.cli.db.DbUtils.parseDateTime;
 import static app.notesr.cli.db.DbUtils.truncateDateTime;
-import static app.notesr.cli.util.FixtureUtils.insertNote;
+import static app.notesr.cli.util.DbUtils.insertNote;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

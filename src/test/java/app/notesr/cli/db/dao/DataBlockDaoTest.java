@@ -4,7 +4,7 @@ import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
-import app.notesr.cli.util.FixtureUtils;
+import app.notesr.cli.util.DbUtils;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,8 +50,8 @@ public final class DataBlockDaoTest {
         testFileInfo = getTestFileInfo();
         testDataBlocks = generateRandomDataBlocks(testFileInfo);
 
-        FixtureUtils.insertNote(db.getConnection(), testNote);
-        FixtureUtils.insertFileInfo(db.getConnection(), testFileInfo);
+        DbUtils.insertNote(db.getConnection(), testNote);
+        DbUtils.insertFileInfo(db.getConnection(), testFileInfo);
     }
 
     @Test
@@ -88,14 +88,14 @@ public final class DataBlockDaoTest {
 
     @Test
     public void testGetIdsByFileId() throws SQLException {
-        testDataBlocks.forEach(dataBlock -> FixtureUtils.insertDataBlock(db.getConnection(), dataBlock));
+        testDataBlocks.forEach(dataBlock -> DbUtils.insertDataBlock(db.getConnection(), dataBlock));
 
         FileInfo additionalTestFileInfo = getTestFileInfo();
-        FixtureUtils.insertFileInfo(db.getConnection(), additionalTestFileInfo);
+        DbUtils.insertFileInfo(db.getConnection(), additionalTestFileInfo);
 
         LinkedHashSet<DataBlock> additionalTestDataBlocks = generateRandomDataBlocks(additionalTestFileInfo);
         additionalTestDataBlocks.forEach(dataBlock ->
-                FixtureUtils.insertDataBlock(db.getConnection(), dataBlock));
+                DbUtils.insertDataBlock(db.getConnection(), dataBlock));
 
         List<String> expected = testDataBlocks.stream().map(DataBlock::getId).collect(Collectors.toList());
         List<String> actual = new ArrayList<>(dataBlockDao.getIdsByFileId(testFileInfo.getId()));
@@ -107,7 +107,7 @@ public final class DataBlockDaoTest {
     @Test
     public void testGetById() throws SQLException {
         for (DataBlock expected : testDataBlocks) {
-            FixtureUtils.insertDataBlock(db.getConnection(), expected);
+            DbUtils.insertDataBlock(db.getConnection(), expected);
             DataBlock actual = dataBlockDao.getById(expected.getId());
 
             assertNotNull(actual, "Actual data block must not be null");

@@ -3,7 +3,7 @@ package app.notesr.cli.db.dao;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
-import app.notesr.cli.util.FixtureUtils;
+import app.notesr.cli.util.DbUtils;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +59,7 @@ public final class FileInfoDaoTest {
             testFileInfos.add(fileInfo);
         }
 
-        FixtureUtils.insertNote(db.getConnection(), testNote);
+        DbUtils.insertNote(db.getConnection(), testNote);
     }
 
     @Test
@@ -94,7 +94,7 @@ public final class FileInfoDaoTest {
 
     @Test
     public void testGetAllByNoteId() throws SQLException {
-        testFileInfos.forEach(fileInfo -> FixtureUtils.insertFileInfo(db.getConnection(), fileInfo));
+        testFileInfos.forEach(fileInfo -> DbUtils.insertFileInfo(db.getConnection(), fileInfo));
 
         Set<FileInfo> actual = fileInfoDao.getAllByNoteId(testNote.getId());
 
@@ -106,7 +106,7 @@ public final class FileInfoDaoTest {
         }
 
         Note additionalTestNote = getTestNote();
-        FixtureUtils.insertNote(db.getConnection(), additionalTestNote);
+        DbUtils.insertNote(db.getConnection(), additionalTestNote);
 
         actual = fileInfoDao.getAllByNoteId(additionalTestNote.getId());
 
@@ -117,7 +117,7 @@ public final class FileInfoDaoTest {
     @Test
     public void testGetById() throws SQLException {
         for (FileInfo expected : testFileInfos) {
-            FixtureUtils.insertFileInfo(db.getConnection(), expected);
+            DbUtils.insertFileInfo(db.getConnection(), expected);
             FileInfo actual = fileInfoDao.getById(expected.getId());
 
             assertNotNull(actual, "Actual file info must not be null");
