@@ -25,12 +25,12 @@ public abstract class FilesJsonParser extends BaseJsonParser {
         this.dataBlockDao = new DataBlockDao(db);
     }
 
-    public void transferToDb() throws IOException {
+    public final void transferToDb() throws IOException {
         transferFilesInfo();
         transferFilesData();
     }
 
-    protected void transferFilesInfo() {
+    protected final void transferFilesInfo() {
         try {
             if (skipTo(ROOT_NAME)) {
                 throw new BackupParserException("'" + ROOT_NAME + "' field not found in json");
@@ -53,7 +53,7 @@ public abstract class FilesJsonParser extends BaseJsonParser {
         }
     }
 
-    protected void transferFileInfoObject(FileInfo fileInfo) throws IOException {
+    protected final void transferFileInfoObject(FileInfo fileInfo) throws IOException {
         String field;
 
         while (parser.nextToken() != JsonToken.END_OBJECT) {
@@ -62,22 +62,33 @@ public abstract class FilesJsonParser extends BaseJsonParser {
             if (field != null) {
                 switch (field) {
                     case "id" -> {
-                        if (parser.getValueAsString().equals("id")) continue;
+                        if (parser.getValueAsString().equals("id")) {
+                            continue;
+                        }
+
                         fileInfo.setId(parser.getValueAsString());
                     }
 
                     case "note_id" -> {
-                        if (parser.getValueAsString().equals("note_id")) continue;
+                        if (parser.getValueAsString().equals("note_id")) {
+                            continue;
+                        }
+
                         fileInfo.setNoteId(parser.getValueAsString());
                     }
 
                     case "size" -> {
-                        if (parser.getValueAsString().equals("size")) continue;
+                        if (parser.getValueAsString().equals("size")) {
+                            continue;
+                        }
+
                         fileInfo.setSize(parser.getValueAsLong());
                     }
 
                     case "name" -> {
-                        if (parser.getValueAsString().equals("name")) continue;
+                        if (parser.getValueAsString().equals("name")) {
+                            continue;
+                        }
                         fileInfo.setName(parser.getValueAsString());
                     }
 
@@ -85,7 +96,10 @@ public abstract class FilesJsonParser extends BaseJsonParser {
                         String value = parser.getValueAsString();
 
                         if (value != null) {
-                            if (value.equals("type")) continue;
+                            if (value.equals("type")) {
+                                continue;
+                            }
+
                             fileInfo.setType(parser.getValueAsString());
                         }
                     }
@@ -94,13 +108,18 @@ public abstract class FilesJsonParser extends BaseJsonParser {
                         String value = parser.getValueAsString();
 
                         if (value != null) {
-                            if (value.equals("thumbnail")) continue;
+                            if (value.equals("thumbnail")) {
+                                continue;
+                            }
+
                             fileInfo.setThumbnail(parser.getBinaryValue());
                         }
                     }
 
                     case "created_at" -> {
-                        if (parser.getValueAsString().equals("created_at")) continue;
+                        if (parser.getValueAsString().equals("created_at")) {
+                            continue;
+                        }
 
                         fileInfo.setCreatedAt(
                                 LocalDateTime.parse(parser.getValueAsString(), timestampFormatter)
@@ -108,7 +127,9 @@ public abstract class FilesJsonParser extends BaseJsonParser {
                     }
 
                     case "updated_at" -> {
-                        if (parser.getValueAsString().equals("updated_at")) continue;
+                        if (parser.getValueAsString().equals("updated_at")) {
+                            continue;
+                        }
 
                         fileInfo.setUpdatedAt(
                                 LocalDateTime.parse(parser.getValueAsString(), timestampFormatter)

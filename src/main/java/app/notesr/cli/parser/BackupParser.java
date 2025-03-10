@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 @Getter
-public class BackupParser implements Runnable {
+public final class BackupParser implements Runnable {
     private final Path backupPath;
     private final Path outputDbPath;
 

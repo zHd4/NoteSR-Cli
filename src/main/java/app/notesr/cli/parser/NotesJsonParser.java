@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class NotesJsonParser extends BaseJsonParser {
+public final class NotesJsonParser extends BaseJsonParser {
     private static final String ROOT_NAME = "notes";
 
     private final NoteDao noteDao;
@@ -52,22 +52,32 @@ public class NotesJsonParser extends BaseJsonParser {
     private void parseNote(Note note, String field) throws IOException {
         switch (field) {
             case "id" -> {
-                if (parser.getValueAsString().equals("id")) return;
+                if (parser.getValueAsString().equals("id")) {
+                    return;
+                }
+
                 note.setId(parser.getValueAsString());
             }
 
             case "name" -> {
-                if (parser.getValueAsString().equals("name")) return;
+                if (parser.getValueAsString().equals("name")) {
+                    return;
+                }
+
                 note.setName(parser.getValueAsString());
             }
 
             case "text" -> {
-                if (parser.getValueAsString().equals("text")) return;
+                if (parser.getValueAsString().equals("text")) {
+                    return;
+                }
                 note.setText(parser.getValueAsString());
             }
 
             case "updated_at" -> {
-                if (parser.getValueAsString().equals("updated_at")) return;
+                if (parser.getValueAsString().equals("updated_at")) {
+                    return;
+                }
 
                 LocalDateTime updatedAt = LocalDateTime.parse(
                         parser.getValueAsString(),

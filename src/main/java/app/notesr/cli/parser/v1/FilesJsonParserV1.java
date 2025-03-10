@@ -8,7 +8,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 
-public class FilesJsonParserV1 extends FilesJsonParser {
+public final class FilesJsonParserV1 extends FilesJsonParser {
 
     public FilesJsonParserV1(DbConnection db, JsonParser parser, DateTimeFormatter timestampFormatter) {
         super(db, parser, timestampFormatter);
