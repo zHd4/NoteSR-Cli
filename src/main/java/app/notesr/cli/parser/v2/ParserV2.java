@@ -2,6 +2,7 @@ package app.notesr.cli.parser.v2;
 
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.parser.BackupIOException;
+import app.notesr.cli.parser.FilesJsonParser;
 import app.notesr.cli.parser.NotesJsonParser;
 import app.notesr.cli.parser.Parser;
 import app.notesr.cli.util.ZipUtils;
@@ -36,9 +37,14 @@ public class ParserV2 extends Parser {
             ZipUtils.unzip(backupPath.toString(), tempDirPath.toString());
 
             File notesJsonFile = new File(tempDirPath.toString(), NOTES_JSON_FILE_NAME);
+            File filesInfosJsonFile = new File(tempDirPath.toString(), FILES_INFO_JSON_FILE_NAME);
+
             NotesJsonParser notesJsonParser = new NotesJsonParser(db, getJsonParser(notesJsonFile), DATETIME_FORMATTER);
+            FilesJsonParser filesJsonParser =
+                    new FilesJsonParserV2(db, getJsonParser(filesInfosJsonFile), DATETIME_FORMATTER);
 
             notesJsonParser.transferToDb();
+            filesJsonParser.transferToDb();
         } catch (IOException e) {
             throw new BackupIOException(e);
         }
