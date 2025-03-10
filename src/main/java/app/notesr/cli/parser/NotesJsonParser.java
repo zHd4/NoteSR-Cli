@@ -26,7 +26,7 @@ public class NotesJsonParser extends BaseJsonParser {
 
         try {
             if (!skipTo(ROOT_NAME)) {
-                throw new BackupParserException("'notes' field not found in json");
+                throw new BackupParserException("'" + ROOT_NAME + "' field not found in json");
             }
 
             do {
