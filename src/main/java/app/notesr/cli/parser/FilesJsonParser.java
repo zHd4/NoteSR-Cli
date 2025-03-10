@@ -32,7 +32,7 @@ public abstract class FilesJsonParser extends BaseJsonParser {
 
     protected final void transferFilesInfo() {
         try {
-            if (skipTo(ROOT_NAME)) {
+            if (!skipTo(ROOT_NAME)) {
                 throw new BackupParserException("'" + ROOT_NAME + "' field not found in json");
             }
 
