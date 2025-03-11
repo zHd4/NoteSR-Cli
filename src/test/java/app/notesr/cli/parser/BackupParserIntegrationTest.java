@@ -1,7 +1,6 @@
 package app.notesr.cli.parser;
 
 import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.util.DbUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -19,6 +18,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import static app.notesr.cli.util.DbUtils.getTableData;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
 import static app.notesr.cli.util.PathUtils.getTempPath;
@@ -51,12 +51,9 @@ public final class BackupParserIntegrationTest {
         parser.run();
 
         DbConnection db = new DbConnection(dbPath.toString());
-        ObjectMapper objectMapper = new ObjectMapper();
 
-        String expectedNotesJson = new String(readFixture("parser/backup_parser/expected-notes.json"));
-
-        List<Map<String, Object>> expectedNotes = objectMapper.readValue(expectedNotesJson, new TypeReference<>() { });
-        List<Map<String, Object>> actualNotes = DbUtils.getTableData(db.getConnection(), NOTES_TABLE_NAME);
+        List<Map<String, Object>> expectedNotes = parseJsonFixture("parser/backup_parser/expected-notes.json");
+        List<Map<String, Object>> actualNotes = getTableData(db.getConnection(), NOTES_TABLE_NAME);
 
         assertEquals(expectedNotes, actualNotes, "Notes are different");
     }
@@ -65,6 +62,11 @@ public final class BackupParserIntegrationTest {
     public void afterEach() throws IOException {
         deleteDir(parserTempDirPath);
         Files.delete(dbPath);
+    }
+
+    private List<Map<String, Object>> parseJsonFixture(String path) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(new String(readFixture(path)), new TypeReference<>() { });
     }
 
     private static void deleteDir(Path path) throws IOException {
