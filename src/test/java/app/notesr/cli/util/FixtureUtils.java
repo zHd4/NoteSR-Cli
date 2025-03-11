@@ -5,8 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class FixtureUtils {
-    public static byte[] readFixture(String filename) throws IOException {
-        return Files.readAllBytes(getFixturePath(filename));
+    public static byte[] readFixture(String path) throws IOException {
+        return Files.readAllBytes(getFixturePath(path));
     }
 
     public static Path getFixturePath(String pathPart) {
