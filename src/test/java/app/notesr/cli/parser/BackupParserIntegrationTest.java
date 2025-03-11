@@ -67,7 +67,7 @@ public final class BackupParserIntegrationTest {
         Files.delete(dbPath);
     }
 
-    public static void deleteDir(Path path) throws IOException {
+    private static void deleteDir(Path path) throws IOException {
         Files.walkFileTree(path, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
