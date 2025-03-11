@@ -28,7 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public final class BackupParserIntegrationTest {
 //    private static final String BACKUP_V1_FIXTURE_NAME = "backup-v1.json";
     private static final String BACKUP_V2_FIXTURE_NAME = "backup-v2.zip";
+
+    private static final String NOTES_FIXTURE_PATH = "parser/backup_parser/expected-notes.json";
+    private static final String FILES_INFOS_FIXTURE_PATH = "parser/backup_parser/expected-files-infos.json";
+    private static final String DATA_BLOCKS_FIXTURE_PATH = "parser/backup_parser/expected-data-blocks.json";
+
     private static final String NOTES_TABLE_NAME = "notes";
+    private static final String FILES_INFOS_TABLE_NAME = "files_info";
+    private static final String DATA_BLOCKS_TABLE_NAME = "data_blocks";
 
     private Path parserTempDirPath;
     private Path dbPath;
@@ -52,10 +59,18 @@ public final class BackupParserIntegrationTest {
 
         DbConnection db = new DbConnection(dbPath.toString());
 
-        List<Map<String, Object>> expectedNotes = parseJsonFixture("parser/backup_parser/expected-notes.json");
+        List<Map<String, Object>> expectedNotes = parseJsonFixture(NOTES_FIXTURE_PATH);
         List<Map<String, Object>> actualNotes = getTableData(db.getConnection(), NOTES_TABLE_NAME);
 
+        List<Map<String, Object>> expectedFilesInfos = parseJsonFixture(FILES_INFOS_FIXTURE_PATH);
+        List<Map<String, Object>> actualFilesInfos = getTableData(db.getConnection(), FILES_INFOS_TABLE_NAME);
+
+        List<Map<String, Object>> expectedDataBlocks = parseJsonFixture(DATA_BLOCKS_FIXTURE_PATH);
+        List<Map<String, Object>> actualDataBlocks = getTableData(db.getConnection(), DATA_BLOCKS_TABLE_NAME);
+
         assertEquals(expectedNotes, actualNotes, "Notes are different");
+        assertEquals(expectedFilesInfos, actualFilesInfos, "Files infos are different");
+        assertEquals(expectedDataBlocks, actualDataBlocks, "Data blocks are different");
     }
 
     @AfterEach
@@ -64,7 +79,7 @@ public final class BackupParserIntegrationTest {
         Files.delete(dbPath);
     }
 
-    private List<Map<String, Object>> parseJsonFixture(String path) throws IOException {
+    private static List<Map<String, Object>> parseJsonFixture(String path) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(new String(readFixture(path)), new TypeReference<>() { });
     }
