@@ -21,32 +21,26 @@ public final class NotesJsonParser extends BaseJsonParser {
         this.noteDao = new NoteDao(db);
     }
 
-    public void transferToDb() {
+    public void transferToDb() throws IOException, SQLException {
         String field;
 
-        try {
-            if (!skipTo(ROOT_NAME)) {
-                throw new BackupParserException("'" + ROOT_NAME + "' field not found in json");
+        if (!skipTo(ROOT_NAME)) {
+            throw new BackupParserException("'" + ROOT_NAME + "' field not found in json");
+        }
+
+        do {
+            Note note = new Note();
+
+            while (parser.nextToken() != JsonToken.END_OBJECT) {
+                field = parser.getCurrentName();
+
+                if (field != null) {
+                    parseNote(note, field);
+                }
             }
 
-            do {
-                Note note = new Note();
-
-                while (parser.nextToken() != JsonToken.END_OBJECT) {
-                    field = parser.getCurrentName();
-
-                    if (field != null) {
-                        parseNote(note, field);
-                    }
-                }
-
-                noteDao.add(note);
-            } while (parser.nextToken() != JsonToken.END_ARRAY);
-        } catch (IOException e) {
-            throw new BackupIOException(e);
-        } catch (SQLException e) {
-            throw new BackupDbException(e);
-        }
+            noteDao.add(note);
+        } while (parser.nextToken() != JsonToken.END_ARRAY);
     }
 
     private void parseNote(Note note, String field) throws IOException {
