@@ -25,7 +25,7 @@ public abstract class FilesJsonParser extends BaseJsonParser {
         this.dataBlockDao = new DataBlockDao(db);
     }
 
-    public final void transferToDb() throws IOException {
+    public final void transferToDb() throws IOException, SQLException {
         transferFilesInfo();
         transferFilesData();
     }
@@ -146,7 +146,7 @@ public abstract class FilesJsonParser extends BaseJsonParser {
         }
     }
 
-    protected abstract void transferFilesData() throws IOException;
+    protected abstract void transferFilesData() throws IOException, SQLException;
 
     protected abstract void parseDataBlockObject(DataBlock dataBlock) throws IOException;
 }
