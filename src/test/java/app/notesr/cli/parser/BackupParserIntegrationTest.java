@@ -1,6 +1,9 @@
 package app.notesr.cli.parser;
 
 import app.notesr.cli.db.DbConnection;
+import app.notesr.cli.model.DataBlock;
+import app.notesr.cli.model.FileInfo;
+import app.notesr.cli.model.Note;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -15,6 +18,9 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -59,14 +65,14 @@ public final class BackupParserIntegrationTest {
 
         DbConnection db = new DbConnection(dbPath.toString());
 
-        List<Map<String, Object>> expectedNotes = parseJsonFixture(NOTES_FIXTURE_PATH);
-        List<Map<String, Object>> actualNotes = getTableData(db.getConnection(), NOTES_TABLE_NAME);
+        List<Note> expectedNotes = getNotesFromMaps(parseJsonFixture(NOTES_FIXTURE_PATH));
+        List<Note> actualNotes = getNotesFromMaps(getTableData(db.getConnection(), NOTES_TABLE_NAME));
 
-        List<Map<String, Object>> expectedFilesInfos = parseJsonFixture(FILES_INFOS_FIXTURE_PATH);
-        List<Map<String, Object>> actualFilesInfos = getTableData(db.getConnection(), FILES_INFOS_TABLE_NAME);
+        List<FileInfo> expectedFilesInfos = getFilesInfosFromMaps(parseJsonFixture(FILES_INFOS_FIXTURE_PATH));
+        List<FileInfo> actualFilesInfos = getFilesInfosFromMaps(getTableData(db.getConnection(), FILES_INFOS_TABLE_NAME));
 
-        List<Map<String, Object>> expectedDataBlocks = parseJsonFixture(DATA_BLOCKS_FIXTURE_PATH);
-        List<Map<String, Object>> actualDataBlocks = getTableData(db.getConnection(), DATA_BLOCKS_TABLE_NAME);
+        List<DataBlock> expectedDataBlocks = getDataBlocksFromMaps(parseJsonFixture(DATA_BLOCKS_FIXTURE_PATH));
+        List<DataBlock> actualDataBlocks = getDataBlocksFromMaps(getTableData(db.getConnection(), DATA_BLOCKS_TABLE_NAME));
 
         assertEquals(expectedNotes, actualNotes, "Notes are different");
         assertEquals(expectedFilesInfos, actualFilesInfos, "Files infos are different");
@@ -77,6 +83,41 @@ public final class BackupParserIntegrationTest {
     public void afterEach() throws IOException {
         deleteDir(parserTempDirPath);
         Files.delete(dbPath);
+    }
+
+    private static List<Note> getNotesFromMaps(List<Map<String, Object>> maps) {
+        return maps.stream()
+                .map(line -> Note.builder()
+                        .id((String) line.get("id"))
+                        .name((String) line.get("name"))
+                        .text((String) line.get("text"))
+                        .updatedAt(parseDateTime((String) line.get("updated_at")))
+                        .build())
+                .toList();
+    }
+
+    private static List<FileInfo> getFilesInfosFromMaps(List<Map<String, Object>> maps) {
+        return maps.stream()
+                .map(line -> FileInfo.builder()
+                        .id((String) line.get("id"))
+                        .noteId((String) line.get("note_id"))
+                        .name((String) line.get("name"))
+                        .size((Long) line.get("type"))
+                        .createdAt(parseDateTime((String) line.get("created_at")))
+                        .updatedAt(parseDateTime((String) line.get("updated_at")))
+                        .build())
+                .toList();
+    }
+
+    private static List<DataBlock> getDataBlocksFromMaps(List<Map<String, Object>> maps) {
+        return maps.stream()
+                .map(line -> DataBlock.builder()
+                        .id((String) line.get("id"))
+                        .fileId((String) line.get("file_id"))
+                        .order(Long.valueOf((Integer) line.get("block_order")))
+                        .data(Base64.getDecoder().decode(String.valueOf(line.get("data"))))
+                        .build())
+                .toList();
     }
 
     private static List<Map<String, Object>> parseJsonFixture(String path) throws IOException {
@@ -98,5 +139,9 @@ public final class BackupParserIntegrationTest {
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    private static LocalDateTime parseDateTime(String dateTime) {
+        return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 }
