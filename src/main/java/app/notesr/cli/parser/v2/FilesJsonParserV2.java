@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 
-public final class FilesJsonParserV2 extends FilesJsonParser {
+final class FilesJsonParserV2 extends FilesJsonParser {
     private static final String ROOT_NAME = "files_data_blocks";
     private static final String DATA_BLOCKS_DIR_NAME = "data_blocks";
 
