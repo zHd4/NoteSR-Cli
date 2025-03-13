@@ -15,3 +15,10 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - run: ./gradlew build
+      - uses: paambaati/codeclimate-action@v5.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+          JACOCO_SOURCE_PATH: src/main/java
+        with:
+          coverageCommand: make report
+          coverageLocations: ${{github.workspace}}/build/reports/jacoco/test/jacocoTestReport.xml:jacoco
