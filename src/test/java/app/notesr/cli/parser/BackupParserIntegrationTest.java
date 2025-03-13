@@ -115,7 +115,7 @@ public final class BackupParserIntegrationTest {
                         .id((String) line.get("id"))
                         .fileId((String) line.get("file_id"))
                         .order(Long.valueOf((Integer) line.get("block_order")))
-                        .data(Base64.getDecoder().decode(String.valueOf(line.get("data"))))
+                        .data(parseDataBlockData(line.get("data")))
                         .build())
                 .toList();
     }
@@ -139,6 +139,16 @@ public final class BackupParserIntegrationTest {
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    private static byte[] parseDataBlockData(Object data) {
+        if (data instanceof String) {
+            return Base64.getDecoder().decode(String.valueOf(data));
+        } else if (data instanceof byte[]) {
+            return (byte[]) data;
+        } else {
+            throw new IllegalArgumentException("Unexpected instance");
+        }
     }
 
     private static LocalDateTime parseDateTime(String dateTime) {
