@@ -19,7 +19,8 @@ public final class FilesJsonParserV2 extends FilesJsonParser {
 
     private final Path tempDirPath;
 
-    public FilesJsonParserV2(DbConnection db, JsonParser parser, Path tempDirPath, DateTimeFormatter timestampFormatter) {
+    public FilesJsonParserV2(DbConnection db, JsonParser parser, Path tempDirPath,
+                             DateTimeFormatter timestampFormatter) {
         super(db, parser, timestampFormatter);
         this.tempDirPath = tempDirPath;
     }
