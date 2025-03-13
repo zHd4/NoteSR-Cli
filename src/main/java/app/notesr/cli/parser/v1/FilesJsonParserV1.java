@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 final class FilesJsonParserV1 extends FilesJsonParser {
     private static final String ROOT_NAME = "files_data_blocks";
 
-    public FilesJsonParserV1(DbConnection db, JsonParser parser, DateTimeFormatter timestampFormatter) {
+    FilesJsonParserV1(DbConnection db, JsonParser parser, DateTimeFormatter timestampFormatter) {
         super(db, parser, timestampFormatter);
     }
 
