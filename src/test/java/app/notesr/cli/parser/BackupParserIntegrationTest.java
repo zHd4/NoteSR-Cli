@@ -61,7 +61,7 @@ public final class BackupParserIntegrationTest {
     @ParameterizedTest
     @ValueSource(strings = {"v1", "v2"})
     public void testParser(String formatVersion) throws IOException, SQLException {
-        Path backupPath = getPathOfFixtureByPattern(BACKUP_FIXTURE_NAME_PATTERN, formatVersion);
+        Path backupPath = getBackupPath(formatVersion);
         BackupParser parser = new BackupParser(backupPath, dbPath);
 
         parser.setTempDirPath(parserTempDirPath);
@@ -77,10 +77,12 @@ public final class BackupParserIntegrationTest {
         List<Note> actualNotes = getNotesFromMaps(getTableData(db.getConnection(), NOTES_TABLE_NAME));
 
         List<FileInfo> expectedFilesInfos = getFilesInfosFromMaps(parseJsonFixture(expectedFilesInfosPath));
-        List<FileInfo> actualFilesInfos = getFilesInfosFromMaps(getTableData(db.getConnection(), FILES_INFOS_TABLE_NAME));
+        List<FileInfo> actualFilesInfos =
+                getFilesInfosFromMaps(getTableData(db.getConnection(), FILES_INFOS_TABLE_NAME));
 
         List<DataBlock> expectedDataBlocks = getDataBlocksFromMaps(parseJsonFixture(expectedDataBlocksPath));
-        List<DataBlock> actualDataBlocks = getDataBlocksFromMaps(getTableData(db.getConnection(), DATA_BLOCKS_TABLE_NAME));
+        List<DataBlock> actualDataBlocks =
+                getDataBlocksFromMaps(getTableData(db.getConnection(), DATA_BLOCKS_TABLE_NAME));
 
         assertEquals(expectedNotes, actualNotes, "Notes are different");
         assertEquals(expectedFilesInfos, actualFilesInfos, "Files infos are different");
@@ -152,12 +154,13 @@ public final class BackupParserIntegrationTest {
         return Path.of(BASE_FIXTURES_PATH, formatVersion, name).toString();
     }
 
-    private static Path getPathOfFixtureByPattern(String pattern, String formatVersion) throws FileNotFoundException {
+    private static Path getBackupPath(String formatVersion) throws FileNotFoundException {
         File dir = Path.of(getFixturePath(BASE_FIXTURES_PATH).toString(), formatVersion).toFile();
-        File[] results = requireNonNull(dir.listFiles((_, name) -> name.startsWith(pattern)));
+        File[] results =
+                requireNonNull(dir.listFiles((_, name) -> name.startsWith(BACKUP_FIXTURE_NAME_PATTERN)));
 
         if (results.length == 0) {
-            throw new FileNotFoundException("File with prefix " + pattern + " not found in " + dir.getAbsolutePath());
+            throw new FileNotFoundException("Backup not found in " + dir.getAbsolutePath());
         }
 
         return results[0].toPath();
