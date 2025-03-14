@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -28,16 +30,18 @@ import static app.notesr.cli.util.DbUtils.getTableData;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
 import static app.notesr.cli.util.PathUtils.getTempPath;
+import static java.util.Objects.requireNonNull;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public final class BackupParserIntegrationTest {
-//    private static final String BACKUP_V1_FIXTURE_NAME = "backup-v1.json";
-    private static final String BACKUP_V2_FIXTURE_NAME = "backup-v2.zip";
+    private static final String BASE_FIXTURES_PATH = "parser/backup_parser";
 
-    private static final String NOTES_FIXTURE_PATH = "parser/backup_parser/expected-notes.json";
-    private static final String FILES_INFOS_FIXTURE_PATH = "parser/backup_parser/expected-files-infos.json";
-    private static final String DATA_BLOCKS_FIXTURE_PATH = "parser/backup_parser/expected-data-blocks.json";
+    private static final String NOTES_FIXTURE_NAME = "expected-notes.json";
+    private static final String FILES_INFOS_FIXTURE_NAME = "expected-files-infos.json";
+    private static final String DATA_BLOCKS_FIXTURE_NAME = "expected-data-blocks.json";
+
+    private static final String BACKUP_FIXTURE_NAME_PATTERN = "backup.";
 
     private static final String NOTES_TABLE_NAME = "notes";
     private static final String FILES_INFOS_TABLE_NAME = "files_info";
@@ -55,9 +59,9 @@ public final class BackupParserIntegrationTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {/* BACKUP_V1_FIXTURE_NAME, */ BACKUP_V2_FIXTURE_NAME})
-    public void testParser(String backupFixtureName) throws IOException, SQLException {
-        Path backupPath = getFixturePath("parser/backup_parser/" + backupFixtureName);
+    @ValueSource(strings = {"v1", "v2"})
+    public void testParser(String formatVersion) throws IOException, SQLException {
+        Path backupPath = getPathOfFixtureByPattern(BACKUP_FIXTURE_NAME_PATTERN, formatVersion);
         BackupParser parser = new BackupParser(backupPath, dbPath);
 
         parser.setTempDirPath(parserTempDirPath);
@@ -65,13 +69,17 @@ public final class BackupParserIntegrationTest {
 
         DbConnection db = new DbConnection(dbPath.toString());
 
-        List<Note> expectedNotes = getNotesFromMaps(parseJsonFixture(NOTES_FIXTURE_PATH));
+        String expectedNotesPath = getPathOfFixtureByName(NOTES_FIXTURE_NAME, formatVersion);
+        String expectedFilesInfosPath = getPathOfFixtureByName(FILES_INFOS_FIXTURE_NAME, formatVersion);
+        String expectedDataBlocksPath = getPathOfFixtureByName(DATA_BLOCKS_FIXTURE_NAME, formatVersion);
+
+        List<Note> expectedNotes = getNotesFromMaps(parseJsonFixture(expectedNotesPath));
         List<Note> actualNotes = getNotesFromMaps(getTableData(db.getConnection(), NOTES_TABLE_NAME));
 
-        List<FileInfo> expectedFilesInfos = getFilesInfosFromMaps(parseJsonFixture(FILES_INFOS_FIXTURE_PATH));
+        List<FileInfo> expectedFilesInfos = getFilesInfosFromMaps(parseJsonFixture(expectedFilesInfosPath));
         List<FileInfo> actualFilesInfos = getFilesInfosFromMaps(getTableData(db.getConnection(), FILES_INFOS_TABLE_NAME));
 
-        List<DataBlock> expectedDataBlocks = getDataBlocksFromMaps(parseJsonFixture(DATA_BLOCKS_FIXTURE_PATH));
+        List<DataBlock> expectedDataBlocks = getDataBlocksFromMaps(parseJsonFixture(expectedDataBlocksPath));
         List<DataBlock> actualDataBlocks = getDataBlocksFromMaps(getTableData(db.getConnection(), DATA_BLOCKS_TABLE_NAME));
 
         assertEquals(expectedNotes, actualNotes, "Notes are different");
@@ -81,8 +89,13 @@ public final class BackupParserIntegrationTest {
 
     @AfterEach
     public void afterEach() throws IOException {
-        deleteDir(parserTempDirPath);
-        Files.delete(dbPath);
+        if (dbPath.toFile().exists()) {
+            Files.delete(dbPath);
+        }
+
+        if (parserTempDirPath.toFile().exists()) {
+            deleteDir(parserTempDirPath);
+        }
     }
 
     private static List<Note> getNotesFromMaps(List<Map<String, Object>> maps) {
@@ -120,9 +133,34 @@ public final class BackupParserIntegrationTest {
                 .toList();
     }
 
+    private static byte[] parseDataBlockData(Object data) {
+        if (data instanceof String) {
+            return Base64.getDecoder().decode(String.valueOf(data));
+        } else if (data instanceof byte[]) {
+            return (byte[]) data;
+        } else {
+            throw new IllegalArgumentException("Unexpected instance");
+        }
+    }
+
     private static List<Map<String, Object>> parseJsonFixture(String path) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(new String(readFixture(path)), new TypeReference<>() { });
+    }
+
+    private static String getPathOfFixtureByName(String name, String formatVersion) {
+        return Path.of(BASE_FIXTURES_PATH, formatVersion, name).toString();
+    }
+
+    private static Path getPathOfFixtureByPattern(String pattern, String formatVersion) throws FileNotFoundException {
+        File dir = Path.of(getFixturePath(BASE_FIXTURES_PATH).toString(), formatVersion).toFile();
+        File[] results = requireNonNull(dir.listFiles((_, name) -> name.startsWith(pattern)));
+
+        if (results.length == 0) {
+            throw new FileNotFoundException("File with prefix " + pattern + " not found in " + dir.getAbsolutePath());
+        }
+
+        return results[0].toPath();
     }
 
     private static void deleteDir(Path path) throws IOException {
@@ -139,16 +177,6 @@ public final class BackupParserIntegrationTest {
                 return FileVisitResult.CONTINUE;
             }
         });
-    }
-
-    private static byte[] parseDataBlockData(Object data) {
-        if (data instanceof String) {
-            return Base64.getDecoder().decode(String.valueOf(data));
-        } else if (data instanceof byte[]) {
-            return (byte[]) data;
-        } else {
-            throw new IllegalArgumentException("Unexpected instance");
-        }
     }
 
     private static LocalDateTime parseDateTime(String dateTime) {
