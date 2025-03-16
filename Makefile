@@ -6,11 +6,14 @@ build:
 clean:
 	./gradlew clean
 
+install-dist:
+	./gradlew installDist
+
 run:
 	./gradlew run
 
 run-dist:
-	./build/install/app/bin/app
+	./build/install/notesr-cli/bin/notesr-cli
 
 checkstyle:
 	./gradlew checkstyleMain
