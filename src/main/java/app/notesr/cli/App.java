@@ -10,6 +10,9 @@ import java.util.concurrent.Callable;
         mixinStandardHelpOptions = true,
         subcommands = {DecryptCommand.class})
 public final class App implements Callable<Integer> {
+    @CommandLine.Spec
+    CommandLine.Model.CommandSpec spec;
+
     public static void main(String[] args) {
         int exitCode = new CommandLine(new App()).execute(args);
         System.exit(exitCode);
@@ -17,8 +20,6 @@ public final class App implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        System.out.println("Please use -h flag to see the available commands.");
-        System.out.println("No command provided. Exit.");
-        return 0;
+        throw new CommandLine.ParameterException(spec.commandLine(), "No command provided.");
     }
 }
