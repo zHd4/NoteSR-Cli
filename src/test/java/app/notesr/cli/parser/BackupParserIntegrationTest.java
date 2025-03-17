@@ -157,7 +157,7 @@ public final class BackupParserIntegrationTest {
     private static Path getBackupPath(String formatVersion) throws FileNotFoundException {
         File dir = Path.of(getFixturePath(BASE_FIXTURES_PATH).toString(), formatVersion).toFile();
         File[] results =
-                requireNonNull(dir.listFiles((_, name) -> name.startsWith(BACKUP_FIXTURE_NAME_PATTERN)));
+                requireNonNull(dir.listFiles((file, name) -> name.startsWith(BACKUP_FIXTURE_NAME_PATTERN)));
 
         if (results.length == 0) {
             throw new FileNotFoundException("Backup not found in " + dir.getAbsolutePath());
