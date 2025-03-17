@@ -5,6 +5,7 @@ import picocli.CommandLine;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(name = "notesr-cli",
+        versionProvider = VersionProvider.class,
         description = "Decrypts and manages exported NoteSR backups",
         mixinStandardHelpOptions = true,
         subcommands = {DecryptCommand.class})

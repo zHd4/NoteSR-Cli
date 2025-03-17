@@ -54,6 +54,15 @@ compileJava {
     options.release = 21
 }
 
+jar {
+    manifest {
+        attributes(
+                'Implementation-Title': 'NoteSR-Cli',
+                'Implementation-Version': project.version
+        )
+    }
+}
+
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
     implementation 'org.xerial:sqlite-jdbc:3.49.0.0'
