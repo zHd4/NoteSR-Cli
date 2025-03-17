@@ -1,5 +1,8 @@
 package app.notesr.cli.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Wiper {
+    private static final Logger logger = LoggerFactory.getLogger(Wiper.class);
     private static final int LOOPS_COUNT = 6;
 
     public static boolean wipeDir(File dir) throws IOException {
@@ -52,8 +56,10 @@ public class Wiper {
 
                         stream.write(empty);
                         bytesWrite += empty.length;
-                    } catch (OutOfMemoryError ignored) {
-                        // TODO: Should be logged
+                    } catch (OutOfMemoryError ex) {
+                        logger.warn(ex.getMessage());
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
                     }
 
                 } while (bytesWrite < fileSize);
