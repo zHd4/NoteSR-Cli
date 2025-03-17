@@ -1,6 +1,8 @@
 package app.notesr.cli.command;
 
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -10,6 +12,8 @@ import java.nio.file.NoSuchFileException;
 @CommandLine.Command(name = "decrypt",
         description = "Decrypts exported NoteSR .bak file and converts it to a SQLite database.")
 public final class DecryptCommand implements Command {
+    private static final Logger logger = LoggerFactory.getLogger(DecryptCommand.class);
+
     @CommandLine.Parameters(index = "0", paramLabel = "file_path", description = "path to encrypted NoteSR .bak file")
     private String encryptedBackupPath;
 
@@ -28,11 +32,11 @@ public final class DecryptCommand implements Command {
             encryptedBackupFile = getFile(this.encryptedBackupPath);
             keyFile = getFile(this.keyPath);
         } catch (NoSuchFileException e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
             return 1;
         }
 
-        System.out.println("Decrypt!");
+        logger.info("Decrypt!");
         return 0;
     }
 
