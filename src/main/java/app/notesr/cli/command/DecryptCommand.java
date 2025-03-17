@@ -12,7 +12,7 @@ import java.nio.file.NoSuchFileException;
 @CommandLine.Command(name = "decrypt",
         description = "Decrypts exported NoteSR .bak file and converts it to a SQLite database.")
 public final class DecryptCommand implements Command {
-    private static final Logger logger = LoggerFactory.getLogger(DecryptCommand.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DecryptCommand.class);
 
     @CommandLine.Parameters(index = "0", paramLabel = "file_path", description = "path to encrypted NoteSR .bak file")
     private String encryptedBackupPath;
@@ -32,11 +32,11 @@ public final class DecryptCommand implements Command {
             encryptedBackupFile = getFile(this.encryptedBackupPath);
             keyFile = getFile(this.keyPath);
         } catch (NoSuchFileException e) {
-            logger.error(e.getMessage());
+            LOGGER.error(e.getMessage());
             return 1;
         }
 
-        logger.info("Decrypt!");
+        LOGGER.info("Decrypt!");
         return 0;
     }
 
