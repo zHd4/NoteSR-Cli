@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Wiper {
-    private static final Logger logger = LoggerFactory.getLogger(Wiper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Wiper.class);
     private static final int LOOPS_COUNT = 6;
 
     public static boolean wipeDir(File dir) throws IOException {
@@ -57,7 +57,7 @@ public class Wiper {
                         stream.write(empty);
                         bytesWrite += empty.length;
                     } catch (OutOfMemoryError ex) {
-                        logger.warn(ex.getMessage());
+                        LOGGER.warn(ex.getMessage());
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
