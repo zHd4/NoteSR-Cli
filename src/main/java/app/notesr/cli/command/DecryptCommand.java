@@ -6,7 +6,7 @@ import picocli.CommandLine;
 @Getter
 @CommandLine.Command(name = "decrypt",
         description = "Decrypts exported NoteSR .bak file and converts it to a SQLite database.")
-public class DecryptCommand implements Command {
+public final class DecryptCommand implements Command {
     @CommandLine.Parameters(index = "0", paramLabel = "file_path", description = "path to encrypted NoteSR .bak file")
     private String encryptedBackupPath;
 
