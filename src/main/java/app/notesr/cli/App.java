@@ -11,7 +11,7 @@ import java.util.concurrent.Callable;
         subcommands = {DecryptCommand.class})
 public final class App implements Callable<Integer> {
     @CommandLine.Spec
-    CommandLine.Model.CommandSpec spec;
+    private CommandLine.Model.CommandSpec spec;
 
     public static void main(String[] args) {
         int exitCode = new CommandLine(new App()).execute(args);
