@@ -17,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
 
 @Getter
 @CommandLine.Command(name = "decrypt",
@@ -73,7 +72,7 @@ public final class DecryptCommand implements Command {
 
     private File decryptBackup(File encryptedBackup, CryptoKey cryptoKey) throws FileNotFoundException,
             BackupDecryptionException {
-        File decryptedBackup = Path.of(encryptedBackup.getAbsolutePath() + "_decrypted").toFile();
+        File decryptedBackup = new File(encryptedBackup.getAbsolutePath() + "_decrypted");
 
         BackupDecryptor decryptor = new BackupDecryptor(cryptoKey);
         FileInputStream inputStream = new FileInputStream(encryptedBackup);
