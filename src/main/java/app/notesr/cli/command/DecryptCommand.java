@@ -102,6 +102,8 @@ public final class DecryptCommand implements Command {
             return UNKNOWN_ERROR;
         }
 
+        LOGGER.info("Saved to: {}", outputFile.getAbsolutePath());
+
         return SUCCESS;
     }
 
