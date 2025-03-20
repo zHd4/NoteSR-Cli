@@ -8,7 +8,7 @@ import picocli.CommandLine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DecryptCommandTest {
+public final class DecryptCommandTest {
     private CommandLine cmd;
 
     @BeforeEach
