@@ -20,7 +20,7 @@ public final class BackupParser implements Runnable {
     public BackupParser(Path backupPath, Path outputDbPath) {
         this.backupPath = backupPath;
         this.outputDbPath = outputDbPath;
-        this.tempDirPath = Path.of(backupPath.toString(), "_temp");
+        this.tempDirPath = Path.of(backupPath.toString() + "_temp");
     }
 
     @Override
