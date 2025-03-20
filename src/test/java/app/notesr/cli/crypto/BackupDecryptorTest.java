@@ -26,7 +26,7 @@ class BackupDecryptorTest {
     @ValueSource(strings = {"v1", "v2"})
     public void testDecrypt(String formatVersion) throws IOException, BackupDecryptionException,
             NoSuchAlgorithmException {
-        String hexCryptoKey = new String(readFixture("crypto/backup_decryptor/crypto_key.txt"));
+        String hexCryptoKey = readFixture("crypto/backup_decryptor/crypto_key.txt");
         CryptoKey cryptoKey = CryptoKeyUtils.hexToCryptoKey(hexCryptoKey, Aes.KEY_GENERATOR_ALGORITHM);
 
         FileInputStream inputStream = new FileInputStream(
@@ -38,8 +38,7 @@ class BackupDecryptorTest {
         BackupDecryptor decryptor = new BackupDecryptor(cryptoKey);
         decryptor.decrypt(inputStream, outputStream);
 
-        String expectedHash = new String(
-                readFixture("crypto/backup_decryptor/decrypted-" + formatVersion + ".sha256")).trim();
+        String expectedHash = readFixture("crypto/backup_decryptor/decrypted-" + formatVersion + ".sha256").trim();
 
         String actualHash = computeSha256(tempBackupPath.toString());
         assertEquals(expectedHash, actualHash, "Decrypted backup hash not matching with expected");

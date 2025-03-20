@@ -147,7 +147,7 @@ public final class BackupParserIntegrationTest {
 
     private static List<Map<String, Object>> parseJsonFixture(String path) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(new String(readFixture(path)), new TypeReference<>() { });
+        return objectMapper.readValue(readFixture(path), new TypeReference<>() { });
     }
 
     private static String getPathOfFixtureByName(String name, String formatVersion) {
