@@ -34,11 +34,11 @@ import static app.notesr.cli.util.Wiper.wipeFile;
 public final class DecryptCommand implements Command {
     private static final Logger LOGGER = LoggerFactory.getLogger(DecryptCommand.class);
 
-    private static final int SUCCESS = 0;
-    private static final int FILE_RW_ERROR = 2;
-    private static final int DB_WRITING_ERROR = 5;
-    private static final int UNKNOWN_ERROR = 6;
-    private static final int DECRYPTION_ERROR = 7;
+    public static final int SUCCESS = 0;
+    public static final int FILE_RW_ERROR = 2;
+    public static final int DB_WRITING_ERROR = 5;
+    public static final int UNKNOWN_ERROR = 6;
+    public static final int DECRYPTION_ERROR = 7;
 
     @CommandLine.Parameters(index = "0", paramLabel = "file_path", description = "path to encrypted NoteSR .bak file")
     private String encryptedBackupPath;
