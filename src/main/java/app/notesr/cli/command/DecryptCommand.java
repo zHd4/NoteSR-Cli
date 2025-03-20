@@ -25,6 +25,9 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Objects;
 
+import static app.notesr.cli.util.Wiper.wipeDir;
+import static app.notesr.cli.util.Wiper.wipeFile;
+
 @Getter
 @CommandLine.Command(name = "decrypt",
         description = "Decrypts exported NoteSR .bak file and converts it to a SQLite database.")
@@ -34,6 +37,7 @@ public final class DecryptCommand implements Command {
     private static final int SUCCESS = 0;
     private static final int FILE_RW_ERROR = 2;
     private static final int DB_WRITING_ERROR = 5;
+    private static final int UNKNOWN_ERROR = 6;
     private static final int DECRYPTION_ERROR = 7;
 
     @CommandLine.Parameters(index = "0", paramLabel = "file_path", description = "path to encrypted NoteSR .bak file")
@@ -47,6 +51,7 @@ public final class DecryptCommand implements Command {
 
     @Override
     public Integer call() {
+        BackupParser backupParser;
         File encryptedBackupFile;
         File keyFile;
         CryptoKey cryptoKey;
@@ -73,19 +78,28 @@ public final class DecryptCommand implements Command {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e); // Already validated
         } catch (BackupDecryptionException e) {
-            LOGGER.error("{}: failed to decrypt, file corrupted or invalid key", encryptedBackupPath);
+            LOGGER.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
             return DECRYPTION_ERROR;
         }
 
         outputFile = getOutputFilePath(encryptedBackupFile.getAbsolutePath(), outputFilePath).toFile();
 
         try {
-            BackupParser backupParser = new BackupParser(tempDecryptedBackup.toPath(), outputFile.toPath());
+            backupParser = new BackupParser(tempDecryptedBackup.toPath(), outputFile.toPath());
             backupParser.run();
         } catch (BackupIOException | BackupParserException | UnexpectedFieldException e) {
+            LOGGER.error("{}: failed to parse, details:\n{}", encryptedBackupPath, e.getMessage());
             return FILE_RW_ERROR;
         } catch (BackupDbException e) {
+            LOGGER.error("Failed to write data to database, details:\n{}", e.getMessage());
             return DB_WRITING_ERROR;
+        }
+
+        try {
+            removeTempData(tempDecryptedBackup, backupParser.getTempDirPath().toFile());
+        } catch (IOException e) {
+            LOGGER.error("Unknown error, details:\n{}", e.getMessage());
+            return UNKNOWN_ERROR;
         }
 
         return SUCCESS;
@@ -101,6 +115,16 @@ public final class DecryptCommand implements Command {
 
         decryptor.decrypt(inputStream, outputStream);
         return decryptedBackup;
+    }
+
+    private void removeTempData(File... tempObjects) throws IOException {
+        for (File tempObject : tempObjects) {
+            boolean success = tempObject.isFile() ? wipeFile(tempObject) : wipeDir(tempObject);
+
+            if (!success) {
+                throw new IOException(tempObject.getAbsolutePath() + ": failed to remove");
+            }
+        }
     }
 
     private CryptoKey getCryptoKey(File keyFile) throws IOException {
