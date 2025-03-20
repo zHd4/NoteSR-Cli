@@ -26,10 +26,10 @@ public final class DecryptCommandTest {
     @ParameterizedTest
     @ValueSource(strings = {"C:\\folder\\..\\NUL\\file", "/////some///weird//path///file"})
     public void testWithInvalidFilesPaths(String path) {
-        String filePath = path + ".notesr.bak";
+        String backupPath = path + ".notesr.bak";
         String keyPath = path + ".txt";
 
-        int exitCode = cmd.execute(filePath, keyPath);
+        int exitCode = cmd.execute(backupPath, keyPath);
         assertEquals(DecryptCommand.FILE_RW_ERROR, exitCode, "Expected code " + DecryptCommand.FILE_RW_ERROR);
     }
 }
