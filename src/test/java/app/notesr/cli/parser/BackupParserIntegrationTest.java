@@ -4,8 +4,9 @@ import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import app.notesr.cli.util.mapper.DataBlocksJsonMapper;
+import app.notesr.cli.util.mapper.FilesInfosJsonMapper;
+import app.notesr.cli.util.mapper.NotesJsonMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,13 +21,9 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 
-import static app.notesr.cli.util.DbUtils.getTableData;
+import static app.notesr.cli.util.DbUtils.serializeTableAsJson;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
 import static app.notesr.cli.util.PathUtils.getTempPath;
@@ -73,16 +70,20 @@ public final class BackupParserIntegrationTest {
         String expectedFilesInfosPath = getPathOfFixtureByName(FILES_INFOS_FIXTURE_NAME, formatVersion);
         String expectedDataBlocksPath = getPathOfFixtureByName(DATA_BLOCKS_FIXTURE_NAME, formatVersion);
 
-        List<Note> expectedNotes = getNotesFromMaps(parseJsonFixture(expectedNotesPath));
-        List<Note> actualNotes = getNotesFromMaps(getTableData(db.getConnection(), NOTES_TABLE_NAME));
+        NotesJsonMapper notesMapper = new NotesJsonMapper();
+        FilesInfosJsonMapper filesInfosMapper = new FilesInfosJsonMapper();
+        DataBlocksJsonMapper dataBlocksMapper = new DataBlocksJsonMapper();
 
-        List<FileInfo> expectedFilesInfos = getFilesInfosFromMaps(parseJsonFixture(expectedFilesInfosPath));
+        List<Note> expectedNotes = notesMapper.map(readFixture(expectedNotesPath));
+        List<Note> actualNotes = notesMapper.map(serializeTableAsJson(db.getConnection(), NOTES_TABLE_NAME));
+
+        List<FileInfo> expectedFilesInfos = filesInfosMapper.map(readFixture(expectedFilesInfosPath));
         List<FileInfo> actualFilesInfos =
-                getFilesInfosFromMaps(getTableData(db.getConnection(), FILES_INFOS_TABLE_NAME));
+                filesInfosMapper.map(serializeTableAsJson(db.getConnection(), FILES_INFOS_TABLE_NAME));
 
-        List<DataBlock> expectedDataBlocks = getDataBlocksFromMaps(parseJsonFixture(expectedDataBlocksPath));
+        List<DataBlock> expectedDataBlocks = dataBlocksMapper.map(readFixture(expectedDataBlocksPath));
         List<DataBlock> actualDataBlocks =
-                getDataBlocksFromMaps(getTableData(db.getConnection(), DATA_BLOCKS_TABLE_NAME));
+                dataBlocksMapper.map(serializeTableAsJson(db.getConnection(), DATA_BLOCKS_TABLE_NAME));
 
         assertEquals(expectedNotes, actualNotes, "Notes are different");
         assertEquals(expectedFilesInfos, actualFilesInfos, "Files infos are different");
@@ -98,56 +99,6 @@ public final class BackupParserIntegrationTest {
         if (parserTempDirPath.toFile().exists()) {
             deleteDir(parserTempDirPath);
         }
-    }
-
-    private static List<Note> getNotesFromMaps(List<Map<String, Object>> maps) {
-        return maps.stream()
-                .map(line -> Note.builder()
-                        .id((String) line.get("id"))
-                        .name((String) line.get("name"))
-                        .text((String) line.get("text"))
-                        .updatedAt(parseDateTime((String) line.get("updated_at")))
-                        .build())
-                .toList();
-    }
-
-    private static List<FileInfo> getFilesInfosFromMaps(List<Map<String, Object>> maps) {
-        return maps.stream()
-                .map(line -> FileInfo.builder()
-                        .id((String) line.get("id"))
-                        .noteId((String) line.get("note_id"))
-                        .name((String) line.get("name"))
-                        .size((Long) line.get("type"))
-                        .createdAt(parseDateTime((String) line.get("created_at")))
-                        .updatedAt(parseDateTime((String) line.get("updated_at")))
-                        .build())
-                .toList();
-    }
-
-    private static List<DataBlock> getDataBlocksFromMaps(List<Map<String, Object>> maps) {
-        return maps.stream()
-                .map(line -> DataBlock.builder()
-                        .id((String) line.get("id"))
-                        .fileId((String) line.get("file_id"))
-                        .order(Long.valueOf((Integer) line.get("block_order")))
-                        .data(parseDataBlockData(line.get("data")))
-                        .build())
-                .toList();
-    }
-
-    private static byte[] parseDataBlockData(Object data) {
-        if (data instanceof String) {
-            return Base64.getDecoder().decode(String.valueOf(data));
-        } else if (data instanceof byte[]) {
-            return (byte[]) data;
-        } else {
-            throw new IllegalArgumentException("Unexpected instance");
-        }
-    }
-
-    private static List<Map<String, Object>> parseJsonFixture(String path) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(readFixture(path), new TypeReference<>() { });
     }
 
     private static String getPathOfFixtureByName(String name, String formatVersion) {
@@ -180,9 +131,5 @@ public final class BackupParserIntegrationTest {
                 return FileVisitResult.CONTINUE;
             }
         });
-    }
-
-    private static LocalDateTime parseDateTime(String dateTime) {
-        return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 }

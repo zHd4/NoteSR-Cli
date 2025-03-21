@@ -3,6 +3,8 @@ package app.notesr.cli.util;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -67,8 +69,11 @@ public class DbUtils {
         }
     }
 
-    public static List<Map<String, Object>> getTableData(Connection conn, String tableName) throws SQLException {
+    public static String serializeTableAsJson(Connection conn, String tableName) throws SQLException,
+            JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
         List<Map<String, Object>> data = new ArrayList<>();
+
         String query = "SELECT * FROM " + tableName;
 
         try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
@@ -87,6 +92,6 @@ public class DbUtils {
             }
         }
 
-        return data;
+        return objectMapper.writeValueAsString(data);
     }
 }
