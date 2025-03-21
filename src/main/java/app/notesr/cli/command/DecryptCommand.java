@@ -36,6 +36,7 @@ public final class DecryptCommand implements Command {
 
     public static final int SUCCESS = 0;
     public static final int FILE_RW_ERROR = 2;
+    public static final int DB_CONNECTION_ERROR = 3;
     public static final int DB_WRITING_ERROR = 5;
     public static final int UNKNOWN_ERROR = 6;
     public static final int DECRYPTION_ERROR = 7;
@@ -84,6 +85,11 @@ public final class DecryptCommand implements Command {
 
         outputFile = getOutputFilePath(encryptedBackupFile.getAbsolutePath(), outputFilePath).toFile();
 
+        if (outputFile.exists()) {
+            LOGGER.error("{}: file already exists", encryptedBackupPath);
+            return DB_CONNECTION_ERROR;
+        }
+
         try {
             backupParser = new BackupParser(tempDecryptedBackup.toPath(), outputFile.toPath());
             backupParser.run();
@@ -121,10 +127,12 @@ public final class DecryptCommand implements Command {
 
     private void removeTempData(File... tempObjects) throws IOException {
         for (File tempObject : tempObjects) {
-            boolean success = tempObject.isFile() ? wipeFile(tempObject) : wipeDir(tempObject);
+            if (tempObject.exists()) {
+                boolean success = tempObject.isFile() ? wipeFile(tempObject) : wipeDir(tempObject);
 
-            if (!success) {
-                throw new IOException(tempObject.getAbsolutePath() + ": failed to remove");
+                if (!success) {
+                    throw new IOException(tempObject.getAbsolutePath() + ": failed to remove");
+                }
             }
         }
     }
