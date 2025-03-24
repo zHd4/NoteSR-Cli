@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ZipUtilsTest {
     private static final Random RANDOM = new Random();
 
-    private static final String DIR_PATH = getFixturePath("util/zip_utils/exported").toString();
-    private static final String ZIP_PATH = getFixturePath("util/zip_utils/exported.zip").toString();
+    private static final String DIR_PATH = getFixturePath("exported").toString();
+    private static final String ZIP_PATH = getFixturePath("exported.zip").toString();
 
     private static final String TEMP_EXTRACTED_DIR_PATH = getTempPath(randomUUID().toString()).toString();
 

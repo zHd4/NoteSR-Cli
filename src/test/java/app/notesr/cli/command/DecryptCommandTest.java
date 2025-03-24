@@ -59,14 +59,12 @@ public final class DecryptCommandTest {
     @ParameterizedTest
     @ValueSource(strings = {"v1", "v2"})
     public void testWithAllArgs(String formatVersion) throws IOException, SQLException {
-        final String baseBackupPath = "crypto/backup_decryptor/encrypted-%s.notesr.bak";
-
         final String notesTableName = "notes";
         final String filesInfosTableName = "files_info";
         final String dataBlocksTableName = "data_blocks";
 
-        Path backupPath = getFixturePath(String.format(baseBackupPath, formatVersion));
-        Path keyPath = getFixturePath("crypto/backup_decryptor/crypto_key.txt");
+        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", formatVersion));
+        Path keyPath = getFixturePath("crypto_key.txt");
         Path outputPath = tempDir.resolve(backupPath.getFileName().toString() + ".db");
 
         int exitCode = cmd.execute(backupPath.toString(), keyPath.toString(), "-o", outputPath.toString());
@@ -101,7 +99,7 @@ public final class DecryptCommandTest {
 
     private static <T> List<T> getExpectedModels(JsonMapper<T> mapper, String fixtureName, String formatVersion)
             throws IOException {
-        String fixturePath = Path.of("parser/backup_parser", formatVersion, fixtureName).toString();
+        String fixturePath = Path.of("parser", formatVersion, fixtureName).toString();
         String json = readFixture(fixturePath);
 
         return mapper.map(json);
