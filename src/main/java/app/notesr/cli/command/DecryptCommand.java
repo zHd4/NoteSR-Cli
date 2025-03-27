@@ -67,6 +67,13 @@ public final class DecryptCommand implements Command {
             return FILE_RW_ERROR;
         }
 
+        outputFile = getOutputFilePath(encryptedBackupFile.getAbsolutePath(), outputFilePath).toFile();
+
+        if (outputFile.exists()) {
+            LOGGER.error("{}: file already exists", encryptedBackupPath);
+            return DB_CONNECTION_ERROR;
+        }
+
         try {
             cryptoKey = getCryptoKey(keyFile);
         } catch (IOException e) {
@@ -81,13 +88,6 @@ public final class DecryptCommand implements Command {
         } catch (BackupDecryptionException e) {
             LOGGER.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
             return DECRYPTION_ERROR;
-        }
-
-        outputFile = getOutputFilePath(encryptedBackupFile.getAbsolutePath(), outputFilePath).toFile();
-
-        if (outputFile.exists()) {
-            LOGGER.error("{}: file already exists", encryptedBackupPath);
-            return DB_CONNECTION_ERROR;
         }
 
         try {
