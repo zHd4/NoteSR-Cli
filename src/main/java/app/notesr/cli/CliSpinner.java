@@ -4,45 +4,43 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.io.PrintStream;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
-public class CliSpinner {
+public final class CliSpinner {
     private static final int ANIMATION_DELAY = 150;
+    private static final String[] FRAMES = {"|", "/", "-", "\\"};
 
-    private final AtomicBoolean running = new AtomicBoolean(false);
     private final String text;
 
-    private Thread loaderThread;
+    private AtomicInteger frameIndex;
+    private ScheduledExecutorService scheduler;
+    private ScheduledFuture<?> future;
 
     @Setter
     private PrintStream printStream = System.out;
 
     public void start() {
-        loaderThread = new Thread(() -> {
-            String[] frames = {"|", "/", "-", "\\"};
-            int i = 0;
+        Runnable animationTask = () ->
+                printStream.print("\r" + text + " " + FRAMES[frameIndex.getAndIncrement() % FRAMES.length]);
 
-            while (running.get()) {
-                printStream.print("\r" + text + " " + frames[i++ % frames.length]);
-
-                try {
-                    Thread.sleep(ANIMATION_DELAY);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-
-            printStream.print("\r");
-        });
-
-        running.set(true);
-        loaderThread.start();
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        frameIndex = new AtomicInteger(0);
+        future = scheduler.scheduleAtFixedRate(animationTask, 0, ANIMATION_DELAY, TimeUnit.MILLISECONDS);
     }
 
-    public void stop() throws InterruptedException {
-        running.set(false);
-        loaderThread.join();
+    public void stop() {
+        future.cancel(true);
+        scheduler.shutdown();
+
+        printStream.print("\r");
+
+        for (int i = 0; i < text.length() + 2; i++) {
+            printStream.print("\0");
+        }
     }
 }
