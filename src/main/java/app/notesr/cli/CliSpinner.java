@@ -24,7 +24,15 @@ public final class CliSpinner {
     @Setter
     private PrintStream printStream = System.out;
 
+    private boolean running = false;
+
     public void start() {
+        if (running) {
+            throw new UnsupportedOperationException("Animation already running");
+        }
+
+        running = true;
+
         Runnable animationTask = () ->
                 printStream.print("\r" + text + " " + FRAMES[frameIndex.getAndIncrement() % FRAMES.length]);
 
@@ -34,6 +42,12 @@ public final class CliSpinner {
     }
 
     public void stop() {
+        if (!running) {
+            throw new UnsupportedOperationException("Animation already stopped");
+        }
+
+        running = false;
+
         future.cancel(true);
         scheduler.shutdown();
 
