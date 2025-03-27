@@ -25,6 +25,7 @@ public abstract class FilesJsonParser extends BaseJsonParser {
         this.dataBlockDao = new DataBlockDao(db);
     }
 
+    @Override
     public final void transferToDb() throws IOException, SQLException {
         transferFilesInfo();
         transferFilesData();

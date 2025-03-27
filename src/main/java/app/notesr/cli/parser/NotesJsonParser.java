@@ -21,6 +21,7 @@ public final class NotesJsonParser extends BaseJsonParser {
         this.noteDao = new NoteDao(db);
     }
 
+    @Override
     public void transferToDb() throws IOException, SQLException {
         String field;
 

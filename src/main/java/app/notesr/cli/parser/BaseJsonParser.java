@@ -4,10 +4,11 @@ import com.fasterxml.jackson.core.JsonParser;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 
 @RequiredArgsConstructor
-public class BaseJsonParser {
+public abstract class BaseJsonParser {
     protected final JsonParser parser;
     protected final DateTimeFormatter timestampFormatter;
 
@@ -24,4 +25,6 @@ public class BaseJsonParser {
 
         return true;
     }
+
+    public abstract void transferToDb() throws IOException, SQLException;
 }
