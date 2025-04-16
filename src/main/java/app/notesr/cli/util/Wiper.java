@@ -1,14 +1,13 @@
 package app.notesr.cli.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+@Slf4j
 public class Wiper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Wiper.class);
     private static final int LOOPS_COUNT = 6;
 
     public static boolean wipeDir(File dir) throws IOException {
@@ -64,7 +63,7 @@ public class Wiper {
                         stream.write(empty);
                         bytesWrite += empty.length;
                     } catch (OutOfMemoryError ex) {
-                        LOGGER.warn(ex.getMessage());
+                        log.warn(ex.getMessage());
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
