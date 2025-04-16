@@ -12,8 +12,7 @@ import app.notesr.cli.parser.BackupParser;
 import app.notesr.cli.parser.BackupParserException;
 import app.notesr.cli.parser.UnexpectedFieldException;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -29,12 +28,11 @@ import java.util.Objects;
 import static app.notesr.cli.util.Wiper.wipeDir;
 import static app.notesr.cli.util.Wiper.wipeFile;
 
+@Slf4j
 @Getter
 @CommandLine.Command(name = "decrypt",
         description = "Decrypts exported NoteSR .bak file and converts it to a SQLite database.")
 public final class DecryptCommand implements Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DecryptCommand.class);
-
     public static final int SUCCESS = 0;
     public static final int FILE_RW_ERROR = 2;
     public static final int DB_CONNECTION_ERROR = 3;
@@ -65,35 +63,35 @@ public final class DecryptCommand implements Command {
             encryptedBackupFile = getFile(this.encryptedBackupPath);
             keyFile = getFile(this.keyPath);
         } catch (NoSuchFileException e) {
-            LOGGER.error(e.getMessage());
+            log.error(e.getMessage());
             return FILE_RW_ERROR;
         }
 
         outputFile = getOutputFilePath(encryptedBackupFile.getAbsolutePath(), outputFilePath).toFile();
 
         if (outputFile.exists()) {
-            LOGGER.error("{}: file already exists", outputFile.getAbsolutePath());
+            log.error("{}: file already exists", outputFile.getAbsolutePath());
             return DB_CONNECTION_ERROR;
         }
 
         try {
             cryptoKey = getCryptoKey(keyFile);
         } catch (IOException e) {
-            LOGGER.error("{}: an error occurred while reading", keyPath);
+            log.error("{}: an error occurred while reading", keyPath);
             return FILE_RW_ERROR;
         }
 
         currentProcessAnimation = new CliSpinner("Decrypting");
 
         try {
-            LOGGER.info("Decryption of {} has been started", encryptedBackupPath);
+            log.info("Decryption of {} has been started", encryptedBackupPath);
             currentProcessAnimation.start();
             tempDecryptedBackup = decryptBackup(encryptedBackupFile, cryptoKey);
-            LOGGER.info("Decryption finished successfully");
+            log.info("Decryption finished successfully");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e); // Already validated
         } catch (BackupDecryptionException e) {
-            LOGGER.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
+            log.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
             return DECRYPTION_ERROR;
         } finally {
             currentProcessAnimation.stop();
@@ -103,21 +101,21 @@ public final class DecryptCommand implements Command {
             backupParser = new BackupParser(tempDecryptedBackup.toPath(), outputFile.toPath());
             backupParser.run();
         } catch (BackupIOException | BackupParserException | UnexpectedFieldException e) {
-            LOGGER.error("{}: failed to parse, details:\n{}", encryptedBackupPath, e.getMessage());
+            log.error("{}: failed to parse, details:\n{}", encryptedBackupPath, e.getMessage());
             return FILE_RW_ERROR;
         } catch (BackupDbException e) {
-            LOGGER.error("Failed to write data to database, details:\n{}", e.getMessage());
+            log.error("Failed to write data to database, details:\n{}", e.getMessage());
             return DB_WRITING_ERROR;
         }
 
         try {
             removeTempData(tempDecryptedBackup, backupParser.getTempDirPath().toFile());
         } catch (IOException e) {
-            LOGGER.error("Unknown error, details:\n{}", e.getMessage());
+            log.error("Unknown error, details:\n{}", e.getMessage());
             return UNKNOWN_ERROR;
         }
 
-        LOGGER.info("Saved to: {}", outputFile.getAbsolutePath());
+        log.info("Saved to: {}", outputFile.getAbsolutePath());
 
         return SUCCESS;
     }
