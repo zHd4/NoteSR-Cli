@@ -1,5 +1,6 @@
 package app.notesr.cli.command;
 
+import app.notesr.cli.CliSpinner;
 import app.notesr.cli.crypto.Aes;
 import app.notesr.cli.crypto.BackupDecryptor;
 import app.notesr.cli.crypto.CryptoKey;
@@ -52,6 +53,7 @@ public final class DecryptCommand implements Command {
 
     @Override
     public Integer call() {
+        CliSpinner currentProcessAnimation;
         BackupParser backupParser;
         File encryptedBackupFile;
         File keyFile;
@@ -81,13 +83,20 @@ public final class DecryptCommand implements Command {
             return FILE_RW_ERROR;
         }
 
+        currentProcessAnimation = new CliSpinner("Decrypting");
+
         try {
+            LOGGER.info("Decryption of {} has been started", encryptedBackupPath);
+            currentProcessAnimation.start();
             tempDecryptedBackup = decryptBackup(encryptedBackupFile, cryptoKey);
+            LOGGER.info("Decryption finished successfully");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e); // Already validated
         } catch (BackupDecryptionException e) {
             LOGGER.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
             return DECRYPTION_ERROR;
+        } finally {
+            currentProcessAnimation.stop();
         }
 
         try {
