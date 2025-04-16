@@ -72,7 +72,7 @@ public final class DecryptCommand implements Command {
         outputFile = getOutputFilePath(encryptedBackupFile.getAbsolutePath(), outputFilePath).toFile();
 
         if (outputFile.exists()) {
-            LOGGER.error("{}: file already exists", encryptedBackupPath);
+            LOGGER.error("{}: file already exists", outputFile.getAbsolutePath());
             return DB_CONNECTION_ERROR;
         }
 
