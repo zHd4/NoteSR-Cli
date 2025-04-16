@@ -85,16 +85,20 @@ public final class DecryptCommand implements Command {
 
         try {
             log.info("Decryption of {} has been started", encryptedBackupPath);
+
             currentProcessAnimation.start();
             tempDecryptedBackup = decryptBackup(encryptedBackupFile, cryptoKey);
+            currentProcessAnimation.stop();
+
             log.info("Decryption finished successfully");
         } catch (FileNotFoundException e) {
+            currentProcessAnimation.stop();
             throw new RuntimeException(e); // Already validated
         } catch (BackupDecryptionException e) {
+            currentProcessAnimation.stop();
+
             log.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
             return DECRYPTION_ERROR;
-        } finally {
-            currentProcessAnimation.stop();
         }
 
         try {
