@@ -84,7 +84,7 @@ public final class DecryptCommand implements Command {
         currentProcessAnimation = new CliSpinner("Decrypting");
 
         try {
-            log.info("Decryption of {} has been started", encryptedBackupPath);
+            log.info("Starting decryption of {}", encryptedBackupPath);
 
             currentProcessAnimation.start();
             tempDecryptedBackup = decryptBackup(encryptedBackupFile, cryptoKey);
