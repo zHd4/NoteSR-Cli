@@ -102,8 +102,16 @@ public final class DecryptCommand implements Command {
         }
 
         try {
+            log.info("Parsing {}", encryptedBackupPath);
+
+            currentProcessAnimation = new CliSpinner("Parsing");
             backupParser = new BackupParser(tempDecryptedBackup.toPath(), outputFile.toPath());
+
+            currentProcessAnimation.start();
             backupParser.run();
+            currentProcessAnimation.stop();
+
+            log.info("Parsing finished successfully");
         } catch (BackupIOException | BackupParserException | UnexpectedFieldException e) {
             log.error("{}: failed to parse, details:\n{}", encryptedBackupPath, e.getMessage());
             return FILE_RW_ERROR;
