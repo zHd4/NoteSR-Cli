@@ -51,108 +51,125 @@ public final class DecryptCommand implements Command {
 
     @Override
     public Integer call() {
-        CliSpinner currentProcessAnimation;
-        BackupParser backupParser;
-        File encryptedBackupFile;
-        File keyFile;
-        CryptoKey cryptoKey;
-        File tempDecryptedBackup;
-        File outputFile;
-
         try {
-            encryptedBackupFile = getFile(this.encryptedBackupPath);
-            keyFile = getFile(this.keyPath);
+            File encryptedBackupFile = getEncryptedBackupFile();
+            File keyFile = getKeyFile();
+            File outputFile = prepareOutputFile(encryptedBackupFile);
+
+            CryptoKey cryptoKey = readCryptoKey(keyFile);
+            File tempDecryptedBackup = decryptBackup(encryptedBackupFile, cryptoKey);
+
+            BackupParser parser = parseBackup(tempDecryptedBackup, outputFile);
+            cleanupTemporaryFiles(tempDecryptedBackup, parser.getTempDirPath().toFile());
+
+            log.info("Saved to: {}", outputFile.getAbsolutePath());
+            return SUCCESS;
+        } catch (HandledException e) {
+            return e.getExitCode();
+        }
+    }
+
+    private File getEncryptedBackupFile() throws HandledException {
+        try {
+            return getFile(this.encryptedBackupPath);
         } catch (NoSuchFileException e) {
             log.error(e.getMessage());
-            return FILE_RW_ERROR;
+            throw new HandledException(FILE_RW_ERROR);
         }
+    }
 
-        outputFile = getOutputFilePath(encryptedBackupFile.getAbsolutePath(), outputFilePath).toFile();
+    private File getKeyFile() throws HandledException {
+        try {
+            return getFile(this.keyPath);
+        } catch (NoSuchFileException e) {
+            log.error(e.getMessage());
+            throw new HandledException(FILE_RW_ERROR);
+        }
+    }
 
+    private File prepareOutputFile(File encryptedBackupFile) throws HandledException {
+        File outputFile = getOutputFilePath(encryptedBackupFile.getAbsolutePath(), outputFilePath).toFile();
         if (outputFile.exists()) {
             log.error("{}: file already exists", outputFile.getAbsolutePath());
-            return DB_CONNECTION_ERROR;
+            throw new HandledException(DB_CONNECTION_ERROR);
         }
+        return outputFile;
+    }
 
+    private CryptoKey readCryptoKey(File keyFile) throws HandledException {
         try {
-            cryptoKey = getCryptoKey(keyFile);
+            return getCryptoKey(keyFile);
         } catch (IOException e) {
             log.error("{}: an error occurred while reading", keyPath);
-            return FILE_RW_ERROR;
+            throw new HandledException(FILE_RW_ERROR);
         }
+    }
 
-        currentProcessAnimation = new CliSpinner("Decrypting");
+    private File decryptBackup(File encryptedBackup, CryptoKey cryptoKey) throws HandledException {
+        CliSpinner spinner = new CliSpinner("Decrypting");
 
         try {
             log.info("Decrypting {}", encryptedBackupPath);
+            spinner.start();
 
-            currentProcessAnimation.start();
-            tempDecryptedBackup = decryptBackup(encryptedBackupFile, cryptoKey);
-            currentProcessAnimation.stop();
+            File decryptedBackup = new File(encryptedBackup.getAbsolutePath() + "_decrypted");
 
+            BackupDecryptor decryptor = new BackupDecryptor(cryptoKey);
+            FileInputStream inputStream = new FileInputStream(encryptedBackup);
+            FileOutputStream outputStream = new FileOutputStream(decryptedBackup);
+
+            decryptor.decrypt(inputStream, outputStream);
+
+            spinner.stop();
             log.info("Decryption finished successfully");
+
+            return decryptedBackup;
         } catch (FileNotFoundException e) {
-            currentProcessAnimation.stop();
+            spinner.stop();
             throw new RuntimeException(e); // Already validated
         } catch (BackupDecryptionException e) {
-            currentProcessAnimation.stop();
-
+            spinner.stop();
             log.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
-            return DECRYPTION_ERROR;
+            throw new HandledException(DECRYPTION_ERROR);
         }
+    }
+
+    private BackupParser parseBackup(File tempDecryptedBackup, File outputFile) throws HandledException {
+        CliSpinner spinner = new CliSpinner("Parsing");
 
         try {
             log.info("Parsing {}", encryptedBackupPath);
-
-            currentProcessAnimation = new CliSpinner("Parsing");
-            backupParser = new BackupParser(tempDecryptedBackup.toPath(), outputFile.toPath());
-
-            currentProcessAnimation.start();
-            backupParser.run();
-            currentProcessAnimation.stop();
-
+            spinner.start();
+            BackupParser parser = new BackupParser(tempDecryptedBackup.toPath(), outputFile.toPath());
+            parser.run();
+            spinner.stop();
             log.info("Parsing finished successfully");
+            return parser;
         } catch (BackupIOException | BackupParserException | UnexpectedFieldException e) {
+            spinner.stop();
             log.error("{}: failed to parse, details:\n{}", encryptedBackupPath, e.getMessage());
-            return FILE_RW_ERROR;
+            throw new HandledException(FILE_RW_ERROR);
         } catch (BackupDbException e) {
+            spinner.stop();
             log.error("Failed to write data to database, details:\n{}", e.getMessage());
-            return DB_WRITING_ERROR;
+            throw new HandledException(DB_WRITING_ERROR);
         }
+    }
 
+    private void cleanupTemporaryFiles(File... files) throws HandledException {
         try {
-            removeTempData(tempDecryptedBackup, backupParser.getTempDirPath().toFile());
-        } catch (IOException e) {
-            log.error("Unknown error, details:\n{}", e.getMessage());
-            return UNKNOWN_ERROR;
-        }
+            for (File file : files) {
+                if (file.exists()) {
+                    boolean success = file.isFile() ? wipeFile(file) : wipeDir(file);
 
-        log.info("Saved to: {}", outputFile.getAbsolutePath());
-
-        return SUCCESS;
-    }
-
-    private File decryptBackup(File encryptedBackup, CryptoKey cryptoKey) throws FileNotFoundException,
-            BackupDecryptionException {
-        File decryptedBackup = new File(encryptedBackup.getAbsolutePath() + "_decrypted");
-
-        BackupDecryptor decryptor = new BackupDecryptor(cryptoKey);
-        FileInputStream inputStream = new FileInputStream(encryptedBackup);
-        FileOutputStream outputStream = new FileOutputStream(decryptedBackup);
-
-        decryptor.decrypt(inputStream, outputStream);
-        return decryptedBackup;
-    }
-
-    private void removeTempData(File... tempObjects) throws IOException {
-        for (File tempObject : tempObjects) {
-            if (tempObject.exists()) {
-                boolean success = tempObject.isFile() ? wipeFile(tempObject) : wipeDir(tempObject);
-
-                if (!success) {
-                    throw new IOException(tempObject.getAbsolutePath() + ": failed to remove");
+                    if (!success) {
+                        throw new IOException(file.getAbsolutePath() + ": failed to remove");
+                    }
                 }
             }
+        } catch (IOException e) {
+            log.error("Unknown error, details:\n{}", e.getMessage());
+            throw new HandledException(UNKNOWN_ERROR);
         }
     }
 
