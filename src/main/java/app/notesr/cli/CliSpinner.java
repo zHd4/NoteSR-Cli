@@ -12,6 +12,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Deprecated(forRemoval = true)
 @RequiredArgsConstructor
 public final class CliSpinner {
     private static final int ANIMATION_DELAY = 150;
