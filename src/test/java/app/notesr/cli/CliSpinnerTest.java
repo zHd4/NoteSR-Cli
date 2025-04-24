@@ -17,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CliSpinnerTest {
+public final class CliSpinnerTest {
     private static final int EMULATED_WORK_DURATION = 1000;
 
     @Mock
-    Logger mockLogger;
+    private Logger mockLogger;
 
     private CliSpinner cliSpinner;
     private ByteArrayOutputStream outputStream;

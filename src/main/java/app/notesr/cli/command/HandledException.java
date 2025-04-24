@@ -6,7 +6,7 @@ import lombok.Getter;
 class HandledException extends Exception {
     private final int exitCode;
 
-    public HandledException(int exitCode) {
+    HandledException(int exitCode) {
         this.exitCode = exitCode;
     }
 }
