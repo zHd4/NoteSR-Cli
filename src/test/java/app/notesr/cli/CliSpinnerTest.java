@@ -1,22 +1,45 @@
 package app.notesr.cli;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mock;
+import org.slf4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class CliSpinnerTest {
     private static final int EMULATED_WORK_DURATION = 1000;
 
-    @Test
-    public void testSpinner() throws InterruptedException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        PrintStream mockOut = new PrintStream(outputStream);
+    @Mock
+    Logger mockLogger;
 
-        CliSpinner cliSpinner = new CliSpinner("Loading");
+    private CliSpinner cliSpinner;
+    private ByteArrayOutputStream outputStream;
+
+    @BeforeEach
+    void beforeEach() {
+        cliSpinner = new CliSpinner("Loading", mockLogger);
+        outputStream = new ByteArrayOutputStream();
+
+        PrintStream mockOut = new PrintStream(outputStream);
         cliSpinner.setPrintStream(mockOut);
+    }
+
+    @Test
+    public void testSpinner() throws Exception {
+        when(mockLogger.isInfoEnabled()).thenReturn(false);
+        when(mockLogger.isDebugEnabled()).thenReturn(false);
+        when(mockLogger.isTraceEnabled()).thenReturn(false);
 
         cliSpinner.start();
         emulateWork();
@@ -28,6 +51,16 @@ public class CliSpinnerTest {
                 && output.contains("Loading -")
                 && output.contains("Loading \\"),
                 "Animation output does not contain expected chars");
+    }
+
+    @Test
+    public void testSpinnerWhenNotAvailable() {
+        when(mockLogger.isInfoEnabled()).thenReturn(true);
+
+        assertFalse(cliSpinner.isAvailable(), "The spinner must be unavailable");
+        assertThrows(UnsupportedOperationException.class, cliSpinner::start,
+                "Method 'start' must throw exception");
+        assertEquals(0, outputStream.size(), "Output must be empty");
     }
 
     private void emulateWork() throws InterruptedException {
