@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+@Deprecated(forRemoval = true)
 @ExtendWith(MockitoExtension.class)
 public final class CliSpinnerTest {
     private static final int EMULATED_WORK_DURATION = 1000;
