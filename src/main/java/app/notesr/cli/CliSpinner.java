@@ -2,6 +2,8 @@ package app.notesr.cli;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintStream;
 import java.util.concurrent.Executors;
@@ -17,6 +19,8 @@ public final class CliSpinner {
 
     private final String text;
 
+    private Logger log = LoggerFactory.getLogger(CliSpinner.class);
+
     private AtomicInteger frameIndex;
     private ScheduledExecutorService scheduler;
     private ScheduledFuture<?> future;
@@ -26,9 +30,22 @@ public final class CliSpinner {
 
     private boolean running = false;
 
+    public CliSpinner(String text, Logger logger) {
+        this.text = text;
+        this.log = logger;
+    }
+
+    public boolean isAvailable() {
+        return !(log.isInfoEnabled() || log.isDebugEnabled() || log.isTraceEnabled());
+    }
+
     public void start() {
         if (running) {
             throw new UnsupportedOperationException("Animation already running");
+        }
+
+        if (!isAvailable()) {
+            throw new UnsupportedOperationException("Animation cannot be run if logging is enabled");
         }
 
         running = true;
