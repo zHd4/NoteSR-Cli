@@ -1,6 +1,5 @@
 package app.notesr.cli.command;
 
-import app.notesr.cli.CliSpinner;
 import app.notesr.cli.crypto.Aes;
 import app.notesr.cli.crypto.BackupDecryptor;
 import app.notesr.cli.crypto.CryptoKey;
@@ -106,11 +105,8 @@ public final class DecryptCommand implements Command {
     }
 
     private File decryptBackup(File encryptedBackup, CryptoKey cryptoKey) throws HandledException {
-        CliSpinner spinner = new CliSpinner("Decrypting");
-
         try {
             log.info("Decrypting {}", encryptedBackupPath);
-            spinner.start();
 
             File decryptedBackup = new File(encryptedBackup.getAbsolutePath() + "_decrypted");
 
@@ -120,37 +116,28 @@ public final class DecryptCommand implements Command {
 
             decryptor.decrypt(inputStream, outputStream);
 
-            spinner.stop();
             log.info("Decryption finished successfully");
 
             return decryptedBackup;
         } catch (FileNotFoundException e) {
-            spinner.stop();
             throw new RuntimeException(e); // Already validated
         } catch (BackupDecryptionException e) {
-            spinner.stop();
             log.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
             throw new HandledException(DECRYPTION_ERROR);
         }
     }
 
     private BackupParser parseBackup(File tempDecryptedBackup, File outputFile) throws HandledException {
-        CliSpinner spinner = new CliSpinner("Parsing");
-
         try {
             log.info("Parsing {}", encryptedBackupPath);
-            spinner.start();
             BackupParser parser = new BackupParser(tempDecryptedBackup.toPath(), outputFile.toPath());
             parser.run();
-            spinner.stop();
             log.info("Parsing finished successfully");
             return parser;
         } catch (BackupIOException | BackupParserException | UnexpectedFieldException e) {
-            spinner.stop();
             log.error("{}: failed to parse, details:\n{}", encryptedBackupPath, e.getMessage());
             throw new HandledException(FILE_RW_ERROR);
         } catch (BackupDbException e) {
-            spinner.stop();
             log.error("Failed to write data to database, details:\n{}", e.getMessage());
             throw new HandledException(DB_WRITING_ERROR);
         }
