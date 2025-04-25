@@ -145,6 +145,8 @@ public final class DecryptCommand implements Command {
 
     private void cleanupTemporaryFiles(File... files) throws HandledException {
         try {
+            log.info("Cleaning temporary files");
+
             for (File file : files) {
                 if (file.exists()) {
                     boolean success = file.isFile() ? wipeFile(file) : wipeDir(file);
@@ -154,6 +156,8 @@ public final class DecryptCommand implements Command {
                     }
                 }
             }
+
+            log.info("Cleaning finished successfully");
         } catch (IOException e) {
             log.error("Unknown error, details:\n{}", e.getMessage());
             throw new HandledException(UNKNOWN_ERROR);
