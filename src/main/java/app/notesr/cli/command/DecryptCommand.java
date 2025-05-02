@@ -1,6 +1,6 @@
 package app.notesr.cli.command;
 
-import app.notesr.cli.crypto.BackupDecryptor;
+import app.notesr.cli.crypto.FileCryptor;
 import app.notesr.cli.crypto.CryptoKey;
 import app.notesr.cli.crypto.CryptoKeyUtils;
 import app.notesr.cli.crypto.exception.BackupDecryptionException;
@@ -23,7 +23,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import static app.notesr.cli.crypto.BackupDecryptor.KEY_GENERATOR_ALGORITHM;
+import static app.notesr.cli.crypto.FileCryptor.KEY_GENERATOR_ALGORITHM;
 import static app.notesr.cli.util.Wiper.wipeDir;
 import static app.notesr.cli.util.Wiper.wipeFile;
 
@@ -110,7 +110,7 @@ public final class DecryptCommand implements Command {
 
             File decryptedBackup = new File(encryptedBackup.getAbsolutePath() + "_decrypted");
 
-            BackupDecryptor decryptor = new BackupDecryptor(cryptoKey);
+            FileCryptor decryptor = new FileCryptor(cryptoKey);
             FileInputStream inputStream = new FileInputStream(encryptedBackup);
             FileOutputStream outputStream = new FileOutputStream(decryptedBackup);
 

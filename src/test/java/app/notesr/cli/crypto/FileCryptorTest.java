@@ -14,13 +14,13 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import static app.notesr.cli.crypto.BackupDecryptor.KEY_GENERATOR_ALGORITHM;
+import static app.notesr.cli.crypto.FileCryptor.KEY_GENERATOR_ALGORITHM;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BackupDecryptorTest {
+class FileCryptorTest {
     private Path tempBackupPath;
 
     @ParameterizedTest
@@ -36,7 +36,7 @@ class BackupDecryptorTest {
         tempBackupPath = PathUtils.getTempPath("test-decrypted-" + randomUUID());
         FileOutputStream outputStream = new FileOutputStream(tempBackupPath.toString());
 
-        BackupDecryptor decryptor = new BackupDecryptor(cryptoKey);
+        FileCryptor decryptor = new FileCryptor(cryptoKey);
         decryptor.decrypt(inputStream, outputStream);
 
         String expectedHash = readFixture("decrypted-" + formatVersion + ".sha256").trim();
