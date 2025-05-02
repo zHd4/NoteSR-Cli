@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,13 +18,26 @@ import java.security.NoSuchAlgorithmException;
 
 @AllArgsConstructor
 public final class BackupDecryptor {
+    public static final String KEY_GENERATOR_ALGORITHM = "AES";
+    private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
     private static final int CHUNK_SIZE = 100000;
 
     private CryptoKey cryptoKey;
 
+    private static Cipher createCipher(SecretKey key, byte[] iv, int mode) throws NoSuchPaddingException,
+            NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
+        Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
+        SecretKeySpec keySpec = new SecretKeySpec(key.getEncoded(), KEY_GENERATOR_ALGORITHM);
+
+        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        cipher.init(mode, keySpec, ivSpec);
+
+        return cipher;
+    }
+
     public void decrypt(FileInputStream inputStream, FileOutputStream outputStream) throws BackupDecryptionException {
         try {
-            Cipher cipher = Aes.createCipher(cryptoKey.getKey(), cryptoKey.getSalt(), Cipher.DECRYPT_MODE);
+            Cipher cipher = createCipher(cryptoKey.getKey(), cryptoKey.getSalt(), Cipher.DECRYPT_MODE);
             CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher);
 
             try (cipherInputStream; outputStream) {

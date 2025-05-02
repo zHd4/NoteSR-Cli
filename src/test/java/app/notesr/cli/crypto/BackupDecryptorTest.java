@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import static app.notesr.cli.crypto.BackupDecryptor.KEY_GENERATOR_ALGORITHM;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
 import static java.util.UUID.randomUUID;
@@ -27,7 +28,7 @@ class BackupDecryptorTest {
     public void testDecrypt(String formatVersion) throws IOException, BackupDecryptionException,
             NoSuchAlgorithmException {
         String hexCryptoKey = readFixture("crypto_key.txt");
-        CryptoKey cryptoKey = CryptoKeyUtils.hexToCryptoKey(hexCryptoKey, Aes.KEY_GENERATOR_ALGORITHM);
+        CryptoKey cryptoKey = CryptoKeyUtils.hexToCryptoKey(hexCryptoKey, KEY_GENERATOR_ALGORITHM);
 
         FileInputStream inputStream = new FileInputStream(
                 getFixturePath(String.format("encrypted-%s.notesr.bak", formatVersion)).toString());

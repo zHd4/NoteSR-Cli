@@ -4,13 +4,16 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 public class CryptoKeyUtils {
+    private static final int KEY_SIZE = 256;
+    private static final int SALT_SIZE = 16;
+
     public static CryptoKey hexToCryptoKey(String hex, String algorithm) {
         String[] hexArray = hex.toLowerCase().split("\\s+");
 
         byte[] bytes = new byte[hexArray.length];
 
-        byte[] keyBytes = new byte[Aes.KEY_SIZE / 8];
-        byte[] salt = new byte[Aes.SALT_SIZE];
+        byte[] keyBytes = new byte[KEY_SIZE / 8];
+        byte[] salt = new byte[SALT_SIZE];
 
         for (int i = 0; i < hexArray.length; i++) {
             String hexDigit = hexArray[i];

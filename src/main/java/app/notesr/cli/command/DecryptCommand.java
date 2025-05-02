@@ -1,6 +1,5 @@
 package app.notesr.cli.command;
 
-import app.notesr.cli.crypto.Aes;
 import app.notesr.cli.crypto.BackupDecryptor;
 import app.notesr.cli.crypto.CryptoKey;
 import app.notesr.cli.crypto.CryptoKeyUtils;
@@ -24,6 +23,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Objects;
 
+import static app.notesr.cli.crypto.BackupDecryptor.KEY_GENERATOR_ALGORITHM;
 import static app.notesr.cli.util.Wiper.wipeDir;
 import static app.notesr.cli.util.Wiper.wipeFile;
 
@@ -166,7 +166,7 @@ public final class DecryptCommand implements Command {
 
     private CryptoKey getCryptoKey(File keyFile) throws IOException {
         String hexKey = Files.readString(keyFile.toPath());
-        return CryptoKeyUtils.hexToCryptoKey(hexKey, Aes.KEY_GENERATOR_ALGORITHM);
+        return CryptoKeyUtils.hexToCryptoKey(hexKey, KEY_GENERATOR_ALGORITHM);
     }
 
     private Path getOutputFilePath(String inputPathStr, String outputPathStr) {
