@@ -1,6 +1,6 @@
 package app.notesr.cli.crypto;
 
-import app.notesr.cli.crypto.exception.BackupDecryptionException;
+import app.notesr.cli.crypto.exception.FileDecryptionException;
 import lombok.AllArgsConstructor;
 
 import javax.crypto.Cipher;
@@ -35,7 +35,7 @@ public final class FileCryptor {
         return cipher;
     }
 
-    public void decrypt(FileInputStream inputStream, FileOutputStream outputStream) throws BackupDecryptionException {
+    public void decrypt(FileInputStream inputStream, FileOutputStream outputStream) throws FileDecryptionException {
         try {
             Cipher cipher = createCipher(cryptoKey.getKey(), cryptoKey.getSalt(), Cipher.DECRYPT_MODE);
             CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher);
@@ -61,7 +61,7 @@ public final class FileCryptor {
 
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException
                  | InvalidKeyException | IOException e) {
-            throw new BackupDecryptionException(e);
+            throw new FileDecryptionException(e);
         }
     }
 }

@@ -3,7 +3,7 @@ package app.notesr.cli.command;
 import app.notesr.cli.crypto.FileCryptor;
 import app.notesr.cli.crypto.CryptoKey;
 import app.notesr.cli.crypto.CryptoKeyUtils;
-import app.notesr.cli.crypto.exception.BackupDecryptionException;
+import app.notesr.cli.crypto.exception.FileDecryptionException;
 import app.notesr.cli.parser.BackupDbException;
 import app.notesr.cli.parser.BackupIOException;
 import app.notesr.cli.parser.BackupParser;
@@ -121,7 +121,7 @@ public final class DecryptCommand implements Command {
             return decryptedBackup;
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e); // Already validated
-        } catch (BackupDecryptionException e) {
+        } catch (FileDecryptionException e) {
             log.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
             throw new HandledException(DECRYPTION_ERROR);
         }

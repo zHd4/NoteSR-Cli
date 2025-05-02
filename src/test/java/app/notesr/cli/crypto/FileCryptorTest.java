@@ -1,6 +1,6 @@
 package app.notesr.cli.crypto;
 
-import app.notesr.cli.crypto.exception.BackupDecryptionException;
+import app.notesr.cli.crypto.exception.FileDecryptionException;
 import app.notesr.cli.util.PathUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,7 +25,7 @@ class FileCryptorTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"v1", "v2"})
-    public void testDecrypt(String formatVersion) throws IOException, BackupDecryptionException,
+    public void testDecrypt(String formatVersion) throws IOException, FileDecryptionException,
             NoSuchAlgorithmException {
         String hexCryptoKey = readFixture("crypto_key.txt");
         CryptoKey cryptoKey = CryptoKeyUtils.hexToCryptoKey(hexCryptoKey, KEY_GENERATOR_ALGORITHM);
