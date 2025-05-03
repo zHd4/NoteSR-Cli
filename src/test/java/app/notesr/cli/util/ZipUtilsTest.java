@@ -22,6 +22,15 @@ public class ZipUtilsTest {
     private static final String ZIP_PATH = getFixturePath("exported.zip").toString();
 
     private static final String TEMP_EXTRACTED_DIR_PATH = getTempPath(randomUUID().toString()).toString();
+    private static final String TEMP_ZIP_PATH = getTempPath(randomUUID() + ".zip").toString();
+
+    @Test
+    public void testZipDirectory() throws IOException {
+        ZipUtils.zipDirectory(DIR_PATH, TEMP_ZIP_PATH, null);
+        File zipFile = new File(TEMP_ZIP_PATH);
+
+        assertTrue(zipFile.exists(), "Zip file not found");
+    }
 
     @Test
     public void testUnzip() throws IOException {
