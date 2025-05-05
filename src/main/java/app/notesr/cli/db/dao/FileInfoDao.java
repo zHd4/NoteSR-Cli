@@ -35,10 +35,36 @@ public final class FileInfoDao {
         }
     }
 
+    public Set<FileInfo> getAll() throws SQLException {
+        Set<FileInfo> results = new LinkedHashSet<>();
+        String sql = "SELECT * FROM files_info";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                FileInfo fileInfo = FileInfo.builder()
+                        .id(rs.getString(1))
+                        .noteId(rs.getString(2))
+                        .name(rs.getString(3))
+                        .type(rs.getString(4))
+                        .thumbnail(rs.getBytes(5))
+                        .size(rs.getLong(6))
+                        .createdAt(parseDateTime(rs.getString(7)))
+                        .updatedAt(parseDateTime(rs.getString(8)))
+                        .build();
+
+                results.add(fileInfo);
+            }
+        }
+
+        return results;
+    }
+
     public Set<FileInfo> getAllByNoteId(String noteId) throws SQLException {
         Set<FileInfo> results = new LinkedHashSet<>();
-
         String sql = "SELECT * FROM files_info WHERE note_id = ?";
+
         try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, noteId);
             ResultSet rs = stmt.executeQuery();
