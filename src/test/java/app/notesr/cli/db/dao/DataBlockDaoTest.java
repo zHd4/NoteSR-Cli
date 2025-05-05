@@ -115,7 +115,7 @@ public final class DataBlockDaoTest {
         List<String> expected = testDataBlocks.stream().map(DataBlock::getId).collect(Collectors.toList());
         List<String> actual = new ArrayList<>(dataBlockDao.getIdsByFileId(testFileInfo.getId()));
 
-        assertFalse(actual.isEmpty(), "Actual data blocks ids must not be empty");
+        assertFalse(actual.isEmpty(), "Actual data blocks ids must be not empty");
         assertEquals(expected, actual, "Data blocks ids are different");
     }
 
@@ -125,7 +125,7 @@ public final class DataBlockDaoTest {
             DbUtils.insertDataBlock(db.getConnection(), expected);
             DataBlock actual = dataBlockDao.getById(expected.getId());
 
-            assertNotNull(actual, "Actual data block must not be null");
+            assertNotNull(actual, "Actual data block must be not null");
             assertEquals(expected, actual, "Data blocks are different");
         }
     }

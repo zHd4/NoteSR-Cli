@@ -88,7 +88,7 @@ public final class FileInfoDaoTest {
             throw new RuntimeException(e);
         }
 
-        assertNotNull(actual, "Actual file info must not be null");
+        assertNotNull(actual, "Actual file info must be not null");
         assertEquals(expected, actual, "Files infos are different");
     }
 
@@ -108,7 +108,7 @@ public final class FileInfoDaoTest {
 
         Set<FileInfo> actual = fileInfoDao.getAllByNoteId(testNote.getId());
 
-        assertNotNull(actual, "Actual files infos must not be null");
+        assertNotNull(actual, "Actual files infos must be not null");
         assertEquals(testFileInfos, actual, "Files infos are different");
 
         for (FileInfo fileInfo : actual) {
@@ -120,7 +120,7 @@ public final class FileInfoDaoTest {
 
         actual = fileInfoDao.getAllByNoteId(additionalTestNote.getId());
 
-        assertNotNull(actual, "Actual files infos must not be null");
+        assertNotNull(actual, "Actual files infos must be not null");
         assertTrue(actual.isEmpty(), "Actual must be empty");
     }
 
@@ -130,7 +130,7 @@ public final class FileInfoDaoTest {
             DbUtils.insertFileInfo(db.getConnection(), expected);
             FileInfo actual = fileInfoDao.getById(expected.getId());
 
-            assertNotNull(actual, "Actual file info must not be null");
+            assertNotNull(actual, "Actual file info must be not null");
             assertEquals(expected, actual, "Files infos are different");
         }
     }

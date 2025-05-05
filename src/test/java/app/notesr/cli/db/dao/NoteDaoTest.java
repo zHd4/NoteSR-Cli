@@ -70,7 +70,7 @@ public final class NoteDaoTest {
             }
         }
 
-        assertNotNull(actual, "Actual note must not be null");
+        assertNotNull(actual, "Actual note must be not null");
         assertEquals(expected, actual, "Notes are different");
     }
 
@@ -79,7 +79,7 @@ public final class NoteDaoTest {
         testNotes.forEach(testNote -> insertNote(db.getConnection(), testNote));
         Set<Note> actual = noteDao.getAll();
 
-        assertNotNull(actual, "Actual notes must not be null");
+        assertNotNull(actual, "Actual notes must be not null");
         assertEquals(testNotes, actual, "Notes are different");
     }
 
@@ -89,7 +89,7 @@ public final class NoteDaoTest {
             insertNote(db.getConnection(), expected);
             Note actual = noteDao.getById(expected.getId());
 
-            assertNotNull(actual, "Actual note must not be null");
+            assertNotNull(actual, "Actual note must be not null");
             assertEquals(expected, actual, "Notes are different");
         }
     }
