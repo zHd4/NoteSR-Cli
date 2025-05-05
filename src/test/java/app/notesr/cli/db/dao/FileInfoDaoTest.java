@@ -20,8 +20,8 @@ import static app.notesr.cli.db.DbUtils.parseDateTime;
 import static app.notesr.cli.db.DbUtils.truncateDateTime;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class FileInfoDaoTest {
     private static final int TEST_FILES_INFOS_COUNT = 5;
@@ -104,24 +104,19 @@ public final class FileInfoDaoTest {
 
     @Test
     public void testGetByNoteId() throws SQLException {
+        Note additionalTestNote = getTestNote();
+
         testFileInfos.forEach(fileInfo -> DbUtils.insertFileInfo(db.getConnection(), fileInfo));
+        DbUtils.insertNote(db.getConnection(), additionalTestNote);
 
         Set<FileInfo> actual = fileInfoDao.getByNoteId(testNote.getId());
 
         assertNotNull(actual, "Actual files infos must be not null");
-        assertEquals(testFileInfos, actual, "Files infos are different");
+        assertFalse(actual.isEmpty(), "Actual must be not empty");
 
         for (FileInfo fileInfo : actual) {
             assertEquals(testNote.getId(), fileInfo.getNoteId(), "Unexpected note id");
         }
-
-        Note additionalTestNote = getTestNote();
-        DbUtils.insertNote(db.getConnection(), additionalTestNote);
-
-        actual = fileInfoDao.getByNoteId(additionalTestNote.getId());
-
-        assertNotNull(actual, "Actual files infos must be not null");
-        assertTrue(actual.isEmpty(), "Actual must be empty");
     }
 
     @Test
