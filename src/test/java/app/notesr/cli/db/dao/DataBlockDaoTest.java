@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static app.notesr.cli.db.DbUtils.truncateDateTime;
@@ -84,6 +85,20 @@ public final class DataBlockDaoTest {
 
         assertFalse(actual.isEmpty(), "Actual must be not empty");
         assertEquals(testDataBlocks, actual, "Data blocks are different");
+    }
+
+    @Test
+    public void testGetAllDataBlocksWithoutData() throws SQLException {
+        testDataBlocks.forEach(dataBlock -> DbUtils.insertDataBlock(db.getConnection(), dataBlock));
+
+        Set<DataBlock> expected = testDataBlocks.stream()
+                .peek(dataBlock -> dataBlock.setData(null))
+                .collect(Collectors.toSet());
+
+        Set<DataBlock> actual = dataBlockDao.getAllDataBlocksWithoutData();
+
+        assertNotNull(actual, "Actual data blocks must be not null");
+        assertEquals(expected, actual, "Data blocks are different");
     }
 
     @Test
