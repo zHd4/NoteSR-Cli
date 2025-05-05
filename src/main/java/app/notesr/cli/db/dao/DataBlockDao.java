@@ -27,6 +27,27 @@ public final class DataBlockDao {
         }
     }
 
+    public Set<DataBlock> getAllDataBlocksWithoutData() throws SQLException {
+        LinkedHashSet<DataBlock> results = new LinkedHashSet<>();
+        String sql = "SELECT id, file_id, block_order FROM data_blocks";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                DataBlock dataBlock = DataBlock.builder()
+                        .id(rs.getString(1))
+                        .fileId(rs.getString(2))
+                        .order(rs.getLong(3))
+                        .build();
+
+                results.add(dataBlock);
+            }
+        }
+
+        return results;
+    }
+
     public Set<String> getIdsByFileId(String fileId) throws SQLException {
         LinkedHashSet<String> results = new LinkedHashSet<>();
 
