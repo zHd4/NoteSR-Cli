@@ -93,6 +93,16 @@ public final class FileInfoDaoTest {
     }
 
     @Test
+    public void testGetAll() throws SQLException {
+        testFileInfos.forEach(fileInfo -> DbUtils.insertFileInfo(db.getConnection(), fileInfo));
+
+        Set<FileInfo> actual = fileInfoDao.getAll();
+
+        assertNotNull(actual, "Actual files infos must be not null");
+        assertEquals(testFileInfos, actual, "Files infos are different");
+    }
+
+    @Test
     public void testGetAllByNoteId() throws SQLException {
         testFileInfos.forEach(fileInfo -> DbUtils.insertFileInfo(db.getConnection(), fileInfo));
 
