@@ -61,7 +61,7 @@ public final class FileInfoDao {
         return results;
     }
 
-    public Set<FileInfo> getAllByNoteId(String noteId) throws SQLException {
+    public Set<FileInfo> getByNoteId(String noteId) throws SQLException {
         Set<FileInfo> results = new LinkedHashSet<>();
         String sql = "SELECT * FROM files_info WHERE note_id = ?";
 
