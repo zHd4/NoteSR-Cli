@@ -20,7 +20,7 @@ import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public final class NoteDaoTest {
+class NoteDaoTest {
     private static final Faker FAKER = new Faker();
     private static final int TEST_NOTES_COUNT = 5;
 

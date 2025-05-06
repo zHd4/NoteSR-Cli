@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public final class DataBlockDaoTest {
+class DataBlockDaoTest {
     public static final int TEST_BLOCK_SIZE = 1000;
 
     public static final int MIN_TEST_FILE_SIZE = 1024;

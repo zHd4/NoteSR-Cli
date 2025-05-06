@@ -13,7 +13,7 @@ import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class WiperTest {
+class WiperTest {
     private static final Random RANDOM = new Random();
 
     private static final int MIN_FILE_SIZE = 1024;

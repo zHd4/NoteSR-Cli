@@ -28,7 +28,7 @@ import static app.notesr.cli.util.FixtureUtils.readFixture;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public final class DecryptCommandTest {
+class DecryptCommandTest {
     private CommandLine cmd;
 
     @TempDir

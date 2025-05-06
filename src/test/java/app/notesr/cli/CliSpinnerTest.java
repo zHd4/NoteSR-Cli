@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 @Deprecated(forRemoval = true)
 @ExtendWith(MockitoExtension.class)
-public final class CliSpinnerTest {
+class CliSpinnerTest {
     private static final int EMULATED_WORK_DURATION = 1000;
 
     @Mock

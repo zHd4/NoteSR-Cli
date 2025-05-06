@@ -15,7 +15,7 @@ import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ZipUtilsTest {
+class ZipUtilsTest {
     private static final Random RANDOM = new Random();
 
     private static final String DIR_PATH = getFixturePath("exported").toString();

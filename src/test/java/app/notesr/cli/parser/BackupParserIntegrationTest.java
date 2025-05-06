@@ -31,7 +31,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public final class BackupParserIntegrationTest {
+class BackupParserIntegrationTest {
     private static final String BASE_FIXTURES_PATH = "parser";
 
     private static final String NOTES_FIXTURE_NAME = "expected-notes.json";

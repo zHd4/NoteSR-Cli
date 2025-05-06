@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public final class FileInfoDaoTest {
+class FileInfoDaoTest {
     private static final int TEST_FILES_INFOS_COUNT = 5;
     private static final long MIN_FILE_SIZE = 1024;
     private static final long MAX_FILE_SIZE = 1024 * 10;
