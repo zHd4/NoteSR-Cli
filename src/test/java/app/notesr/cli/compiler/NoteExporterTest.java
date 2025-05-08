@@ -46,7 +46,10 @@ class NoteExporterTest {
     @BeforeEach
     void beforeEach() throws SQLException, IOException {
         outputFile = Path.of(getTempPath(randomUUID() + ".json").toString()).toFile();
-        jsonGenerator = getTestJsonGenerator(outputFile);
+
+        JsonFactory jsonFactory = new JsonFactory();
+        jsonGenerator = jsonFactory.createGenerator(outputFile, JsonEncoding.UTF8);
+
         noteDao = mock(NoteDao.class);
         testNotes = generateTestNotes(TEST_NOTES_COUNT);
 
@@ -89,10 +92,5 @@ class NoteExporterTest {
         JsonNode notesArray = root.get(NOTES_ARRAY_NAME);
 
         return objectMapper.readerFor(new TypeReference<Set<Note>>() { }).readValue(notesArray);
-    }
-
-    private JsonGenerator getTestJsonGenerator(File file) throws IOException {
-        JsonFactory jsonFactory = new JsonFactory();
-        return jsonFactory.createGenerator(file, JsonEncoding.UTF8);
     }
 }
