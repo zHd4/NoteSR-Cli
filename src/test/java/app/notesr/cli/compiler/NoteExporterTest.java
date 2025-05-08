@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import net.datafaker.Faker;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,10 +23,9 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
 import java.util.Set;
 
-import static app.notesr.cli.db.DbUtils.truncateDateTime;
+import static app.notesr.cli.util.ModelGenerator.generateTestNotes;
 import static app.notesr.cli.util.PathUtils.getTempPath;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,10 +33,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class NoteExporterTest {
-    private static final String NOTES_ARRAY_NAME = "notes";
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    private static final Faker FAKER = new Faker();
+    private static final String NOTES_ARRAY_NAME = "notes";
     private static final int TEST_NOTES_COUNT = 5;
 
     private JsonGenerator jsonGenerator;
@@ -51,7 +48,7 @@ class NoteExporterTest {
         outputFile = Path.of(getTempPath(randomUUID() + ".json").toString()).toFile();
         jsonGenerator = getTestJsonGenerator(outputFile);
         noteDao = mock(NoteDao.class);
-        testNotes = generateTestNotes();
+        testNotes = generateTestNotes(TEST_NOTES_COUNT);
 
         when(noteDao.getAll()).thenReturn(testNotes);
     }
@@ -97,22 +94,5 @@ class NoteExporterTest {
     private JsonGenerator getTestJsonGenerator(File outputFile) throws IOException {
         JsonFactory jsonFactory = new JsonFactory();
         return jsonFactory.createGenerator(outputFile, JsonEncoding.UTF8);
-    }
-
-    private Set<Note> generateTestNotes() {
-        Set<Note> testNotes = new HashSet<>();
-
-        for (int i = 0; i < TEST_NOTES_COUNT; i++) {
-            Note testNote = Note.builder()
-                    .id(randomUUID().toString())
-                    .name(FAKER.text().text(5, 15))
-                    .text(FAKER.text().text())
-                    .updatedAt(truncateDateTime(LocalDateTime.now()))
-                    .build();
-
-            testNotes.add(testNote);
-        }
-
-        return testNotes;
     }
 }

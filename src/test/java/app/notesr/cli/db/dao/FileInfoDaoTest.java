@@ -4,21 +4,18 @@ import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
 import app.notesr.cli.util.DbUtils;
-import net.datafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
-import java.util.Random;
 import java.util.Set;
 
 import static app.notesr.cli.db.DbUtils.parseDateTime;
-import static app.notesr.cli.db.DbUtils.truncateDateTime;
-import static java.util.UUID.randomUUID;
+import static app.notesr.cli.util.ModelGenerator.generateTestFilesInfos;
+import static app.notesr.cli.util.ModelGenerator.generateTestNote;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,9 +24,6 @@ class FileInfoDaoTest {
     private static final int TEST_FILES_INFOS_COUNT = 5;
     private static final long MIN_FILE_SIZE = 1024;
     private static final long MAX_FILE_SIZE = 1024 * 10;
-
-    private static final Faker FAKER = new Faker();
-    private static final Random RANDOM = new Random();
 
     private DbConnection db;
     private FileInfoDao fileInfoDao;
@@ -43,21 +37,9 @@ class FileInfoDaoTest {
 
         fileInfoDao = new FileInfoDao(db);
 
-        testNote = getTestNote();
-        testFileInfos = new LinkedHashSet<>();
-
-        for (int i = 0; i < TEST_FILES_INFOS_COUNT; i++) {
-            FileInfo fileInfo = FileInfo.builder()
-                    .id(randomUUID().toString())
-                    .noteId(testNote.getId())
-                    .size(RANDOM.nextLong(MIN_FILE_SIZE, MAX_FILE_SIZE))
-                    .name(FAKER.text().text(5, 15))
-                    .createdAt(truncateDateTime(LocalDateTime.now()))
-                    .updatedAt(truncateDateTime(LocalDateTime.now()))
-                    .build();
-
-            testFileInfos.add(fileInfo);
-        }
+        testNote = generateTestNote();
+        testFileInfos = new LinkedHashSet<>(generateTestFilesInfos(testNote, TEST_FILES_INFOS_COUNT,
+                MIN_FILE_SIZE, MAX_FILE_SIZE));
 
         DbUtils.insertNote(db.getConnection(), testNote);
     }
@@ -104,7 +86,7 @@ class FileInfoDaoTest {
 
     @Test
     public void testGetByNoteId() throws SQLException {
-        Note additionalTestNote = getTestNote();
+        Note additionalTestNote = generateTestNote();
 
         testFileInfos.forEach(fileInfo -> DbUtils.insertFileInfo(db.getConnection(), fileInfo));
         DbUtils.insertNote(db.getConnection(), additionalTestNote);
@@ -128,14 +110,5 @@ class FileInfoDaoTest {
             assertNotNull(actual, "Actual file info must be not null");
             assertEquals(expected, actual, "Files infos are different");
         }
-    }
-
-    private Note getTestNote() {
-        return Note.builder()
-                .id(randomUUID().toString())
-                .name(FAKER.text().text(5, 15))
-                .text(FAKER.text().text())
-                .updatedAt(truncateDateTime(LocalDateTime.now()))
-                .build();
     }
 }

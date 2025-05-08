@@ -5,23 +5,20 @@ import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
 import app.notesr.cli.util.DbUtils;
-import net.datafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static app.notesr.cli.db.DbUtils.truncateDateTime;
-import static java.util.UUID.randomUUID;
+import static app.notesr.cli.util.ModelGenerator.generateTestDataBlocks;
+import static app.notesr.cli.util.ModelGenerator.generateTestFileInfo;
+import static app.notesr.cli.util.ModelGenerator.generateTestNote;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,24 +29,27 @@ class DataBlockDaoTest {
     public static final int MIN_TEST_FILE_SIZE = 1024;
     public static final int MAX_TEST_FILE_SIZE = 1024 * 20;
 
-    private static final Faker FAKER = new Faker();
     private static final Random RANDOM = new Random();
 
     private DbConnection db;
     private DataBlockDao dataBlockDao;
 
+    private long testFileSize;
+
     private Note testNote;
     private FileInfo testFileInfo;
-    private LinkedHashSet<DataBlock> testDataBlocks;
+    private Set<DataBlock> testDataBlocks;
 
     @BeforeEach
     public void beforeEach() {
         db = new DbConnection(":memory:");
         dataBlockDao = new DataBlockDao(db);
 
-        testNote = getTestNote();
-        testFileInfo = getTestFileInfo();
-        testDataBlocks = generateRandomDataBlocks(testFileInfo);
+        testFileSize = RANDOM.nextLong(MIN_TEST_FILE_SIZE, MAX_TEST_FILE_SIZE);
+
+        testNote = generateTestNote();
+        testFileInfo = generateTestFileInfo(testNote, testFileSize);
+        testDataBlocks = generateTestDataBlocks(testFileInfo, TEST_BLOCK_SIZE);
 
         DbUtils.insertNote(db.getConnection(), testNote);
         DbUtils.insertFileInfo(db.getConnection(), testFileInfo);
@@ -61,8 +61,7 @@ class DataBlockDaoTest {
             dataBlockDao.add(testDataBlock);
         }
 
-        List<DataBlock> actualList = new ArrayList<>();
-
+        Set<DataBlock> actual = new LinkedHashSet<>();
         String sql = "SELECT * FROM data_blocks WHERE file_id = ?";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
@@ -77,11 +76,9 @@ class DataBlockDaoTest {
                         .data(rs.getBytes(4))
                         .build();
 
-                actualList.add(dataBlock);
+                actual.add(dataBlock);
             }
         }
-
-        LinkedHashSet<DataBlock> actual = new LinkedHashSet<>(actualList);
 
         assertFalse(actual.isEmpty(), "Actual must be not empty");
         assertEquals(testDataBlocks, actual, "Data blocks are different");
@@ -105,15 +102,15 @@ class DataBlockDaoTest {
     public void testGetIdsByFileId() throws SQLException {
         testDataBlocks.forEach(dataBlock -> DbUtils.insertDataBlock(db.getConnection(), dataBlock));
 
-        FileInfo additionalTestFileInfo = getTestFileInfo();
+        FileInfo additionalTestFileInfo = generateTestFileInfo(testNote, testFileSize);
         DbUtils.insertFileInfo(db.getConnection(), additionalTestFileInfo);
 
-        LinkedHashSet<DataBlock> additionalTestDataBlocks = generateRandomDataBlocks(additionalTestFileInfo);
+        Set<DataBlock> additionalTestDataBlocks = generateTestDataBlocks(additionalTestFileInfo, TEST_BLOCK_SIZE);
         additionalTestDataBlocks.forEach(dataBlock ->
                 DbUtils.insertDataBlock(db.getConnection(), dataBlock));
 
-        List<String> expected = testDataBlocks.stream().map(DataBlock::getId).collect(Collectors.toList());
-        List<String> actual = new ArrayList<>(dataBlockDao.getIdsByFileId(testFileInfo.getId()));
+        Set<String> expected = testDataBlocks.stream().map(DataBlock::getId).collect(Collectors.toSet());
+        Set<String> actual = dataBlockDao.getIdsByFileId(testFileInfo.getId());
 
         assertFalse(actual.isEmpty(), "Actual data blocks ids must be not empty");
         assertEquals(expected, actual, "Data blocks ids are different");
@@ -128,62 +125,5 @@ class DataBlockDaoTest {
             assertNotNull(actual, "Actual data block must be not null");
             assertEquals(expected, actual, "Data blocks are different");
         }
-    }
-
-    private Note getTestNote() {
-        return Note.builder()
-                .id(randomUUID().toString())
-                .name(FAKER.text().text(5, 15))
-                .text(FAKER.text().text())
-                .updatedAt(truncateDateTime(LocalDateTime.now()))
-                .build();
-    }
-
-    private FileInfo getTestFileInfo() {
-        return FileInfo.builder()
-                .id(randomUUID().toString())
-                .noteId(testNote.getId())
-                .size(RANDOM.nextLong(MIN_TEST_FILE_SIZE, MAX_TEST_FILE_SIZE))
-                .name(FAKER.text().text(5, 15))
-                .createdAt(truncateDateTime(LocalDateTime.now()))
-                .updatedAt(truncateDateTime(LocalDateTime.now()))
-                .build();
-    }
-
-    private DataBlock getDataBlock(FileInfo fileInfo, long order, byte[] data) {
-        return DataBlock.builder()
-                .id(randomUUID().toString())
-                .fileId(fileInfo.getId())
-                .order(order)
-                .data(data)
-                .build();
-    }
-
-    private LinkedHashSet<DataBlock> generateRandomDataBlocks(FileInfo fileInfo) {
-        List<DataBlock> blocks = new ArrayList<>();
-
-        long order = 0;
-        long bytesLeft = fileInfo.getSize();
-
-        while (bytesLeft > TEST_BLOCK_SIZE) {
-            byte[] data = new byte[TEST_BLOCK_SIZE];
-            RANDOM.nextBytes(data);
-
-            blocks.add(getDataBlock(fileInfo, order, data));
-            order++;
-
-            bytesLeft -= TEST_BLOCK_SIZE;
-        }
-
-        if (bytesLeft > 0) {
-            order++;
-
-            byte[] data = new byte[(int) bytesLeft];
-            RANDOM.nextBytes(data);
-
-            blocks.add(getDataBlock(fileInfo, order, data));
-        }
-
-        return new LinkedHashSet<>(blocks);
     }
 }

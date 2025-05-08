@@ -2,26 +2,22 @@ package app.notesr.cli.db.dao;
 
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.model.Note;
-import net.datafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static app.notesr.cli.db.DbUtils.parseDateTime;
-import static app.notesr.cli.db.DbUtils.truncateDateTime;
 import static app.notesr.cli.util.DbUtils.insertNote;
-import static java.util.UUID.randomUUID;
+import static app.notesr.cli.util.ModelGenerator.generateTestNotes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class NoteDaoTest {
-    private static final Faker FAKER = new Faker();
     private static final int TEST_NOTES_COUNT = 5;
 
     private DbConnection db;
@@ -34,18 +30,7 @@ class NoteDaoTest {
         db = new DbConnection(":memory:");
 
         noteDao = new NoteDao(db);
-        testNotes = new LinkedHashSet<>();
-
-        for (int i = 0; i < TEST_NOTES_COUNT; i++) {
-            Note testNote = Note.builder()
-                    .id(randomUUID().toString())
-                    .name(FAKER.text().text(5, 15))
-                    .text(FAKER.text().text())
-                    .updatedAt(truncateDateTime(LocalDateTime.now()))
-                    .build();
-
-            testNotes.add(testNote);
-        }
+        testNotes = new LinkedHashSet<>(generateTestNotes(TEST_NOTES_COUNT));
     }
 
     @Test
