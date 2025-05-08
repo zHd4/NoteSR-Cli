@@ -26,7 +26,7 @@ class NoteDaoTest {
     private LinkedHashSet<Note> testNotes;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         db = new DbConnection(":memory:");
 
         noteDao = new NoteDao(db);
@@ -34,7 +34,7 @@ class NoteDaoTest {
     }
 
     @Test
-    public void testAdd() throws SQLException {
+    void testAdd() throws SQLException {
         Note expected = testNotes.getFirst();
         Note actual = null;
 
@@ -60,7 +60,7 @@ class NoteDaoTest {
     }
 
     @Test
-    public void testGetAll() throws SQLException {
+    void testGetAll() throws SQLException {
         testNotes.forEach(testNote -> insertNote(db.getConnection(), testNote));
         Set<Note> actual = noteDao.getAll();
 
@@ -69,7 +69,7 @@ class NoteDaoTest {
     }
 
     @Test
-    public void testGetById() throws SQLException {
+    void testGetById() throws SQLException {
         for (Note expected : testNotes) {
             insertNote(db.getConnection(), expected);
             Note actual = noteDao.getById(expected.getId());

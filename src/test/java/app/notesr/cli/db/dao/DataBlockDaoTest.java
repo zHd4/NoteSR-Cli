@@ -41,7 +41,7 @@ class DataBlockDaoTest {
     private Set<DataBlock> testDataBlocks;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         db = new DbConnection(":memory:");
         dataBlockDao = new DataBlockDao(db);
 
@@ -56,7 +56,7 @@ class DataBlockDaoTest {
     }
 
     @Test
-    public void testAdd() throws SQLException {
+    void testAdd() throws SQLException {
         for (DataBlock testDataBlock : testDataBlocks) {
             dataBlockDao.add(testDataBlock);
         }
@@ -85,7 +85,7 @@ class DataBlockDaoTest {
     }
 
     @Test
-    public void testGetAllDataBlocksWithoutData() throws SQLException {
+    void testGetAllDataBlocksWithoutData() throws SQLException {
         testDataBlocks.forEach(dataBlock -> DbUtils.insertDataBlock(db.getConnection(), dataBlock));
 
         Set<DataBlock> expected = testDataBlocks.stream()
@@ -99,7 +99,7 @@ class DataBlockDaoTest {
     }
 
     @Test
-    public void testGetIdsByFileId() throws SQLException {
+    void testGetIdsByFileId() throws SQLException {
         testDataBlocks.forEach(dataBlock -> DbUtils.insertDataBlock(db.getConnection(), dataBlock));
 
         FileInfo additionalTestFileInfo = generateTestFileInfo(testNote, testFileSize);
@@ -117,7 +117,7 @@ class DataBlockDaoTest {
     }
 
     @Test
-    public void testGetById() throws SQLException {
+    void testGetById() throws SQLException {
         for (DataBlock expected : testDataBlocks) {
             DbUtils.insertDataBlock(db.getConnection(), expected);
             DataBlock actual = dataBlockDao.getById(expected.getId());

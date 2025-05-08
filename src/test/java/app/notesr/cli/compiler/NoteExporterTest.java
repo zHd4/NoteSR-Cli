@@ -44,7 +44,7 @@ class NoteExporterTest {
     private Set<Note> testNotes;
 
     @BeforeEach
-    public void beforeEach() throws SQLException, IOException {
+    void beforeEach() throws SQLException, IOException {
         outputFile = Path.of(getTempPath(randomUUID() + ".json").toString()).toFile();
         jsonGenerator = getTestJsonGenerator(outputFile);
         noteDao = mock(NoteDao.class);
@@ -54,7 +54,7 @@ class NoteExporterTest {
     }
 
     @Test
-    public void testExport() throws SQLException, IOException {
+    void testExport() throws SQLException, IOException {
         NoteExporter noteExporter = new NoteExporter(jsonGenerator, noteDao, DATETIME_FORMATTER);
         noteExporter.export();
 
@@ -65,7 +65,7 @@ class NoteExporterTest {
     }
 
     @AfterEach
-    public void afterEach() throws IOException {
+    void afterEach() throws IOException {
         if (outputFile.exists()) {
             boolean deleted = outputFile.delete();
 

@@ -20,7 +20,7 @@ class WiperTest {
     private static final int MAX_FILE_SIZE = 1024 * 10;
 
     @Test
-    public void testWipeFile() throws IOException {
+    void testWipeFile() throws IOException {
         String testFilePath = getTempPath(randomUUID().toString()).toString();
         byte[] testFileContent = new byte[RANDOM.nextInt(MIN_FILE_SIZE, MAX_FILE_SIZE)];
 
@@ -35,7 +35,7 @@ class WiperTest {
     }
 
     @Test
-    public void testWipeDir() throws IOException {
+    void testWipeDir() throws IOException {
         String testDirPath = getTempPath(randomUUID().toString()).toString();
         String testFilePath = Path.of(testDirPath, randomUUID().toString()).toString();
 

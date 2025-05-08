@@ -26,7 +26,7 @@ class FileCryptorTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"v1", "v2"})
-    public void testEncrypt(String backupFormatVersion) throws IOException, NoSuchAlgorithmException,
+    void testEncrypt(String backupFormatVersion) throws IOException, NoSuchAlgorithmException,
             FileEncryptionException {
         FileInputStream inputStream = new FileInputStream(getFixturePath(backupFormatVersion
                 + ".notesr.bak.decrypted").toString());
@@ -46,7 +46,7 @@ class FileCryptorTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"v1", "v2"})
-    public void testDecrypt(String backupFormatVersion) throws IOException, FileDecryptionException,
+    void testDecrypt(String backupFormatVersion) throws IOException, FileDecryptionException,
             NoSuchAlgorithmException {
         FileInputStream inputStream = new FileInputStream(
                 getFixturePath(String.format("encrypted-%s.notesr.bak", backupFormatVersion)).toString());
@@ -65,7 +65,7 @@ class FileCryptorTest {
     }
 
     @AfterEach
-    public void afterEach() throws IOException {
+    void afterEach() throws IOException {
         if (tempBackupPath != null && Files.exists(tempBackupPath)) {
             Files.delete(tempBackupPath);
         }

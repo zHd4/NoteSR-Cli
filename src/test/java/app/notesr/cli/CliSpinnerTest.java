@@ -37,7 +37,7 @@ class CliSpinnerTest {
     }
 
     @Test
-    public void testSpinner() throws Exception {
+    void testSpinner() throws Exception {
         when(mockLogger.isInfoEnabled()).thenReturn(false);
         when(mockLogger.isDebugEnabled()).thenReturn(false);
         when(mockLogger.isTraceEnabled()).thenReturn(false);
@@ -55,7 +55,7 @@ class CliSpinnerTest {
     }
 
     @Test
-    public void testSpinnerWhenNotAvailable() {
+    void testSpinnerWhenNotAvailable() {
         when(mockLogger.isInfoEnabled()).thenReturn(true);
 
         assertFalse(cliSpinner.isAvailable(), "The spinner must be unavailable");

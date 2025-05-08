@@ -32,7 +32,7 @@ class FileInfoDaoTest {
     private LinkedHashSet<FileInfo> testFileInfos;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         db = new DbConnection(":memory:");
 
         fileInfoDao = new FileInfoDao(db);
@@ -45,7 +45,7 @@ class FileInfoDaoTest {
     }
 
     @Test
-    public void testAdd() throws SQLException {
+    void testAdd() throws SQLException {
         FileInfo expected = testFileInfos.getFirst();
         FileInfo actual = null;
 
@@ -75,7 +75,7 @@ class FileInfoDaoTest {
     }
 
     @Test
-    public void testGetAll() throws SQLException {
+    void testGetAll() throws SQLException {
         testFileInfos.forEach(fileInfo -> DbUtils.insertFileInfo(db.getConnection(), fileInfo));
 
         Set<FileInfo> actual = fileInfoDao.getAll();
@@ -85,7 +85,7 @@ class FileInfoDaoTest {
     }
 
     @Test
-    public void testGetByNoteId() throws SQLException {
+    void testGetByNoteId() throws SQLException {
         Note additionalTestNote = generateTestNote();
 
         testFileInfos.forEach(fileInfo -> DbUtils.insertFileInfo(db.getConnection(), fileInfo));
@@ -102,7 +102,7 @@ class FileInfoDaoTest {
     }
 
     @Test
-    public void testGetById() throws SQLException {
+    void testGetById() throws SQLException {
         for (FileInfo expected : testFileInfos) {
             DbUtils.insertFileInfo(db.getConnection(), expected);
             FileInfo actual = fileInfoDao.getById(expected.getId());

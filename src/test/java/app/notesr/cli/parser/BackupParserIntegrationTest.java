@@ -48,7 +48,7 @@ class BackupParserIntegrationTest {
     private Path dbPath;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         String uuid = randomUUID().toString();
 
         parserTempDirPath = Path.of(getTempPath(uuid) + "_temp");
@@ -57,7 +57,7 @@ class BackupParserIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"v1", "v2"})
-    public void testParser(String formatVersion) throws IOException, SQLException {
+    void testParser(String formatVersion) throws IOException, SQLException {
         Path backupPath = getBackupPath(formatVersion);
         BackupParser parser = new BackupParser(backupPath, dbPath);
 
@@ -91,7 +91,7 @@ class BackupParserIntegrationTest {
     }
 
     @AfterEach
-    public void afterEach() throws IOException {
+    void afterEach() throws IOException {
         if (dbPath.toFile().exists()) {
             Files.delete(dbPath);
         }

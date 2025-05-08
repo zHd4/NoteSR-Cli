@@ -22,14 +22,14 @@ class DbConnectionTest {
     }
 
     @Test
-    public void testConnectionAvailable() throws SQLException {
+    void testConnectionAvailable() throws SQLException {
         assertNotNull(dbConnection.getConnection(), "Connection is null");
         assertTrue(dbConnection.getConnection().isValid(30), "Invalid connection");
         assertFalse(dbConnection.getConnection().isClosed(), "Connection closed");
     }
 
     @Test
-    public void testTablesExists() throws SQLException {
+    void testTablesExists() throws SQLException {
         List<String> tables = List.of("notes", "files_info", "data_blocks");
 
         for (String table : tables) {

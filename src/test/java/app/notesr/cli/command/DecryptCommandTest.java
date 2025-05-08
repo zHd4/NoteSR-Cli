@@ -35,20 +35,20 @@ class DecryptCommandTest {
     private Path tempDir;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         DecryptCommand decryptCommand = new DecryptCommand();
         cmd = new CommandLine(decryptCommand);
     }
 
     @Test
-    public void testWithoutArgs() {
+    void testWithoutArgs() {
         int exitCode = cmd.execute();
         assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"C:\\folder\\..\\NUL\\file", "/////some///weird//path///file"})
-    public void testWithInvalidFilesPaths(String path) {
+    void testWithInvalidFilesPaths(String path) {
         String backupPath = path + ".notesr.bak";
         String keyPath = path + ".txt";
 
@@ -58,7 +58,7 @@ class DecryptCommandTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"v1", "v2"})
-    public void testWithAllArgs(String formatVersion) throws IOException, SQLException {
+    void testWithAllArgs(String formatVersion) throws IOException, SQLException {
         final String notesTableName = "notes";
         final String filesInfosTableName = "files_info";
         final String dataBlocksTableName = "data_blocks";
