@@ -88,11 +88,11 @@ class NoteExporterTest {
         JsonNode root = objectMapper.readTree(json);
         JsonNode notesArray = root.get(NOTES_ARRAY_NAME);
 
-        return objectMapper.readerFor(new TypeReference<Set<Note>>() {}).readValue(notesArray);
+        return objectMapper.readerFor(new TypeReference<Set<Note>>() { }).readValue(notesArray);
     }
 
-    private JsonGenerator getTestJsonGenerator(File outputFile) throws IOException {
+    private JsonGenerator getTestJsonGenerator(File file) throws IOException {
         JsonFactory jsonFactory = new JsonFactory();
-        return jsonFactory.createGenerator(outputFile, JsonEncoding.UTF8);
+        return jsonFactory.createGenerator(file, JsonEncoding.UTF8);
     }
 }
