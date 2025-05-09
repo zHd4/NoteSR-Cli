@@ -77,7 +77,7 @@ class FileInfoExporterTest {
     }
 
     @Test
-    void export() throws SQLException, IOException {
+    void testExport() throws SQLException, IOException {
         FileInfoExporter fileInfoExporter = new FileInfoExporter(jsonGenerator, fileInfoDao, dataBlockDao,
                 DATETIME_FORMATTER);
 
