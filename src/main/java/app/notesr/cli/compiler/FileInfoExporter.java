@@ -14,6 +14,9 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 class FileInfoExporter implements Exporter {
+    static final String FILES_INFOS_ARRAY_NAME = "files_info";
+    static final String FILES_DATA_BLOCKS_ARRAY_NAME = "files_data_blocks";
+
     private final JsonGenerator jsonGenerator;
     private final FileInfoDao fileInfoDao;
     private final DataBlockDao dataBlockDao;
@@ -32,7 +35,7 @@ class FileInfoExporter implements Exporter {
     }
 
     private void writeFilesInfos(Set<FileInfo> fileInfos) throws IOException {
-        jsonGenerator.writeArrayFieldStart("files_info");
+        jsonGenerator.writeArrayFieldStart(FILES_INFOS_ARRAY_NAME);
 
         for (FileInfo fileInfo : fileInfos) {
             writeFileInfo(fileInfo);
@@ -42,7 +45,7 @@ class FileInfoExporter implements Exporter {
     }
 
     private void writeDataBlocksWithoutData(Set<DataBlock> dataBlocks) throws IOException {
-        jsonGenerator.writeArrayFieldStart("files_data_blocks");
+        jsonGenerator.writeArrayFieldStart(FILES_DATA_BLOCKS_ARRAY_NAME);
 
         for (DataBlock dataBlock : dataBlocks) {
             writeDataBlockInfo(dataBlock);
