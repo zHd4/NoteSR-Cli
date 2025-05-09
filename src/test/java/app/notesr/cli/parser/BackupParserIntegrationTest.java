@@ -4,6 +4,7 @@ import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
+import app.notesr.cli.util.FileUtils;
 import app.notesr.cli.util.mapper.DataBlocksJsonMapper;
 import app.notesr.cli.util.mapper.FilesInfosJsonMapper;
 import app.notesr.cli.util.mapper.NotesJsonMapper;
@@ -15,11 +16,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -97,7 +95,7 @@ class BackupParserIntegrationTest {
         }
 
         if (parserTempDirPath.toFile().exists()) {
-            deleteDir(parserTempDirPath);
+            FileUtils.deleteDir(parserTempDirPath);
         }
     }
 
@@ -115,21 +113,5 @@ class BackupParserIntegrationTest {
         }
 
         return results[0].toPath();
-    }
-
-    private static void deleteDir(Path path) throws IOException {
-        Files.walkFileTree(path, new SimpleFileVisitor<>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            }
-        });
     }
 }
