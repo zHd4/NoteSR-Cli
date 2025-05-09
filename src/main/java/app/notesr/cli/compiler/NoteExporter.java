@@ -11,6 +11,8 @@ import java.time.format.DateTimeFormatter;
 
 @RequiredArgsConstructor
 class NoteExporter implements Exporter {
+    static final String NOTES_ARRAY_NAME = "notes";
+
     private final JsonGenerator jsonGenerator;
     private final NoteDao noteDao;
     private final DateTimeFormatter dateTimeFormatter;
@@ -19,7 +21,7 @@ class NoteExporter implements Exporter {
     public void export() throws IOException, SQLException {
         try (jsonGenerator) {
             jsonGenerator.writeStartObject();
-            jsonGenerator.writeArrayFieldStart("notes");
+            jsonGenerator.writeArrayFieldStart(NOTES_ARRAY_NAME);
 
             for (Note note : noteDao.getAll()) {
                 writeNote(note);
