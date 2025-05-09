@@ -1,0 +1,108 @@
+package app.notesr.cli.compiler;
+
+import app.notesr.cli.db.dao.DataBlockDao;
+import app.notesr.cli.model.DataBlock;
+import app.notesr.cli.model.FileInfo;
+import app.notesr.cli.util.FileUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static app.notesr.cli.util.ModelGenerator.generateTestDataBlocks;
+import static app.notesr.cli.util.ModelGenerator.generateTestFileInfo;
+import static app.notesr.cli.util.ModelGenerator.generateTestNote;
+import static app.notesr.cli.util.PathUtils.getTempPath;
+import static java.util.UUID.randomUUID;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+class FileDataExporterTest {
+    private static final long MIN_FILE_SIZE = 1024;
+    private static final long MAX_FILE_SIZE = 1024 * 10;
+    private static final int TEST_BLOCK_SIZE = 1000;
+    private static final Random RANDOM = new Random();
+
+    private File outputDir;
+    private DataBlockDao dataBlockDao;
+    private Set<DataBlock> testDataBlocks;
+
+    @BeforeEach
+    void setUp() throws SQLException {
+        outputDir = Path.of(getTempPath(randomUUID().toString()).toString()).toFile();
+        dataBlockDao = mock(DataBlockDao.class);
+
+        FileInfo testFileInfo = generateTestFileInfo(generateTestNote(), RANDOM.nextLong(MIN_FILE_SIZE, MAX_FILE_SIZE));
+        testDataBlocks = generateTestDataBlocks(testFileInfo, TEST_BLOCK_SIZE);
+
+        Set<DataBlock> testDataBlocksWithoutData = testDataBlocks.stream()
+                .map(dataBlock -> DataBlock.builder()
+                        .id(dataBlock.getId())
+                        .fileId(dataBlock.getFileId())
+                        .order(dataBlock.getOrder())
+                        .build())
+                .collect(Collectors.toSet());
+
+        Map<String, DataBlock> testDataBlocksMap = testDataBlocks.stream()
+                        .collect(Collectors.toMap(DataBlock::getId, Function.identity()));
+
+        when(dataBlockDao.getAllDataBlocksWithoutData()).thenReturn(testDataBlocksWithoutData);
+        when(dataBlockDao.getById(anyString())).thenAnswer(invocation -> {
+            String id = invocation.getArgument(0);
+            return testDataBlocksMap.get(id);
+        });
+    }
+
+    @Test
+    void testExport() throws SQLException, IOException {
+        FileDataExporter fileDataExporter = new FileDataExporter(outputDir, dataBlockDao);
+        fileDataExporter.export();
+
+        Map<String, byte[]> expected = testDataBlocks.stream()
+                .collect(Collectors.toMap(DataBlock::getId, DataBlock::getData));
+
+        Map<String, byte[]> actual = readFilesAsBytes(outputDir.toPath());
+        assertFalse(actual.isEmpty(), "The actual map is empty");
+
+        for (String id : expected.keySet()) {
+            assertTrue(actual.containsKey(id), "Id " + id + " not found in the actual map");
+            assertArrayEquals(expected.get(id), actual.get(id), "Data of " + id + " is different");
+        }
+    }
+
+    @AfterEach
+    void tearDown() throws IOException {
+        FileUtils.deleteDir(outputDir.toPath());
+    }
+
+    private static Map<String, byte[]> readFilesAsBytes(Path dirPath) throws IOException {
+        Map<String, byte[]> filesBytesMap = new HashMap<>();
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath)) {
+            for (Path path : stream) {
+                if (Files.isRegularFile(path)) {
+                    byte[] bytes = Files.readAllBytes(path);
+                    filesBytesMap.put(path.getFileName().toString(), bytes);
+                }
+            }
+        }
+
+        return filesBytesMap;
+    }
+}
