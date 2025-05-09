@@ -65,7 +65,7 @@ class FileCryptorTest {
     }
 
     @AfterEach
-    void afterEach() throws IOException {
+    void tearDown() throws IOException {
         if (tempBackupPath != null && Files.exists(tempBackupPath)) {
             Files.delete(tempBackupPath);
         }

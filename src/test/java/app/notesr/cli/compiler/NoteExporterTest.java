@@ -42,7 +42,7 @@ class NoteExporterTest {
     private Set<Note> testNotes;
 
     @BeforeEach
-    void beforeEach() throws SQLException, IOException {
+    void setUp() throws SQLException, IOException {
         outputFile = Path.of(getTempPath(randomUUID() + ".json").toString()).toFile();
 
         JsonFactory jsonFactory = new JsonFactory();
@@ -66,7 +66,7 @@ class NoteExporterTest {
     }
 
     @AfterEach
-    void afterEach() throws IOException {
+    void tearDown() throws IOException {
         if (outputFile.exists()) {
             boolean deleted = outputFile.delete();
 

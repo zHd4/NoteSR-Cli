@@ -41,7 +41,7 @@ class DataBlockDaoTest {
     private Set<DataBlock> testDataBlocks;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
         db = new DbConnection(":memory:");
         dataBlockDao = new DataBlockDao(db);
 

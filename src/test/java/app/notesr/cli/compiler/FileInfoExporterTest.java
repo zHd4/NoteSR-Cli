@@ -57,7 +57,7 @@ class FileInfoExporterTest {
     private Set<DataBlock> testDataBlocks;
 
     @BeforeEach
-    void beforeEach() throws IOException, SQLException {
+    void setUp() throws IOException, SQLException {
         outputFile = Path.of(getTempPath(randomUUID() + ".json").toString()).toFile();
 
         JsonFactory jsonFactory = new JsonFactory();
@@ -95,7 +95,7 @@ class FileInfoExporterTest {
     }
 
     @AfterEach
-    void afterEach() throws IOException {
+    void tearDown() throws IOException {
         if (outputFile.exists()) {
             boolean deleted = outputFile.delete();
 

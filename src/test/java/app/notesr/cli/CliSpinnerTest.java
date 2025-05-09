@@ -28,7 +28,7 @@ class CliSpinnerTest {
     private ByteArrayOutputStream outputStream;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
         cliSpinner = new CliSpinner("Loading", mockLogger);
         outputStream = new ByteArrayOutputStream();
 

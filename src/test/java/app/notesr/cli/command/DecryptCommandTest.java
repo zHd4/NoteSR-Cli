@@ -35,7 +35,7 @@ class DecryptCommandTest {
     private Path tempDir;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
         DecryptCommand decryptCommand = new DecryptCommand();
         cmd = new CommandLine(decryptCommand);
     }

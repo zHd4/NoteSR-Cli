@@ -32,7 +32,7 @@ class FileInfoDaoTest {
     private LinkedHashSet<FileInfo> testFileInfos;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
         db = new DbConnection(":memory:");
 
         fileInfoDao = new FileInfoDao(db);

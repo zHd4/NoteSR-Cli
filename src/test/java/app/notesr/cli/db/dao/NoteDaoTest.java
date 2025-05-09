@@ -26,7 +26,7 @@ class NoteDaoTest {
     private LinkedHashSet<Note> testNotes;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
         db = new DbConnection(":memory:");
 
         noteDao = new NoteDao(db);
