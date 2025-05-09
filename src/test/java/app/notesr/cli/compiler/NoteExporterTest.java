@@ -34,8 +34,6 @@ import static org.mockito.Mockito.when;
 
 class NoteExporterTest {
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-    private static final String NOTES_ARRAY_NAME = "notes";
     private static final int TEST_NOTES_COUNT = 5;
 
     private JsonGenerator jsonGenerator;
@@ -89,7 +87,7 @@ class NoteExporterTest {
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         JsonNode root = objectMapper.readTree(json);
-        JsonNode notesArray = root.get(NOTES_ARRAY_NAME);
+        JsonNode notesArray = root.get(NoteExporter.NOTES_ARRAY_NAME);
 
         return objectMapper.readerFor(new TypeReference<Set<Note>>() { }).readValue(notesArray);
     }
