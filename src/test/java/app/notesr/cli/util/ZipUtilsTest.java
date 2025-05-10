@@ -24,9 +24,9 @@ class ZipUtilsTest {
     private static final String TEMP_EXTRACTED_DIR_PATH = getTempPath(randomUUID().toString()).toString();
     private static final String TEMP_ZIP_PATH = getTempPath(randomUUID() + ".zip").toString();
 
-
+    @Test
     void testZipDirectory() throws IOException {
-        ZipUtils.zipDirectory(DIR_PATH, TEMP_ZIP_PATH, null);
+        ZipUtils.zipDirectory(DIR_PATH, TEMP_ZIP_PATH);
         File zipFile = new File(TEMP_ZIP_PATH);
 
         assertTrue(zipFile.exists(), "Zip file not found");
@@ -56,8 +56,17 @@ class ZipUtilsTest {
     }
 
     @AfterAll
-    public static void afterAll() {
-        removeDir(new File(TEMP_EXTRACTED_DIR_PATH));
+    public static void afterAll() throws IOException {
+        File tempDir = new File(TEMP_EXTRACTED_DIR_PATH);
+        File tempArchive = new File(TEMP_ZIP_PATH);
+
+        if (tempDir.exists()) {
+            removeDir(tempDir);
+        }
+
+        if (tempArchive.exists()) {
+            Files.delete(tempArchive.toPath());
+        }
     }
 
     private static boolean isDirsIdentical(String path1, String path2) {
