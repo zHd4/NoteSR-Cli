@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 @RequiredArgsConstructor
-class FileInfoJsonWriter implements JsonWriter {
+class FileInfoWriter implements Writer {
     static final String FILES_INFOS_ARRAY_NAME = "files_info";
     static final String FILES_DATA_BLOCKS_ARRAY_NAME = "files_data_blocks";
 

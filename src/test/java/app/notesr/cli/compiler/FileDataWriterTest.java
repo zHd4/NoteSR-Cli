@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class FileDataJsonWriterTest {
+class FileDataWriterTest {
     private static final long MIN_FILE_SIZE = 1024;
     private static final long MAX_FILE_SIZE = 1024 * 10;
     private static final int TEST_BLOCK_SIZE = 1000;
@@ -74,8 +74,8 @@ class FileDataJsonWriterTest {
         File outputDir = Path.of(getTempPath(randomUUID().toString()).toString()).toFile();
         tempDir = outputDir;
 
-        FileDataJsonWriter fileDataJsonWriter = new FileDataJsonWriter(outputDir, dataBlockDao);
-        fileDataJsonWriter.write();
+        FileDataWriter fileDataWriter = new FileDataWriter(outputDir, dataBlockDao);
+        fileDataWriter.write();
 
         Map<String, byte[]> expected = testDataBlocks.stream()
                 .collect(Collectors.toMap(DataBlock::getId, DataBlock::getData));
@@ -97,8 +97,8 @@ class FileDataJsonWriterTest {
         when(outputDir.isDirectory()).thenReturn(false);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            FileDataJsonWriter fileDataJsonWriter = new FileDataJsonWriter(outputDir, dataBlockDao);
-            fileDataJsonWriter.write();
+            FileDataWriter fileDataWriter = new FileDataWriter(outputDir, dataBlockDao);
+            fileDataWriter.write();
         }, "An exception was expected but wasn't thrown");
     }
 
@@ -110,8 +110,8 @@ class FileDataJsonWriterTest {
         when(outputDir.mkdir()).thenReturn(false);
 
         assertThrows(IOException.class, () -> {
-            FileDataJsonWriter fileDataJsonWriter = new FileDataJsonWriter(outputDir, dataBlockDao);
-            fileDataJsonWriter.write();
+            FileDataWriter fileDataWriter = new FileDataWriter(outputDir, dataBlockDao);
+            fileDataWriter.write();
         }, "An exception was expected but wasn't thrown");
     }
 

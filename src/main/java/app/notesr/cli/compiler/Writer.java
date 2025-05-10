@@ -3,6 +3,6 @@ package app.notesr.cli.compiler;
 import java.io.IOException;
 import java.sql.SQLException;
 
-interface JsonWriter {
+interface Writer {
     void write() throws IOException, SQLException;
 }

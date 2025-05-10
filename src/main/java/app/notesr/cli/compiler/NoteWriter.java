@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 
 @RequiredArgsConstructor
-class NoteJsonWriter implements JsonWriter {
+class NoteWriter implements Writer {
     static final String NOTES_ARRAY_NAME = "notes";
 
     private final JsonGenerator jsonGenerator;

@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import static java.util.Objects.requireNonNull;
 
 @RequiredArgsConstructor
-class FileDataJsonWriter implements JsonWriter {
+class FileDataWriter implements Writer {
     private final File outputDir;
     private final DataBlockDao dataBlockDao;
 
