@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 @RequiredArgsConstructor
-class FileInfoExporter implements Exporter {
+class FileInfoJsonWriter implements JsonWriter {
     static final String FILES_INFOS_ARRAY_NAME = "files_info";
     static final String FILES_DATA_BLOCKS_ARRAY_NAME = "files_data_blocks";
 
@@ -23,7 +23,7 @@ class FileInfoExporter implements Exporter {
     private final DateTimeFormatter dateTimeFormatter;
 
     @Override
-    public void export() throws IOException, SQLException {
+    public void write() throws IOException, SQLException {
         try (jsonGenerator) {
             jsonGenerator.writeStartObject();
 

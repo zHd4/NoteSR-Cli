@@ -34,7 +34,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class FileDataExporterTest {
+class FileDataJsonWriterTest {
     private static final long MIN_FILE_SIZE = 1024;
     private static final long MAX_FILE_SIZE = 1024 * 10;
     private static final int TEST_BLOCK_SIZE = 1000;
@@ -50,7 +50,7 @@ class FileDataExporterTest {
     }
 
     @Test
-    void testExport() throws SQLException, IOException {
+    void testWrite() throws SQLException, IOException {
         FileInfo testFileInfo = generateTestFileInfo(generateTestNote(), RANDOM.nextLong(MIN_FILE_SIZE, MAX_FILE_SIZE));
         Set<DataBlock> testDataBlocks = generateTestDataBlocks(testFileInfo, TEST_BLOCK_SIZE);
 
@@ -74,8 +74,8 @@ class FileDataExporterTest {
         File outputDir = Path.of(getTempPath(randomUUID().toString()).toString()).toFile();
         tempDir = outputDir;
 
-        FileDataExporter fileDataExporter = new FileDataExporter(outputDir, dataBlockDao);
-        fileDataExporter.export();
+        FileDataJsonWriter fileDataJsonWriter = new FileDataJsonWriter(outputDir, dataBlockDao);
+        fileDataJsonWriter.write();
 
         Map<String, byte[]> expected = testDataBlocks.stream()
                 .collect(Collectors.toMap(DataBlock::getId, DataBlock::getData));
@@ -90,28 +90,28 @@ class FileDataExporterTest {
     }
 
     @Test
-    void testExportWhenOutputDirIsFile() {
+    void testWriteWhenOutputDirIsFile() {
         File outputDir = mock(File.class);
 
         when(outputDir.exists()).thenReturn(true);
         when(outputDir.isDirectory()).thenReturn(false);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            FileDataExporter fileDataExporter = new FileDataExporter(outputDir, dataBlockDao);
-            fileDataExporter.export();
+            FileDataJsonWriter fileDataJsonWriter = new FileDataJsonWriter(outputDir, dataBlockDao);
+            fileDataJsonWriter.write();
         }, "An exception was expected but wasn't thrown");
     }
 
     @Test
-    void testExportWhenMkdirReturnsFalse() {
+    void testWriteWhenMkdirReturnsFalse() {
         File outputDir = mock(File.class);
 
         when(outputDir.exists()).thenReturn(false);
         when(outputDir.mkdir()).thenReturn(false);
 
         assertThrows(IOException.class, () -> {
-            FileDataExporter fileDataExporter = new FileDataExporter(outputDir, dataBlockDao);
-            fileDataExporter.export();
+            FileDataJsonWriter fileDataJsonWriter = new FileDataJsonWriter(outputDir, dataBlockDao);
+            fileDataJsonWriter.write();
         }, "An exception was expected but wasn't thrown");
     }
 

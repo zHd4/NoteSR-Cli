@@ -12,12 +12,12 @@ import java.sql.SQLException;
 import static java.util.Objects.requireNonNull;
 
 @RequiredArgsConstructor
-class FileDataExporter implements Exporter {
+class FileDataJsonWriter implements JsonWriter {
     private final File outputDir;
     private final DataBlockDao dataBlockDao;
 
     @Override
-    public void export() throws IOException, SQLException {
+    public void write() throws IOException, SQLException {
         if (outputDir.exists()) {
             if (!outputDir.isDirectory()) {
                 throw new IllegalArgumentException(outputDir.getAbsolutePath() + " isn't directory");

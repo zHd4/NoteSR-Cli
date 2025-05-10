@@ -28,8 +28,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static app.notesr.cli.compiler.FileInfoExporter.FILES_DATA_BLOCKS_ARRAY_NAME;
-import static app.notesr.cli.compiler.FileInfoExporter.FILES_INFOS_ARRAY_NAME;
+import static app.notesr.cli.compiler.FileInfoJsonWriter.FILES_DATA_BLOCKS_ARRAY_NAME;
+import static app.notesr.cli.compiler.FileInfoJsonWriter.FILES_INFOS_ARRAY_NAME;
 import static app.notesr.cli.util.ModelGenerator.generateTestDataBlocks;
 import static app.notesr.cli.util.ModelGenerator.generateTestFilesInfos;
 import static app.notesr.cli.util.ModelGenerator.generateTestNote;
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class FileInfoExporterTest {
+class FileInfoJsonWriterTest {
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private static final int TEST_FILES_COUNT = 5;
@@ -77,11 +77,11 @@ class FileInfoExporterTest {
     }
 
     @Test
-    void testExport() throws SQLException, IOException {
-        FileInfoExporter fileInfoExporter = new FileInfoExporter(jsonGenerator, fileInfoDao, dataBlockDao,
+    void testWrite() throws SQLException, IOException {
+        FileInfoJsonWriter fileInfoJsonWriter = new FileInfoJsonWriter(jsonGenerator, fileInfoDao, dataBlockDao,
                 DATETIME_FORMATTER);
 
-        fileInfoExporter.export();
+        fileInfoJsonWriter.write();
         String outputFileJsonData = Files.readString(outputFile.toPath());
 
         Set<FileInfo> actualFilesInfos = deserializeResultFileData(outputFileJsonData, FILES_INFOS_ARRAY_NAME,

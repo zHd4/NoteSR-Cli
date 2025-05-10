@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 
 @RequiredArgsConstructor
-class NoteExporter implements Exporter {
+class NoteJsonWriter implements JsonWriter {
     static final String NOTES_ARRAY_NAME = "notes";
 
     private final JsonGenerator jsonGenerator;
@@ -18,7 +18,7 @@ class NoteExporter implements Exporter {
     private final DateTimeFormatter dateTimeFormatter;
 
     @Override
-    public void export() throws IOException, SQLException {
+    public void write() throws IOException, SQLException {
         try (jsonGenerator) {
             jsonGenerator.writeStartObject();
             jsonGenerator.writeArrayFieldStart(NOTES_ARRAY_NAME);

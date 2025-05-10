@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class NoteExporterTest {
+class NoteJsonWriterTest {
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final int TEST_NOTES_COUNT = 5;
 
@@ -55,9 +55,9 @@ class NoteExporterTest {
     }
 
     @Test
-    void testExport() throws SQLException, IOException {
-        NoteExporter noteExporter = new NoteExporter(jsonGenerator, noteDao, DATETIME_FORMATTER);
-        noteExporter.export();
+    void testWrite() throws SQLException, IOException {
+        NoteJsonWriter noteJsonWriter = new NoteJsonWriter(jsonGenerator, noteDao, DATETIME_FORMATTER);
+        noteJsonWriter.write();
 
         String outputFileJsonData = Files.readString(outputFile.toPath());
         Set<Note> actual = deserializeResultFileData(outputFileJsonData);
@@ -87,7 +87,7 @@ class NoteExporterTest {
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         JsonNode root = objectMapper.readTree(json);
-        JsonNode notesArray = root.get(NoteExporter.NOTES_ARRAY_NAME);
+        JsonNode notesArray = root.get(NoteJsonWriter.NOTES_ARRAY_NAME);
 
         return objectMapper.readerFor(new TypeReference<Set<Note>>() { }).readValue(notesArray);
     }
