@@ -1,4 +1,4 @@
-package app.notesr.cli.crypto.exception;
+package app.notesr.cli.crypto;
 
 public class FileEncryptionException extends Exception {
     public FileEncryptionException(Exception e) {

@@ -3,7 +3,7 @@ package app.notesr.cli.command;
 import app.notesr.cli.crypto.FileCryptor;
 import app.notesr.cli.crypto.CryptoKey;
 import app.notesr.cli.crypto.CryptoKeyUtils;
-import app.notesr.cli.crypto.exception.FileDecryptionException;
+import app.notesr.cli.crypto.FileDecryptionException;
 import app.notesr.cli.exception.BackupDbException;
 import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.parser.BackupParser;

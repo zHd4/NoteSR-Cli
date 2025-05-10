@@ -1,7 +1,5 @@
 package app.notesr.cli.crypto;
 
-import app.notesr.cli.crypto.exception.FileDecryptionException;
-import app.notesr.cli.crypto.exception.FileEncryptionException;
 import lombok.AllArgsConstructor;
 
 import javax.crypto.Cipher;
