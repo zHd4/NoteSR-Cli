@@ -1,5 +1,6 @@
 package app.notesr.cli.parser;
 
+import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.parser.v2.ParserV2;
 import app.notesr.cli.parser.v1.ParserV1;
 import app.notesr.cli.util.ZipUtils;

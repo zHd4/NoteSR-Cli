@@ -3,6 +3,8 @@ package app.notesr.cli.parser;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.DataBlockDao;
 import app.notesr.cli.db.dao.FileInfoDao;
+import app.notesr.cli.exception.BackupDbException;
+import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import com.fasterxml.jackson.core.JsonParser;
