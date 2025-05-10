@@ -28,6 +28,7 @@ import static app.notesr.cli.util.PathUtils.getTempPath;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -37,19 +38,21 @@ class FileDataExporterTest {
     private static final long MIN_FILE_SIZE = 1024;
     private static final long MAX_FILE_SIZE = 1024 * 10;
     private static final int TEST_BLOCK_SIZE = 1000;
+
     private static final Random RANDOM = new Random();
 
-    private File outputDir;
+    private File tempDir;
     private DataBlockDao dataBlockDao;
-    private Set<DataBlock> testDataBlocks;
 
     @BeforeEach
-    void setUp() throws SQLException {
-        outputDir = Path.of(getTempPath(randomUUID().toString()).toString()).toFile();
+    void setUp() {
         dataBlockDao = mock(DataBlockDao.class);
+    }
 
+    @Test
+    void testExport() throws SQLException, IOException {
         FileInfo testFileInfo = generateTestFileInfo(generateTestNote(), RANDOM.nextLong(MIN_FILE_SIZE, MAX_FILE_SIZE));
-        testDataBlocks = generateTestDataBlocks(testFileInfo, TEST_BLOCK_SIZE);
+        Set<DataBlock> testDataBlocks = generateTestDataBlocks(testFileInfo, TEST_BLOCK_SIZE);
 
         Set<DataBlock> testDataBlocksWithoutData = testDataBlocks.stream()
                 .map(dataBlock -> DataBlock.builder()
@@ -60,17 +63,17 @@ class FileDataExporterTest {
                 .collect(Collectors.toSet());
 
         Map<String, DataBlock> testDataBlocksMap = testDataBlocks.stream()
-                        .collect(Collectors.toMap(DataBlock::getId, Function.identity()));
+                .collect(Collectors.toMap(DataBlock::getId, Function.identity()));
 
         when(dataBlockDao.getAllDataBlocksWithoutData()).thenReturn(testDataBlocksWithoutData);
         when(dataBlockDao.getById(anyString())).thenAnswer(invocation -> {
             String id = invocation.getArgument(0);
             return testDataBlocksMap.get(id);
         });
-    }
 
-    @Test
-    void testExport() throws SQLException, IOException {
+        File outputDir = Path.of(getTempPath(randomUUID().toString()).toString()).toFile();
+        tempDir = outputDir;
+
         FileDataExporter fileDataExporter = new FileDataExporter(outputDir, dataBlockDao);
         fileDataExporter.export();
 
@@ -86,9 +89,37 @@ class FileDataExporterTest {
         }
     }
 
+    @Test
+    void testExportWhenOutputDirIsFile() {
+        File outputDir = mock(File.class);
+
+        when(outputDir.exists()).thenReturn(true);
+        when(outputDir.isDirectory()).thenReturn(false);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            FileDataExporter fileDataExporter = new FileDataExporter(outputDir, dataBlockDao);
+            fileDataExporter.export();
+        }, "An exception was expected but wasn't thrown");
+    }
+
+    @Test
+    void testExportWhenMkdirReturnsFalse() {
+        File outputDir = mock(File.class);
+
+        when(outputDir.exists()).thenReturn(false);
+        when(outputDir.mkdir()).thenReturn(false);
+
+        assertThrows(IOException.class, () -> {
+            FileDataExporter fileDataExporter = new FileDataExporter(outputDir, dataBlockDao);
+            fileDataExporter.export();
+        }, "An exception was expected but wasn't thrown");
+    }
+
     @AfterEach
     void tearDown() throws IOException {
-        FileUtils.deleteDir(outputDir.toPath());
+        if (tempDir != null && tempDir.exists()) {
+            FileUtils.deleteDir(tempDir.toPath());
+        }
     }
 
     private static Map<String, byte[]> readFilesAsBytes(Path dirPath) throws IOException {
