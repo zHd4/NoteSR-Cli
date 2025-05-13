@@ -30,7 +30,7 @@ class BackupCompilerTest {
         String uuid = randomUUID().toString();
 
         dbPath = getFixturePath("backup.db");
-        outputPath = getTempPath( uuid + ".zip");
+        outputPath = getTempPath(uuid + ".zip");
         tempDirPath = getTempPath(uuid + "_temp");
     }
 
