@@ -1,6 +1,7 @@
 package app.notesr.cli.util;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,8 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
 
-import static app.notesr.cli.util.PathUtils.getTempPath;
-import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -19,15 +18,18 @@ class WiperTest {
     private static final int MIN_FILE_SIZE = 1024;
     private static final int MAX_FILE_SIZE = 1024 * 10;
 
+    @TempDir
+    private Path tempDir;
+
     @Test
     void testWipeFile() throws IOException {
-        String testFilePath = getTempPath(randomUUID().toString()).toString();
+        Path testFilePath = tempDir.resolve("temp_file");
         byte[] testFileContent = new byte[RANDOM.nextInt(MIN_FILE_SIZE, MAX_FILE_SIZE)];
 
         RANDOM.nextBytes(testFileContent);
-        Files.write(Path.of(testFilePath), testFileContent);
+        Files.write(testFilePath, testFileContent);
 
-        File testFile = new File(testFilePath);
+        File testFile = testFilePath.toFile();
         boolean result = Wiper.wipeFile(testFile);
 
         assertTrue(result, "Result must be 'true'");
@@ -36,18 +38,16 @@ class WiperTest {
 
     @Test
     void testWipeDir() throws IOException {
-        String testDirPath = getTempPath(randomUUID().toString()).toString();
-        String testFilePath = Path.of(testDirPath, randomUUID().toString()).toString();
+        Path testDirPath = tempDir.resolve("temp_dir");
+        Path testFilePath = testDirPath.resolve("test_file");
 
         byte[] testFileContent = new byte[RANDOM.nextInt(MIN_FILE_SIZE, MAX_FILE_SIZE)];
         RANDOM.nextBytes(testFileContent);
 
-        File testDir = new File(testDirPath);
-        File testFile = new File(testFilePath);
+        File testDir = testDirPath.toFile();
+        File testFile = testFilePath.toFile();
 
-        boolean isDirCreated = testDir.mkdir();
-        assertTrue(isDirCreated, "Cannot create test directory " + testDirPath);
-
+        Files.createDirectory(testDirPath);
         Files.write(testFile.toPath(), testFileContent);
 
         boolean result = Wiper.wipeDir(testDir);
