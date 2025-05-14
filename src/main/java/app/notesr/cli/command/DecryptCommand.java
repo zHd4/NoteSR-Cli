@@ -9,7 +9,6 @@ import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.parser.BackupParser;
 import app.notesr.cli.parser.BackupParserException;
 import app.notesr.cli.parser.UnexpectedFieldException;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 
@@ -28,7 +27,6 @@ import static app.notesr.cli.util.Wiper.wipeDir;
 import static app.notesr.cli.util.Wiper.wipeFile;
 
 @Slf4j
-@Getter
 @CommandLine.Command(name = "decrypt",
         description = "Decrypts exported NoteSR .bak file and converts it to a SQLite database.")
 public final class DecryptCommand implements Command {
