@@ -61,48 +61,48 @@ public final class DecryptCommand implements Command {
 
             log.info("Saved to: {}", outputFile.getAbsolutePath());
             return SUCCESS;
-        } catch (HandledException e) {
+        } catch (CommandHandlingException e) {
             return e.getExitCode();
         }
     }
 
-    private File getEncryptedBackupFile() throws HandledException {
+    private File getEncryptedBackupFile() throws CommandHandlingException {
         try {
             return getFile(this.encryptedBackupPath);
         } catch (NoSuchFileException e) {
             log.error(e.getMessage());
-            throw new HandledException(FILE_RW_ERROR);
+            throw new CommandHandlingException(FILE_RW_ERROR);
         }
     }
 
-    private File getKeyFile() throws HandledException {
+    private File getKeyFile() throws CommandHandlingException {
         try {
             return getFile(this.keyPath);
         } catch (NoSuchFileException e) {
             log.error(e.getMessage());
-            throw new HandledException(FILE_RW_ERROR);
+            throw new CommandHandlingException(FILE_RW_ERROR);
         }
     }
 
-    private File prepareOutputFile(File encryptedBackupFile) throws HandledException {
+    private File prepareOutputFile(File encryptedBackupFile) throws CommandHandlingException {
         File outputFile = getOutputFilePath(encryptedBackupFile.getAbsolutePath(), outputFilePath).toFile();
         if (outputFile.exists()) {
             log.error("{}: file already exists", outputFile.getAbsolutePath());
-            throw new HandledException(DB_CONNECTION_ERROR);
+            throw new CommandHandlingException(DB_CONNECTION_ERROR);
         }
         return outputFile;
     }
 
-    private CryptoKey readCryptoKey(File keyFile) throws HandledException {
+    private CryptoKey readCryptoKey(File keyFile) throws CommandHandlingException {
         try {
             return getCryptoKey(keyFile);
         } catch (IOException e) {
             log.error("{}: an error occurred while reading", keyPath);
-            throw new HandledException(FILE_RW_ERROR);
+            throw new CommandHandlingException(FILE_RW_ERROR);
         }
     }
 
-    private File decryptBackup(File encryptedBackup, CryptoKey cryptoKey) throws HandledException {
+    private File decryptBackup(File encryptedBackup, CryptoKey cryptoKey) throws CommandHandlingException {
         try {
             log.info("Decrypting {}", encryptedBackupPath);
 
@@ -121,11 +121,11 @@ public final class DecryptCommand implements Command {
             throw new RuntimeException(e); // Already validated
         } catch (FileDecryptionException e) {
             log.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
-            throw new HandledException(DECRYPTION_ERROR);
+            throw new CommandHandlingException(DECRYPTION_ERROR);
         }
     }
 
-    private BackupParser parseBackup(File tempDecryptedBackup, File outputFile) throws HandledException {
+    private BackupParser parseBackup(File tempDecryptedBackup, File outputFile) throws CommandHandlingException {
         try {
             log.info("Parsing {}", encryptedBackupPath);
             BackupParser parser = new BackupParser(tempDecryptedBackup.toPath(), outputFile.toPath());
@@ -134,14 +134,14 @@ public final class DecryptCommand implements Command {
             return parser;
         } catch (BackupIOException | BackupParserException | UnexpectedFieldException e) {
             log.error("{}: failed to parse, details:\n{}", encryptedBackupPath, e.getMessage());
-            throw new HandledException(FILE_RW_ERROR);
+            throw new CommandHandlingException(FILE_RW_ERROR);
         } catch (BackupDbException e) {
             log.error("Failed to write data to database, details:\n{}", e.getMessage());
-            throw new HandledException(DB_WRITING_ERROR);
+            throw new CommandHandlingException(DB_WRITING_ERROR);
         }
     }
 
-    private void cleanupTemporaryFiles(File... files) throws HandledException {
+    private void cleanupTemporaryFiles(File... files) throws CommandHandlingException {
         try {
             log.info("Cleaning temporary files");
 
@@ -158,7 +158,7 @@ public final class DecryptCommand implements Command {
             log.info("Cleaning finished successfully");
         } catch (IOException e) {
             log.error("Unknown error, details:\n{}", e.getMessage());
-            throw new HandledException(UNKNOWN_ERROR);
+            throw new CommandHandlingException(UNKNOWN_ERROR);
         }
     }
 

@@ -3,10 +3,10 @@ package app.notesr.cli.command;
 import lombok.Getter;
 
 @Getter
-class HandledException extends Exception {
+class CommandHandlingException extends Exception {
     private final int exitCode;
 
-    HandledException(int exitCode) {
+    CommandHandlingException(int exitCode) {
         this.exitCode = exitCode;
     }
 }
