@@ -1,25 +1,24 @@
 package app.notesr.cli.compiler;
 
 import app.notesr.cli.exception.BackupIOException;
-import app.notesr.cli.util.FileUtils;
 import app.notesr.cli.util.ZipUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
-import static app.notesr.cli.util.PathUtils.getTempPath;
-import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BackupCompilerTest {
     private static final String NOTESR_VERSION = "5.1";
+
+    @TempDir
+    private Path tempDir;
 
     private Path dbPath;
     private Path outputPath;
@@ -27,11 +26,9 @@ class BackupCompilerTest {
 
     @BeforeEach
     void setUp() {
-        String uuid = randomUUID().toString();
-
         dbPath = getFixturePath("backup.db");
-        outputPath = getTempPath(uuid + ".zip");
-        tempDirPath = getTempPath(uuid + "_temp");
+        outputPath = tempDir.resolve("output.zip");
+        tempDirPath = tempDir.resolve("output_temp");
     }
 
     @Test
@@ -49,20 +46,8 @@ class BackupCompilerTest {
 
     @Test
     void testRunWhenDbFileDoesNotExists() {
-        Path wrongDbPath = getTempPath(randomUUID().toString());
+        Path wrongDbPath = Path.of("not_path");
         BackupCompiler backupCompiler = new BackupCompiler(wrongDbPath, outputPath, NOTESR_VERSION);
-
         assertThrows(BackupIOException.class, backupCompiler::run);
-    }
-
-    @AfterEach
-    void tearDown() throws IOException {
-        if (tempDirPath != null && Files.exists(tempDirPath)) {
-            FileUtils.deleteDir(tempDirPath);
-        }
-
-        if (outputPath != null && Files.exists(outputPath)) {
-            Files.delete(outputPath);
-        }
     }
 }
