@@ -10,8 +10,6 @@ import java.nio.file.Path;
 import java.util.Random;
 
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
-import static app.notesr.cli.util.PathUtils.getTempPath;
-import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -47,7 +45,7 @@ class ZipUtilsTest {
 
     @Test
     void testIsZipArchive() throws IOException {
-        File nonZipFile = getTempPath(randomUUID().toString()).toFile();
+        File nonZipFile = tempDir.resolve("file").toFile();
         byte[] nonZipFileData = new byte[1024];
 
         RANDOM.nextBytes(nonZipFileData);
