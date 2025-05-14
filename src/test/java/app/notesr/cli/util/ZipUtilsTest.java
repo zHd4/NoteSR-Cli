@@ -1,7 +1,7 @@
 package app.notesr.cli.util;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,24 +21,28 @@ class ZipUtilsTest {
     private static final String DIR_PATH = getFixturePath("exported").toString();
     private static final String ZIP_PATH = getFixturePath("exported.zip").toString();
 
-    private static final String TEMP_EXTRACTED_DIR_PATH = getTempPath(randomUUID().toString()).toString();
-    private static final String TEMP_ZIP_PATH = getTempPath(randomUUID() + ".zip").toString();
+    @TempDir
+    private Path tempDir;
 
     @Test
     void testZipDirectory() throws IOException {
-        ZipUtils.zipDirectory(DIR_PATH, TEMP_ZIP_PATH);
-        File zipFile = new File(TEMP_ZIP_PATH);
+        Path tempZipPath = tempDir.resolve("test-archive.zip");
+
+        ZipUtils.zipDirectory(DIR_PATH, tempZipPath.toString());
+        File zipFile = tempZipPath.toFile();
 
         assertTrue(zipFile.exists(), "Zip file not found");
     }
 
     @Test
     void testUnzip() throws IOException {
-        ZipUtils.unzip(ZIP_PATH, TEMP_EXTRACTED_DIR_PATH);
-        File dir = new File(TEMP_EXTRACTED_DIR_PATH);
+        Path tempOutputDirPath = tempDir.resolve("output");
+
+        ZipUtils.unzip(ZIP_PATH, tempOutputDirPath.toString());
+        File dir = tempOutputDirPath.toFile();
 
         assertTrue(dir.exists(), "Directory " + dir.getAbsolutePath() + " not found");
-        assertTrue(isDirsIdentical(DIR_PATH, TEMP_EXTRACTED_DIR_PATH), "Dirs not identical");
+        assertTrue(isDirsIdentical(DIR_PATH, tempOutputDirPath.toString()), "Dirs not identical");
     }
 
     @Test
@@ -53,20 +57,6 @@ class ZipUtilsTest {
         assertFalse(ZipUtils.isZipArchive(DIR_PATH));
         assertTrue(ZipUtils.isZipArchive(ZIP_PATH));
         assertTrue(nonZipFile.delete());
-    }
-
-    @AfterAll
-    public static void afterAll() throws IOException {
-        File tempDir = new File(TEMP_EXTRACTED_DIR_PATH);
-        File tempArchive = new File(TEMP_ZIP_PATH);
-
-        if (tempDir.exists()) {
-            removeDir(tempDir);
-        }
-
-        if (tempArchive.exists()) {
-            Files.delete(tempArchive.toPath());
-        }
     }
 
     private static boolean isDirsIdentical(String path1, String path2) {
@@ -100,21 +90,5 @@ class ZipUtilsTest {
         }
 
         return true;
-    }
-
-    private static void removeDir(File dir) {
-        if (dir.isDirectory()) {
-            File[] children = dir.listFiles();
-
-            if (children != null) {
-                for (File child : children) {
-                    removeDir(child);
-                }
-            }
-        }
-
-        if (!dir.delete()) {
-            throw new RuntimeException("Cannot delete directory " + dir.getAbsolutePath());
-        }
     }
 }
