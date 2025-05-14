@@ -27,7 +27,6 @@ import static app.notesr.cli.command.DecryptCommand.SUCCESS;
 import static app.notesr.cli.util.DbUtils.serializeTableAsJson;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
-import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -68,7 +67,7 @@ class DecryptCommandTest {
     void testWithInvalidKeyAsString() throws IOException {
         String invalidKey = "TEST_INVALID_KEY";
 
-        Path invalidKeyPath = tempDir.resolve(randomUUID() + ".txt");
+        Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
         Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2));
 
         Files.writeString(invalidKeyPath, invalidKey);
@@ -80,8 +79,9 @@ class DecryptCommandTest {
     @Test
     void testWithInvalidKeyAsBinary() throws IOException {
         byte[] invalidKey = new byte[1024];
+        RANDOM.nextBytes(invalidKey);
 
-        Path invalidKeyPath = tempDir.resolve(randomUUID() + ".txt");
+        Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
         Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2));
 
         Files.write(invalidKeyPath, invalidKey);
