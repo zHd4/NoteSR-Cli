@@ -12,9 +12,9 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,8 +26,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 import static app.notesr.cli.util.ModelGenerator.generateTestNotes;
-import static app.notesr.cli.util.PathUtils.getTempPath;
-import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -36,6 +34,9 @@ class NoteWriterTest {
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final int TEST_NOTES_COUNT = 5;
 
+    @TempDir
+    private Path tempDir;
+
     private JsonGenerator jsonGenerator;
     private File outputFile;
     private NoteDao noteDao;
@@ -43,7 +44,7 @@ class NoteWriterTest {
 
     @BeforeEach
     void setUp() throws SQLException, IOException {
-        outputFile = Path.of(getTempPath(randomUUID() + ".json").toString()).toFile();
+        outputFile = tempDir.resolve("test.json").toFile();
 
         JsonFactory jsonFactory = new JsonFactory();
         jsonGenerator = jsonFactory.createGenerator(outputFile, JsonEncoding.UTF8);
@@ -63,17 +64,6 @@ class NoteWriterTest {
         Set<Note> actual = deserializeResultFileData(outputFileJsonData);
 
         assertEquals(testNotes, actual, "Notes are different");
-    }
-
-    @AfterEach
-    void tearDown() throws IOException {
-        if (outputFile.exists()) {
-            boolean deleted = outputFile.delete();
-
-            if (!deleted) {
-                throw new IOException("Cannot delete temp file " + outputFile.getAbsolutePath());
-            }
-        }
     }
 
     private Set<Note> deserializeResultFileData(String json) throws IOException {
