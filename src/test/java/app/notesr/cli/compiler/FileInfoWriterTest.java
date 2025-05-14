@@ -14,9 +14,9 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,8 +33,6 @@ import static app.notesr.cli.compiler.FileInfoWriter.FILES_INFOS_ARRAY_NAME;
 import static app.notesr.cli.util.ModelGenerator.generateTestDataBlocks;
 import static app.notesr.cli.util.ModelGenerator.generateTestFilesInfos;
 import static app.notesr.cli.util.ModelGenerator.generateTestNote;
-import static app.notesr.cli.util.PathUtils.getTempPath;
-import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -47,6 +45,9 @@ class FileInfoWriterTest {
     private static final long MIN_FILE_SIZE = 1024;
     private static final long MAX_FILE_SIZE = 1024 * 10;
 
+    @TempDir
+    private Path tempDir;
+
     private JsonGenerator jsonGenerator;
     private File outputFile;
 
@@ -58,7 +59,7 @@ class FileInfoWriterTest {
 
     @BeforeEach
     void setUp() throws IOException, SQLException {
-        outputFile = Path.of(getTempPath(randomUUID() + ".json").toString()).toFile();
+        outputFile = tempDir.resolve("output.json").toFile();
 
         JsonFactory jsonFactory = new JsonFactory();
         jsonGenerator = jsonFactory.createGenerator(outputFile, JsonEncoding.UTF8);
@@ -92,17 +93,6 @@ class FileInfoWriterTest {
 
         assertEquals(testFilesInfos, actualFilesInfos, "Files infos are different");
         assertEquals(testDataBlocks, actualDataBlocks, "Data blocks infos are different");
-    }
-
-    @AfterEach
-    void tearDown() throws IOException {
-        if (outputFile.exists()) {
-            boolean deleted = outputFile.delete();
-
-            if (!deleted) {
-                throw new IOException("Cannot delete temp file " + outputFile.getAbsolutePath());
-            }
-        }
     }
 
     private <T> Set<T> deserializeResultFileData(String json, String arrayName, TypeReference<Set<T>> typeReference)
