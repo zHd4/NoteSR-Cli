@@ -4,19 +4,17 @@ import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
-import app.notesr.cli.util.FileUtils;
 import app.notesr.cli.util.mapper.DataBlocksJsonMapper;
 import app.notesr.cli.util.mapper.FilesInfosJsonMapper;
 import app.notesr.cli.util.mapper.NotesJsonMapper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.List;
@@ -24,9 +22,7 @@ import java.util.List;
 import static app.notesr.cli.util.DbUtils.serializeTableAsJson;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
-import static app.notesr.cli.util.PathUtils.getTempPath;
 import static java.util.Objects.requireNonNull;
-import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BackupParserIntegrationTest {
@@ -42,15 +38,16 @@ class BackupParserIntegrationTest {
     private static final String FILES_INFOS_TABLE_NAME = "files_info";
     private static final String DATA_BLOCKS_TABLE_NAME = "data_blocks";
 
+    @TempDir
+    private Path tempDir;
+
     private Path parserTempDirPath;
     private Path dbPath;
 
     @BeforeEach
     void setUp() {
-        String uuid = randomUUID().toString();
-
-        parserTempDirPath = Path.of(getTempPath(uuid) + "_temp");
-        dbPath = Path.of(getTempPath(uuid) + ".db");
+        parserTempDirPath = tempDir.resolve("parser_temp");
+        dbPath = tempDir.resolve("test.db");
     }
 
     @ParameterizedTest
@@ -86,17 +83,6 @@ class BackupParserIntegrationTest {
         assertEquals(expectedNotes, actualNotes, "Notes are different");
         assertEquals(expectedFilesInfos, actualFilesInfos, "Files infos are different");
         assertEquals(expectedDataBlocks, actualDataBlocks, "Data blocks are different");
-    }
-
-    @AfterEach
-    void tearDown() throws IOException {
-        if (dbPath.toFile().exists()) {
-            Files.delete(dbPath);
-        }
-
-        if (parserTempDirPath.toFile().exists()) {
-            FileUtils.deleteDir(parserTempDirPath);
-        }
     }
 
     private static String getPathOfFixtureByName(String name, String formatVersion) {
