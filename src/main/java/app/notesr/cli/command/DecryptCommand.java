@@ -96,6 +96,9 @@ public final class DecryptCommand implements Command {
     private CryptoKey readCryptoKey(File keyFile) throws CommandHandlingException {
         try {
             return getCryptoKey(keyFile);
+        } catch (NumberFormatException e) {
+            log.error("{}: invalid key", keyPath);
+            throw new CommandHandlingException(FILE_RW_ERROR);
         } catch (IOException e) {
             log.error("{}: an error occurred while reading", keyPath);
             throw new CommandHandlingException(FILE_RW_ERROR);
@@ -162,7 +165,7 @@ public final class DecryptCommand implements Command {
         }
     }
 
-    private CryptoKey getCryptoKey(File keyFile) throws IOException {
+    private CryptoKey getCryptoKey(File keyFile) throws IOException, NumberFormatException {
         String hexKey = Files.readString(keyFile.toPath());
         return CryptoKeyUtils.hexToCryptoKey(hexKey, KEY_GENERATOR_ALGORITHM);
     }
