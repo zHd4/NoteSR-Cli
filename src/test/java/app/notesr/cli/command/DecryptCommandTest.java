@@ -16,19 +16,27 @@ import org.junit.jupiter.params.provider.ValueSource;
 import picocli.CommandLine;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Random;
 
 import static app.notesr.cli.command.DecryptCommand.FILE_RW_ERROR;
 import static app.notesr.cli.command.DecryptCommand.SUCCESS;
 import static app.notesr.cli.util.DbUtils.serializeTableAsJson;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DecryptCommandTest {
+    private static final String FORMAT_V1 = "v1";
+    private static final String FORMAT_V2 = "v2";
+
+    private static final Random RANDOM = new Random();
+
     private CommandLine cmd;
 
     @TempDir
@@ -56,8 +64,34 @@ class DecryptCommandTest {
         assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
     }
 
+    @Test
+    void testWithInvalidKeyAsString() throws IOException {
+        String invalidKey = "TEST_INVALID_KEY";
+
+        Path invalidKeyPath = tempDir.resolve(randomUUID() + ".txt");
+        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2));
+
+        Files.writeString(invalidKeyPath, invalidKey);
+        int exitCode = cmd.execute(backupPath.toString(), invalidKeyPath.toString());
+
+        assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
+    }
+
+    @Test
+    void testWithInvalidKeyAsBinary() throws IOException {
+        byte[] invalidKey = new byte[1024];
+
+        Path invalidKeyPath = tempDir.resolve(randomUUID() + ".txt");
+        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2));
+
+        Files.write(invalidKeyPath, invalidKey);
+        int exitCode = cmd.execute(backupPath.toString(), invalidKeyPath.toString());
+
+        assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
+    }
+
     @ParameterizedTest
-    @ValueSource(strings = {"v1", "v2"})
+    @ValueSource(strings = {FORMAT_V1, FORMAT_V2})
     void testWithAllArgs(String formatVersion) throws IOException, SQLException {
         final String notesTableName = "notes";
         final String filesInfosTableName = "files_info";
