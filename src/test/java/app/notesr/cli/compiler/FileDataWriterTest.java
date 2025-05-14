@@ -3,10 +3,9 @@ package app.notesr.cli.compiler;
 import app.notesr.cli.db.dao.DataBlockDao;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
-import app.notesr.cli.util.FileUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +23,6 @@ import java.util.stream.Collectors;
 import static app.notesr.cli.util.ModelGenerator.generateTestDataBlocks;
 import static app.notesr.cli.util.ModelGenerator.generateTestFileInfo;
 import static app.notesr.cli.util.ModelGenerator.generateTestNote;
-import static app.notesr.cli.util.PathUtils.getTempPath;
-import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,7 +38,9 @@ class FileDataWriterTest {
 
     private static final Random RANDOM = new Random();
 
-    private File tempDir;
+    @TempDir
+    private Path tempDir;
+
     private DataBlockDao dataBlockDao;
 
     @BeforeEach
@@ -71,8 +70,7 @@ class FileDataWriterTest {
             return testDataBlocksMap.get(id);
         });
 
-        File outputDir = Path.of(getTempPath(randomUUID().toString()).toString()).toFile();
-        tempDir = outputDir;
+        File outputDir = tempDir.resolve("output").toFile();
 
         FileDataWriter fileDataWriter = new FileDataWriter(outputDir, dataBlockDao);
         fileDataWriter.write();
@@ -113,13 +111,6 @@ class FileDataWriterTest {
             FileDataWriter fileDataWriter = new FileDataWriter(outputDir, dataBlockDao);
             fileDataWriter.write();
         }, "An exception was expected but wasn't thrown");
-    }
-
-    @AfterEach
-    void tearDown() throws IOException {
-        if (tempDir != null && tempDir.exists()) {
-            FileUtils.deleteDir(tempDir.toPath());
-        }
     }
 
     private static Map<String, byte[]> readFilesAsBytes(Path dirPath) throws IOException {
