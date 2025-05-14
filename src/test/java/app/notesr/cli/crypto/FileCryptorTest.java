@@ -1,14 +1,12 @@
 package app.notesr.cli.crypto;
 
-import app.notesr.cli.util.PathUtils;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,11 +14,11 @@ import java.security.NoSuchAlgorithmException;
 import static app.notesr.cli.crypto.FileCryptor.KEY_GENERATOR_ALGORITHM;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
-import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileCryptorTest {
-    private Path tempBackupPath;
+    @TempDir
+    private Path tempDir;
 
     @ParameterizedTest
     @ValueSource(strings = {"v1", "v2"})
@@ -29,7 +27,7 @@ class FileCryptorTest {
         FileInputStream inputStream = new FileInputStream(getFixturePath(backupFormatVersion
                 + ".notesr.bak.decrypted").toString());
 
-        tempBackupPath = PathUtils.getTempPath("test-encrypted-" + randomUUID());
+        Path tempBackupPath = tempDir.resolve("encrypted-test-file");
         FileOutputStream outputStream = new FileOutputStream(tempBackupPath.toString());
 
         FileCryptor decryptor = new FileCryptor(getCryptoKey());
@@ -49,7 +47,7 @@ class FileCryptorTest {
         FileInputStream inputStream = new FileInputStream(
                 getFixturePath(String.format("encrypted-%s.notesr.bak", backupFormatVersion)).toString());
 
-        tempBackupPath = PathUtils.getTempPath("test-decrypted-" + randomUUID());
+        Path tempBackupPath = tempDir.resolve("decrypted-test-file");
         FileOutputStream outputStream = new FileOutputStream(tempBackupPath.toString());
 
         FileCryptor decryptor = new FileCryptor(getCryptoKey());
@@ -60,13 +58,6 @@ class FileCryptorTest {
         String actualHash = computeSha256(tempBackupPath.toString());
 
         assertEquals(expectedHash, actualHash, "Decrypted backup hash not matching with expected");
-    }
-
-    @AfterEach
-    void tearDown() throws IOException {
-        if (tempBackupPath != null && Files.exists(tempBackupPath)) {
-            Files.delete(tempBackupPath);
-        }
     }
 
     private CryptoKey getCryptoKey() throws IOException {
