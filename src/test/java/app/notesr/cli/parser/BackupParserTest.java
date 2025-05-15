@@ -25,7 +25,7 @@ import static app.notesr.cli.util.FixtureUtils.readFixture;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BackupParserIntegrationTest {
+class BackupParserTest {
     private static final String BASE_FIXTURES_PATH = "parser";
 
     private static final String NOTES_FIXTURE_NAME = "expected-notes.json";
