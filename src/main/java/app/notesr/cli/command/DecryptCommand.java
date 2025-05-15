@@ -150,10 +150,10 @@ public final class DecryptCommand implements Command {
 
             for (File file : files) {
                 if (file.exists()) {
-                    boolean success = file.isFile() ? wipeFile(file) : wipeDir(file);
-
-                    if (!success) {
-                        throw new IOException(file.getAbsolutePath() + ": failed to remove");
+                    if (file.isFile()) {
+                        wipeFile(file);
+                    } else {
+                        wipeDir(file);
                     }
                 }
             }

@@ -5,46 +5,47 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
 @Slf4j
 public class Wiper {
     private static final int LOOPS_COUNT = 6;
 
-    public static boolean wipeDir(File dir) throws IOException {
-        if (dir == null || !dir.isDirectory()) {
-            return false;
+    public static void wipeDir(File dir) throws IOException {
+        if (dir == null) {
+            throw new NullPointerException("dir is null");
         }
 
-        File[] files = dir.listFiles();
-        if (files == null) {
-            return false;
+        if (!dir.isDirectory()) {
+            throw new IOException(dir.getAbsolutePath() + " is not a directory");
         }
 
-        boolean success = true;
-
-        for (File file : files) {
-            if (file.isDirectory()) {
-                boolean subdirCleared = !file.exists() || wipeDir(file);
-                boolean subdirDeleted = !file.exists() || wipeFile(file);
-
-                success &= subdirCleared;
-                success &= subdirDeleted;
-            } else {
-                boolean fileDeleted = !file.exists() || wipeFile(file);
-                success &= fileDeleted;
-            }
+        try (Stream<Path> paths = Files.list(dir.toPath())) {
+            paths.forEach(path -> {
+                try {
+                    if (Files.isDirectory(path)) {
+                        wipeDir(path.toFile());
+                        Files.delete(path);
+                    } else {
+                        wipeFile(path.toFile());
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         }
 
-        boolean dirDeleted = !dir.exists() || dir.delete();
-        return success && dirDeleted;
+        Files.delete(dir.toPath());
     }
 
-    public static boolean wipeFile(File file) throws IOException {
+    public static void wipeFile(File file) throws IOException {
         for (int i = 0; i < LOOPS_COUNT; i++) {
             wipeFileData(file);
         }
 
-        return file.delete();
+        Files.delete(file.toPath());
     }
 
     private static void wipeFileData(File file) throws IOException {

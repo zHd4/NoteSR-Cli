@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WiperTest {
     private static final Random RANDOM = new Random();
@@ -30,9 +29,8 @@ class WiperTest {
         Files.write(testFilePath, testFileContent);
 
         File testFile = testFilePath.toFile();
-        boolean result = Wiper.wipeFile(testFile);
+        Wiper.wipeFile(testFile);
 
-        assertTrue(result, "Result must be 'true'");
         assertFalse(testFile.exists(), "File must be wiped");
     }
 
@@ -50,8 +48,7 @@ class WiperTest {
         Files.createDirectory(testDirPath);
         Files.write(testFile.toPath(), testFileContent);
 
-        boolean result = Wiper.wipeDir(testDir);
-        assertTrue(result, "Result must be 'true'");
+        Wiper.wipeDir(testDir);
 
         assertFalse(testDir.exists(), "Dir must be wiped");
         assertFalse(testFile.exists(), "File must be wiped");
