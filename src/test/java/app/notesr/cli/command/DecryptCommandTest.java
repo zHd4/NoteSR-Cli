@@ -18,10 +18,12 @@ import picocli.CommandLine;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 
+import static app.notesr.cli.command.DecryptCommand.DECRYPTION_ERROR;
 import static app.notesr.cli.command.DecryptCommand.FILE_RW_ERROR;
 import static app.notesr.cli.command.DecryptCommand.SUCCESS;
 import static app.notesr.cli.util.DbUtils.serializeTableAsJson;
@@ -35,6 +37,7 @@ class DecryptCommandTest {
     private static final String FORMAT_V2 = "v2";
 
     private static final Random RANDOM = new Random();
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private CommandLine cmd;
 
@@ -50,43 +53,6 @@ class DecryptCommandTest {
     @Test
     void testWithoutArgs() {
         int exitCode = cmd.execute();
-        assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"C:\\folder\\..\\NUL\\file", "/////some///weird//path///file"})
-    void testWithInvalidFilesPaths(String path) {
-        String backupPath = path + ".notesr.bak";
-        String keyPath = path + ".txt";
-
-        int exitCode = cmd.execute(backupPath, keyPath);
-        assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
-    }
-
-    @Test
-    void testWithInvalidKeyAsString() throws IOException {
-        String invalidKey = "TEST_INVALID_KEY";
-
-        Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
-        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2));
-
-        Files.writeString(invalidKeyPath, invalidKey);
-        int exitCode = cmd.execute(backupPath.toString(), invalidKeyPath.toString());
-
-        assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
-    }
-
-    @Test
-    void testWithInvalidKeyAsBinary() throws IOException {
-        byte[] invalidKey = new byte[1024];
-        RANDOM.nextBytes(invalidKey);
-
-        Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
-        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2));
-
-        Files.write(invalidKeyPath, invalidKey);
-        int exitCode = cmd.execute(backupPath.toString(), invalidKeyPath.toString());
-
         assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
     }
 
@@ -131,11 +97,83 @@ class DecryptCommandTest {
         assertEquals(expectedDataBlocks, actualDataBlocks, "Data blocks are different");
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"C:\\folder\\..\\NUL\\file", "/////some///weird//path///file"})
+    void testWithInvalidFilesPaths(String path) {
+        String backupPath = path + ".notesr.bak";
+        String keyPath = path + ".txt";
+
+        int exitCode = cmd.execute(backupPath, keyPath);
+        assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
+    }
+
+    @Test
+    void testWithInvalidKeyAsString() throws IOException {
+        String invalidKey = "TEST_INVALID_KEY";
+
+        Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
+        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2));
+
+        Files.writeString(invalidKeyPath, invalidKey);
+        int exitCode = cmd.execute(backupPath.toString(), invalidKeyPath.toString());
+
+        assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
+    }
+
+    @Test
+    void testWithInvalidKeyAsBinary() throws IOException {
+        byte[] invalidKey = new byte[1024];
+        RANDOM.nextBytes(invalidKey);
+
+        Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
+        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2));
+
+        Files.write(invalidKeyPath, invalidKey);
+        int exitCode = cmd.execute(backupPath.toString(), invalidKeyPath.toString());
+
+        assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
+    }
+
+    @Test
+    void testWithWrongKey() throws IOException {
+        String wrongKey = getRandomCryptoKeyHex();
+
+        Path wrongKeyPath = tempDir.resolve("wrong_key.txt");
+        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2));
+
+        Files.writeString(wrongKeyPath, wrongKey);
+        int exitCode = cmd.execute(backupPath.toString(), wrongKeyPath.toString());
+
+        assertEquals(DECRYPTION_ERROR, exitCode, "Expected code " + DECRYPTION_ERROR);
+    }
+
     private static <T> List<T> getExpectedModels(JsonMapper<T> mapper, String fixtureName, String formatVersion)
             throws IOException {
         String fixturePath = Path.of("parser", formatVersion, fixtureName).toString();
         String json = readFixture(fixturePath);
 
         return mapper.map(json);
+    }
+
+    private static String getRandomCryptoKeyHex() {
+        final int rows = 12;
+        final int columns = 4;
+
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                int value = SECURE_RANDOM.nextInt(256); // 0 - 255
+                builder.append(String.format("%02X", value));
+                if (j < columns - 1) {
+                    builder.append(" ");
+                }
+            }
+            if (i < rows - 1) {
+                builder.append(System.lineSeparator());
+            }
+        }
+
+        return builder.toString();
     }
 }
