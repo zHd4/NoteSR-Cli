@@ -54,7 +54,6 @@ class ZipUtilsTest {
         assertFalse(ZipUtils.isZipArchive(nonZipFile.getAbsolutePath()));
         assertFalse(ZipUtils.isZipArchive(DIR_PATH));
         assertTrue(ZipUtils.isZipArchive(ZIP_PATH));
-        assertTrue(nonZipFile.delete());
     }
 
     private static boolean isDirsIdentical(String path1, String path2) {
