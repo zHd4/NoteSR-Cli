@@ -23,9 +23,7 @@ class FileDataWriter implements Writer {
                 throw new IllegalArgumentException(outputDir.getAbsolutePath() + " isn't directory");
             }
         } else {
-            if (!outputDir.mkdir()) {
-                throw new IOException("Failed to create temporary directory " + outputDir.getAbsolutePath());
-            }
+            Files.createDirectory(outputDir.toPath());
         }
 
         for (DataBlock dataBlock : dataBlockDao.getAllDataBlocksWithoutData()) {
