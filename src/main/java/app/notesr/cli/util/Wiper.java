@@ -25,11 +25,12 @@ public class Wiper {
         try (Stream<Path> paths = Files.list(dir.toPath())) {
             paths.forEach(path -> {
                 try {
-                    if (Files.isDirectory(path)) {
-                        wipeDir(path.toFile());
-                        Files.delete(path);
-                    } else {
-                        wipeFile(path.toFile());
+                    if (Files.exists(path)) {
+                        if (Files.isDirectory(path)) {
+                            wipeDir(path.toFile());
+                        } else {
+                            wipeFile(path.toFile());
+                        }
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
