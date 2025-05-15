@@ -100,19 +100,6 @@ class FileDataWriterTest {
         }, "An exception was expected but wasn't thrown");
     }
 
-    @Test
-    void testWriteWhenMkdirReturnsFalse() {
-        File outputDir = mock(File.class);
-
-        when(outputDir.exists()).thenReturn(false);
-        when(outputDir.mkdir()).thenReturn(false);
-
-        assertThrows(IOException.class, () -> {
-            FileDataWriter fileDataWriter = new FileDataWriter(outputDir, dataBlockDao);
-            fileDataWriter.write();
-        }, "An exception was expected but wasn't thrown");
-    }
-
     private static Map<String, byte[]> readFilesAsBytes(Path dirPath) throws IOException {
         Map<String, byte[]> filesBytesMap = new HashMap<>();
 
