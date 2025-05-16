@@ -5,7 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Enumeration;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -27,6 +31,28 @@ public class ZipUtils {
         }
 
         return false;
+    }
+
+    public static Set<String> getTopLevelEntries(String path) throws IOException {
+        Set<String> result = new LinkedHashSet<>();
+
+        try (ZipFile zip = new ZipFile(path)) {
+            Enumeration<? extends ZipEntry> entries = zip.entries();
+
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                String name = entry.getName();
+
+                String[] parts = name.split("/");
+                if (parts.length == 1) {
+                    result.add(name);
+                } else if (parts.length > 1) {
+                    result.add(parts[0] + "/");
+                }
+            }
+        }
+
+        return result;
     }
 
     public static void zipDirectory(String sourceDirPath, String output) throws
