@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ZipUtilsTest {
     private static final Random RANDOM = new Random();
 
-    private static final String DIR_PATH = getFixturePath("exported").toString();
-    private static final String ZIP_PATH = getFixturePath("exported.zip").toString();
+    private static final String TEST_DIR_PATH = getFixturePath("exported").toString();
+    private static final String TEST_ZIP_PATH = getFixturePath("exported.zip").toString();
 
     @TempDir
     private Path tempDir;
@@ -27,7 +27,7 @@ class ZipUtilsTest {
     @Test
     void testGetTopLevelEntries() throws IOException {
         Set<String> expected = Set.of("data_blocks/", "files_info.json", "notes.json", "version");
-        Set<String> actual = ZipUtils.getTopLevelEntries(ZIP_PATH);
+        Set<String> actual = ZipUtils.getTopLevelEntries(TEST_ZIP_PATH);
 
         assertEquals(expected, actual, "Top level entries are different");
     }
@@ -36,7 +36,7 @@ class ZipUtilsTest {
     void testZipDirectory() throws IOException {
         Path tempZipPath = tempDir.resolve("test-archive.zip");
 
-        ZipUtils.zipDirectory(DIR_PATH, tempZipPath.toString());
+        ZipUtils.zipDirectory(TEST_DIR_PATH, tempZipPath.toString());
         File zipFile = tempZipPath.toFile();
 
         assertTrue(zipFile.exists(), "Zip file not found");
@@ -46,11 +46,11 @@ class ZipUtilsTest {
     void testUnzip() throws IOException {
         Path tempOutputDirPath = tempDir.resolve("output");
 
-        ZipUtils.unzip(ZIP_PATH, tempOutputDirPath.toString());
+        ZipUtils.unzip(TEST_ZIP_PATH, tempOutputDirPath.toString());
         File dir = tempOutputDirPath.toFile();
 
         assertTrue(dir.exists(), "Directory " + dir.getAbsolutePath() + " not found");
-        assertTrue(isDirsIdentical(DIR_PATH, tempOutputDirPath.toString()), "Dirs not identical");
+        assertTrue(isDirsIdentical(TEST_DIR_PATH, tempOutputDirPath.toString()), "Dirs not identical");
     }
 
     @Test
@@ -62,8 +62,8 @@ class ZipUtilsTest {
         Files.write(Path.of(nonZipFile.getAbsolutePath()), nonZipFileData);
 
         assertFalse(ZipUtils.isZipArchive(nonZipFile.getAbsolutePath()));
-        assertFalse(ZipUtils.isZipArchive(DIR_PATH));
-        assertTrue(ZipUtils.isZipArchive(ZIP_PATH));
+        assertFalse(ZipUtils.isZipArchive(TEST_DIR_PATH));
+        assertTrue(ZipUtils.isZipArchive(TEST_ZIP_PATH));
     }
 
     private static boolean isDirsIdentical(String path1, String path2) {
