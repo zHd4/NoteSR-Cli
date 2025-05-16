@@ -2,6 +2,6 @@ package app.notesr.cli.command;
 
 import java.util.concurrent.Callable;
 
-public interface Command extends Callable<Integer> {
+public abstract class Command implements Callable<Integer> {
     // Command
 }

@@ -30,7 +30,7 @@ import static java.util.Objects.requireNonNullElseGet;
 @Slf4j
 @CommandLine.Command(name = "decrypt",
         description = "Decrypts exported NoteSR .bak file and converts it to a SQLite database.")
-public final class DecryptCommand implements Command {
+public final class DecryptCommand extends Command {
     public static final int SUCCESS = 0;
     public static final int FILE_RW_ERROR = 2;
     public static final int DB_CONNECTION_ERROR = 3;
