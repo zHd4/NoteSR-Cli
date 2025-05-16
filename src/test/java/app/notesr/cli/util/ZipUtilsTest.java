@@ -8,8 +8,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
+import java.util.Set;
 
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,6 +23,14 @@ class ZipUtilsTest {
 
     @TempDir
     private Path tempDir;
+
+    @Test
+    void testGetTopLevelEntries() throws IOException {
+        Set<String> expected = Set.of("data_blocks/", "files_info.json", "notes.json", "version");
+        Set<String> actual = ZipUtils.getTopLevelEntries(ZIP_PATH);
+
+        assertEquals(expected, actual, "Top level entries are different");
+    }
 
     @Test
     void testZipDirectory() throws IOException {
