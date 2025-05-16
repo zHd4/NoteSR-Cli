@@ -6,6 +6,7 @@ plugins {
 
 group = 'app.notesr.cli'
 version = '1.0'
+ext.defaultNoteSrVersion = '5.1'
 
 repositories {
     mavenCentral()
@@ -55,11 +56,28 @@ compileJava {
 }
 
 jar {
-    manifest {
-        attributes(
-                'Implementation-Title': 'NoteSR-Cli',
-                'Implementation-Version': project.version
-        )
+    archiveBaseName.set('NoteSR-Cli')
+    archiveVersion.set(project.version.toString())
+}
+
+tasks.register("generateVersionProperties") {
+    def outputDir = layout.buildDirectory.dir("generated-resources")
+
+    outputs.dir outputDir
+    doLast {
+        def file = outputDir.get().file("version.properties").asFile
+        file.parentFile.mkdirs()
+        file.text = """
+            utility.version=${project.version}
+            noteSr.defaultVersion=${project.defaultNoteSrVersion}
+        """.stripIndent().trim()
+    }
+}
+
+tasks.named("processResources") {
+    dependsOn("generateVersionProperties")
+    from(layout.buildDirectory.dir("generated-resources")) {
+        into "."
     }
 }
 
