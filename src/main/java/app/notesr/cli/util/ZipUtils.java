@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -14,6 +15,8 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ZipUtils {
+    private static final byte[] ZIP_SIGNATURE = new byte[] {0x50, 0x4B, 0x03, 0x04};
+
     public static boolean isZipArchive(String path) throws IOException {
         File file = new File(path);
 
@@ -25,8 +28,7 @@ public class ZipUtils {
             byte[] signature = new byte[4];
 
             if (fileInputStream.read(signature) == 4) {
-                return (signature[0] == 0x50 && signature[1] == 0x4B
-                        && signature[2] == 0x03 && signature[3] == 0x04);
+                return Arrays.equals(signature, ZIP_SIGNATURE);
             }
         }
 
