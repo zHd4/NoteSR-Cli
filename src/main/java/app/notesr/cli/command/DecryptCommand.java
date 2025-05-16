@@ -14,7 +14,6 @@ import picocli.CommandLine;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,6 +22,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 import static app.notesr.cli.crypto.FileCryptor.KEY_GENERATOR_ALGORITHM;
+import static app.notesr.cli.validation.BackupValidator.isValid;
 import static app.notesr.cli.util.Wiper.wipeDir;
 import static app.notesr.cli.util.Wiper.wipeFile;
 
@@ -106,25 +106,35 @@ public final class DecryptCommand implements Command {
     }
 
     private File decryptBackup(File encryptedBackup, CryptoKey cryptoKey) throws CommandHandlingException {
+        log.info("Decrypting {}", encryptedBackupPath);
+        File decryptedBackup = new File(encryptedBackup.getAbsolutePath() + "_decrypted");
+
         try {
-            log.info("Decrypting {}", encryptedBackupPath);
-
-            File decryptedBackup = new File(encryptedBackup.getAbsolutePath() + "_decrypted");
-
             FileCryptor decryptor = new FileCryptor(cryptoKey);
             FileInputStream inputStream = new FileInputStream(encryptedBackup);
             FileOutputStream outputStream = new FileOutputStream(decryptedBackup);
 
             decryptor.decrypt(inputStream, outputStream);
 
-            log.info("Decryption finished successfully");
+            if (!isValid(decryptedBackup.getAbsolutePath())) {
+                throw new FileDecryptionException();
+            }
 
+            log.info("Decryption finished successfully");
             return decryptedBackup;
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e); // Already validated
         } catch (FileDecryptionException e) {
+            if (decryptedBackup.exists()) {
+                try {
+                    Files.delete(decryptedBackup.toPath());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+
             log.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
             throw new CommandHandlingException(DECRYPTION_ERROR);
+        }  catch (IOException e) {
+            throw new RuntimeException(e); // Already validated
         }
     }
 
