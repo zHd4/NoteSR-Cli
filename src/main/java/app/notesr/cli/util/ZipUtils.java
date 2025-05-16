@@ -25,9 +25,9 @@ public class ZipUtils {
         }
 
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            byte[] signature = new byte[4];
+            byte[] signature = new byte[ZIP_SIGNATURE.length];
 
-            if (fileInputStream.read(signature) == 4) {
+            if (fileInputStream.read(signature) == ZIP_SIGNATURE.length) {
                 return Arrays.equals(signature, ZIP_SIGNATURE);
             }
         }
