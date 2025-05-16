@@ -19,12 +19,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.Objects;
 
 import static app.notesr.cli.crypto.FileCryptor.KEY_GENERATOR_ALGORITHM;
+import static app.notesr.cli.util.PathUtils.getNameWithoutExtension;
 import static app.notesr.cli.validation.BackupValidator.isValid;
 import static app.notesr.cli.util.Wiper.wipeDir;
 import static app.notesr.cli.util.Wiper.wipeFile;
+import static java.util.Objects.requireNonNullElseGet;
 
 @Slf4j
 @CommandLine.Command(name = "decrypt",
@@ -51,7 +52,7 @@ public final class DecryptCommand implements Command {
         try {
             File encryptedBackupFile = getEncryptedBackupFile();
             File keyFile = getKeyFile();
-            File outputFile = prepareOutputFile(encryptedBackupFile);
+            File outputFile = getOutputFile(encryptedBackupFile);
 
             CryptoKey cryptoKey = readCryptoKey(keyFile);
             File tempDecryptedBackup = decryptBackup(encryptedBackupFile, cryptoKey);
@@ -84,12 +85,15 @@ public final class DecryptCommand implements Command {
         }
     }
 
-    private File prepareOutputFile(File encryptedBackupFile) throws CommandHandlingException {
-        File outputFile = getOutputFilePath(encryptedBackupFile.getAbsolutePath(), outputFilePath).toFile();
+    private File getOutputFile(File encryptedBackupFile) throws CommandHandlingException {
+        File outputFile = Path.of(requireNonNullElseGet(outputFilePath, () ->
+                getNameWithoutExtension(encryptedBackupFile) + ".db")).toFile();
+
         if (outputFile.exists()) {
             log.error("{}: file already exists", outputFile.getAbsolutePath());
             throw new CommandHandlingException(DB_CONNECTION_ERROR);
         }
+
         return outputFile;
     }
 
@@ -178,10 +182,6 @@ public final class DecryptCommand implements Command {
     private CryptoKey getCryptoKey(File keyFile) throws IOException, NumberFormatException {
         String hexKey = Files.readString(keyFile.toPath());
         return CryptoKeyUtils.hexToCryptoKey(hexKey, KEY_GENERATOR_ALGORITHM);
-    }
-
-    private Path getOutputFilePath(String inputPathStr, String outputPathStr) {
-        return Path.of(Objects.requireNonNullElseGet(outputPathStr, () -> inputPathStr + ".db"));
     }
 
     private File getFile(String path) throws NoSuchFileException {
