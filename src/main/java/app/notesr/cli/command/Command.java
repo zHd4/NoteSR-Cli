@@ -65,7 +65,7 @@ abstract class Command implements Callable<Integer> {
         return outputFile;
     }
 
-    protected final void cleanupTemporaryFiles(File... files) throws CommandHandlingException {
+    protected final void cleanTempFiles(File... files) throws CommandHandlingException {
         try {
             log.info("Cleaning temporary files");
 

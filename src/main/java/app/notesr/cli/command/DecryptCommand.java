@@ -47,7 +47,7 @@ public final class DecryptCommand extends Command {
             File tempDecryptedBackup = decryptBackup(encryptedBackupFile, cryptoKey);
 
             BackupParser parser = parseBackup(tempDecryptedBackup, outputFile);
-            cleanupTemporaryFiles(tempDecryptedBackup, parser.getTempDirPath().toFile());
+            cleanTempFiles(tempDecryptedBackup, parser.getTempDirPath().toFile());
 
             log.info("Saved to: {}", outputFile.getAbsolutePath());
             return SUCCESS;
