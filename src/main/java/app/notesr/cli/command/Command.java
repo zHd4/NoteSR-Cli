@@ -19,7 +19,7 @@ import static app.notesr.cli.util.Wiper.wipeFile;
 import static java.util.Objects.requireNonNullElseGet;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class Command implements Callable<Integer> {
+abstract class Command implements Callable<Integer> {
     public static final int SUCCESS = 0;
     public static final int FILE_RW_ERROR = 2;
     public static final int DB_WRITING_ERROR = 5;
