@@ -23,7 +23,7 @@ import static java.util.Objects.requireNonNullElseGet;
 abstract class Command implements Callable<Integer> {
     public static final int SUCCESS = 0;
     public static final int FILE_RW_ERROR = 2;
-    public static final int DB_WRITING_ERROR = 5;
+    public static final int DB_ERROR = 5;
     public static final int UNKNOWN_ERROR = 6;
     public static final int CRYPTO_ERROR = 7;
 

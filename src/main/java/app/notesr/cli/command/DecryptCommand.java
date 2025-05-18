@@ -123,7 +123,7 @@ public final class DecryptCommand extends Command {
             throw new CommandHandlingException(FILE_RW_ERROR);
         } catch (BackupDbException e) {
             log.error("Failed to write data to database, details:\n{}", e.getMessage());
-            throw new CommandHandlingException(DB_WRITING_ERROR);
+            throw new CommandHandlingException(DB_ERROR);
         }
     }
 }
