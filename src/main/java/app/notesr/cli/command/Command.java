@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.Callable;
 import org.slf4j.Logger;
 
@@ -24,7 +25,7 @@ abstract class Command implements Callable<Integer> {
     public static final int FILE_RW_ERROR = 2;
     public static final int DB_WRITING_ERROR = 5;
     public static final int UNKNOWN_ERROR = 6;
-    public static final int DECRYPTION_ERROR = 7;
+    public static final int CRYPTO_ERROR = 7;
 
     private final Logger log;
 
@@ -52,10 +53,12 @@ abstract class Command implements Callable<Integer> {
         return file;
     }
 
-    protected final File getOutputFile(File encryptedBackupFile, String outputFilePath, String outputFileExtension)
+    protected final File getOutputFile(File inputFile, String outputFilePath, String outputFileExtension)
             throws CommandHandlingException {
-        File outputFile = Path.of(requireNonNullElseGet(outputFilePath, () ->
-                getNameWithoutExtension(encryptedBackupFile) + outputFileExtension)).toFile();
+        File outputFile = Path.of(requireNonNullElseGet(outputFilePath, () -> {
+            String fileName = getNameWithoutExtension(inputFile) + outputFileExtension;
+            return Path.of(inputFile.getParentFile().getAbsolutePath(), fileName).toString();
+        })).toFile();
 
         if (outputFile.exists()) {
             log.error("{}: file already exists", outputFile.getAbsolutePath());
@@ -65,7 +68,7 @@ abstract class Command implements Callable<Integer> {
         return outputFile;
     }
 
-    protected final void cleanTempFiles(File... files) throws CommandHandlingException {
+    protected final void cleanTempFiles(List<File> files) {
         try {
             log.info("Cleaning temporary files");
 
@@ -82,7 +85,6 @@ abstract class Command implements Callable<Integer> {
             log.info("Cleaning finished successfully");
         } catch (IOException e) {
             log.error("Unknown error, details:\n{}", e.getMessage());
-            throw new CommandHandlingException(UNKNOWN_ERROR);
         }
     }
 }

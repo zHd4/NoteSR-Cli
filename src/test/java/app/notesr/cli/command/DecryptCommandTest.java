@@ -23,7 +23,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 
-import static app.notesr.cli.command.DecryptCommand.DECRYPTION_ERROR;
+import static app.notesr.cli.command.DecryptCommand.CRYPTO_ERROR;
 import static app.notesr.cli.command.DecryptCommand.FILE_RW_ERROR;
 import static app.notesr.cli.command.DecryptCommand.SUCCESS;
 import static app.notesr.cli.util.DbUtils.serializeTableAsJson;
@@ -144,7 +144,7 @@ class DecryptCommandTest {
         Files.writeString(wrongKeyPath, wrongKey);
         int exitCode = cmd.execute(backupPath.toString(), wrongKeyPath.toString());
 
-        assertEquals(DECRYPTION_ERROR, exitCode, "Expected code " + DECRYPTION_ERROR);
+        assertEquals(CRYPTO_ERROR, exitCode, "Expected code " + CRYPTO_ERROR);
     }
 
     private static <T> List<T> getExpectedModels(JsonMapper<T> mapper, String fixtureName, String formatVersion)

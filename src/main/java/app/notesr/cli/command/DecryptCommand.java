@@ -16,6 +16,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import static app.notesr.cli.validation.BackupValidator.isValid;
 
@@ -38,22 +41,38 @@ public final class DecryptCommand extends Command {
 
     @Override
     public Integer call() {
+        int exitCode = UNKNOWN_ERROR;
+
+        File outputFile = null;
+        List<File> tempFiles = new ArrayList<>();
+
         try {
             File encryptedBackupFile = getFile(encryptedBackupPath);
+            outputFile = getOutputFile(encryptedBackupFile, outputFilePath, ".db");
+
             File keyFile = getFile(keyPath);
-            File outputFile = getOutputFile(encryptedBackupFile, outputFilePath, ".db");
-
             CryptoKey cryptoKey = getCryptoKey(keyFile);
+
             File tempDecryptedBackup = decryptBackup(encryptedBackupFile, cryptoKey);
+            tempFiles.add(tempDecryptedBackup);
 
-            BackupParser parser = parseBackup(tempDecryptedBackup, outputFile);
-            cleanTempFiles(tempDecryptedBackup, parser.getTempDirPath().toFile());
+            Path tempDirPath = parseBackup(tempDecryptedBackup, outputFile);
+            tempFiles.add(tempDirPath.toFile());
 
-            log.info("Saved to: {}", outputFile.getAbsolutePath());
-            return SUCCESS;
+            exitCode = SUCCESS;
         } catch (CommandHandlingException e) {
-            return e.getExitCode();
+            exitCode = e.getExitCode();
+        } finally {
+            if (!tempFiles.isEmpty()) {
+                cleanTempFiles(tempFiles);
+            }
+
+            if (outputFile != null && exitCode == SUCCESS) {
+                log.info("Saved to: {}", outputFile.getAbsolutePath());
+            }
         }
+
+        return exitCode;
     }
 
     private File decryptBackup(File encryptedBackup, CryptoKey cryptoKey) throws CommandHandlingException {
@@ -83,19 +102,22 @@ public final class DecryptCommand extends Command {
             }
 
             log.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
-            throw new CommandHandlingException(DECRYPTION_ERROR);
+            throw new CommandHandlingException(CRYPTO_ERROR);
         }  catch (IOException e) {
-            throw new RuntimeException(e); // Already validated
+            log.error(e.getMessage());
+            throw new CommandHandlingException(FILE_RW_ERROR);
         }
     }
 
-    private BackupParser parseBackup(File tempDecryptedBackup, File outputFile) throws CommandHandlingException {
+    private Path parseBackup(File tempDecryptedBackup, File outputFile) throws CommandHandlingException {
         try {
             log.info("Parsing {}", encryptedBackupPath);
+
             BackupParser parser = new BackupParser(tempDecryptedBackup.toPath(), outputFile.toPath());
             parser.run();
+
             log.info("Parsing finished successfully");
-            return parser;
+            return parser.getTempDirPath();
         } catch (BackupIOException | BackupParserException | UnexpectedFieldException e) {
             log.error("{}: failed to parse, details:\n{}", encryptedBackupPath, e.getMessage());
             throw new CommandHandlingException(FILE_RW_ERROR);
