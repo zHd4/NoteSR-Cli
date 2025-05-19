@@ -29,6 +29,7 @@ import static app.notesr.cli.command.DecryptCommand.SUCCESS;
 import static app.notesr.cli.util.DbUtils.serializeTableAsJson;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
+import static app.notesr.cli.util.PathUtils.getNameWithoutExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -65,7 +66,7 @@ class DecryptCommandTest {
 
         Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", formatVersion));
         Path keyPath = getFixturePath("crypto_key.txt");
-        Path outputPath = tempDir.resolve(backupPath.getFileName().toString() + ".db");
+        Path outputPath = tempDir.resolve(getNameWithoutExtension(backupPath.toFile()) + ".db");
 
         int exitCode = cmd.execute(backupPath.toString(), keyPath.toString(), "-o", outputPath.toString());
 
