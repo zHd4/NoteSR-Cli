@@ -164,7 +164,7 @@ class DecryptCommandTest {
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                int value = SECURE_RANDOM.nextInt(256); // 0 - 255
+                int value = SECURE_RANDOM.nextInt(256);
                 builder.append(String.format("%02X", value));
                 if (j < columns - 1) {
                     builder.append(" ");
