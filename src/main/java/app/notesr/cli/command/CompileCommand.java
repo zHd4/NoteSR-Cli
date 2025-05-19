@@ -51,7 +51,8 @@ public final class CompileCommand extends Command {
 
         try {
             File dbFile = getFile(dbPath);
-            outputFile = getOutputFile(dbFile, Path.of(outputPath), ".notesr.bak");
+            outputFile = getOutputFile(dbFile, outputPath != null ? Path.of(outputPath) : null,
+                    ".notesr.bak");
 
             File keyFile = getFile(keyPath);
             CryptoKey cryptoKey = getCryptoKey(keyFile);
