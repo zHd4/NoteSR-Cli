@@ -32,7 +32,7 @@ public final class CompileCommand extends Command {
     private String keyPath;
 
     @CommandLine.Option(names = { "-o", "--output" }, description = "output file path")
-    private String outputPath;
+    private String outputFilePath;
 
     @CommandLine.Option(names = { "-n", "--notesr-version" }, description = "target NoteSR version "
             + "(see --version to check default version)")
@@ -51,7 +51,7 @@ public final class CompileCommand extends Command {
 
         try {
             File dbFile = getFile(dbPath);
-            outputFile = getOutputFile(dbFile, outputPath != null ? Path.of(outputPath) : null,
+            outputFile = getOutputFile(dbFile, outputFilePath != null ? Path.of(outputFilePath) : null,
                     ".notesr.bak");
 
             File keyFile = getFile(keyPath);
