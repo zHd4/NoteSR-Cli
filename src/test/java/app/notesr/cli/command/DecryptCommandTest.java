@@ -26,6 +26,7 @@ import java.util.Random;
 import static app.notesr.cli.command.DecryptCommand.CRYPTO_ERROR;
 import static app.notesr.cli.command.DecryptCommand.FILE_RW_ERROR;
 import static app.notesr.cli.command.DecryptCommand.SUCCESS;
+import static app.notesr.cli.crypto.CryptoKeyUtils.getRandomCryptoKeyHex;
 import static app.notesr.cli.util.DbUtils.serializeTableAsJson;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
@@ -38,7 +39,6 @@ class DecryptCommandTest {
     private static final String FORMAT_V2 = "v2";
 
     private static final Random RANDOM = new Random();
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private CommandLine cmd;
 
@@ -154,27 +154,5 @@ class DecryptCommandTest {
         String json = readFixture(fixturePath);
 
         return mapper.map(json);
-    }
-
-    private static String getRandomCryptoKeyHex() {
-        final int rows = 12;
-        final int columns = 4;
-
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                int value = SECURE_RANDOM.nextInt(256);
-                builder.append(String.format("%02X", value));
-                if (j < columns - 1) {
-                    builder.append(" ");
-                }
-            }
-            if (i < rows - 1) {
-                builder.append(System.lineSeparator());
-            }
-        }
-
-        return builder.toString();
     }
 }
