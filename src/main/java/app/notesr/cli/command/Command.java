@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -17,7 +18,6 @@ import static app.notesr.cli.crypto.FileCryptor.KEY_GENERATOR_ALGORITHM;
 import static app.notesr.cli.util.PathUtils.getNameWithoutExtension;
 import static app.notesr.cli.util.Wiper.wipeDir;
 import static app.notesr.cli.util.Wiper.wipeFile;
-import static java.util.Objects.requireNonNullElseGet;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 abstract class Command implements Callable<Integer> {
@@ -53,15 +53,28 @@ abstract class Command implements Callable<Integer> {
         return file;
     }
 
-    protected final File getOutputFile(File inputFile, String outputFilePath, String outputFileExtension)
+    protected final File getOutputFile(File inputFile, Path outputFilePath, String outputFileExtension)
             throws CommandHandlingException {
-        File outputFile = Path.of(requireNonNullElseGet(outputFilePath, () -> {
-            String fileName = getNameWithoutExtension(inputFile) + outputFileExtension;
-            return Path.of(inputFile.getParentFile().getAbsolutePath(), fileName).toString();
-        })).toFile();
+        File outputFile = null;
 
-        if (outputFile.exists()) {
-            log.error("{}: file already exists", outputFile.getAbsolutePath());
+        try {
+            if (outputFilePath == null) {
+                String outputFileName = getNameWithoutExtension(inputFile) + outputFileExtension;
+                outputFile = new File(inputFile.getParentFile(), outputFileName);
+            } else if (Files.isDirectory(outputFilePath)) {
+                String outputFileName = getNameWithoutExtension(inputFile) + outputFileExtension;
+                outputFile = outputFilePath.resolve(outputFileName).toFile();
+            } else if (Files.exists(outputFilePath)) {
+                throw new FileAlreadyExistsException(outputFilePath.toString());
+            } else {
+                outputFile = outputFilePath.toFile();
+            }
+
+            if (outputFile.exists()) {
+                throw new FileAlreadyExistsException(outputFile.getAbsolutePath());
+            }
+        } catch (FileAlreadyExistsException e) {
+            log.error("{}: file already exists", outputFile != null ? outputFile.getAbsolutePath() : outputFilePath);
             throw new CommandHandlingException(FILE_RW_ERROR);
         }
 
