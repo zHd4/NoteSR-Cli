@@ -48,7 +48,8 @@ public final class DecryptCommand extends Command {
 
         try {
             File encryptedBackupFile = getFile(encryptedBackupPath);
-            outputFile = getOutputFile(encryptedBackupFile, Path.of(outputFilePath), ".db");
+            outputFile = getOutputFile(encryptedBackupFile, outputFilePath != null ? Path.of(outputFilePath) : null,
+                    ".db");
 
             File keyFile = getFile(keyPath);
             CryptoKey cryptoKey = getCryptoKey(keyFile);
