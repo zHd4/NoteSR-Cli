@@ -1,5 +1,6 @@
 package app.notesr.cli;
 
+import app.notesr.cli.command.CompileCommand;
 import app.notesr.cli.command.DecryptCommand;
 import picocli.CommandLine;
 import java.util.concurrent.Callable;
@@ -8,7 +9,7 @@ import java.util.concurrent.Callable;
         versionProvider = VersionProvider.class,
         description = "Decrypts and manages exported NoteSR backups",
         mixinStandardHelpOptions = true,
-        subcommands = {DecryptCommand.class})
+        subcommands = {DecryptCommand.class, CompileCommand.class})
 public final class App implements Callable<Integer> {
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
@@ -33,7 +34,6 @@ public final class App implements Callable<Integer> {
                 System.err.println("Error: " + ex.getMessage());
             }
 
-            printUsage(commandLine);
             return commandLine.getCommandSpec().exitCodeOnInvalidInput();
         });
 
