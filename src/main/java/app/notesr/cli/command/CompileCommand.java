@@ -26,7 +26,7 @@ import static java.util.Objects.requireNonNullElseGet;
 public final class CompileCommand extends Command {
 
     @CommandLine.Parameters(index = "0", paramLabel = "db_path",
-            description = "path to NoteSR SQLite database database")
+            description = "path to NoteSR SQLite database")
     private String dbPath;
 
     @CommandLine.Parameters(index = "1", paramLabel = "key_path", description = "path to exported key (text file)")
