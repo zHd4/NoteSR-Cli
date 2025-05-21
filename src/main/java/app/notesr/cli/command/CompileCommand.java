@@ -25,7 +25,8 @@ import static java.util.Objects.requireNonNullElseGet;
         description = "Compiles NoteSR SQLite database into NoteSR .bak file.")
 public final class CompileCommand extends Command {
 
-    @CommandLine.Parameters(index = "0", paramLabel = "db_path", description = "path to decrypted database")
+    @CommandLine.Parameters(index = "0", paramLabel = "db_path",
+            description = "path to NoteSR SQLite database database")
     private String dbPath;
 
     @CommandLine.Parameters(index = "1", paramLabel = "key_path", description = "path to exported key (text file)")
