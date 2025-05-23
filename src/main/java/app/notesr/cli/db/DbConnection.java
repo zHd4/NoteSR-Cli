@@ -29,8 +29,7 @@ public class DbConnection {
 
     private void createStructure() {
         try {
-            InputStream scriptStream =
-                    requireNonNull(DbConnection.class.getResourceAsStream(INIT_DB_SCRIPT_RES_PATH));
+            InputStream scriptStream = requireNonNull(this.getClass().getResourceAsStream(INIT_DB_SCRIPT_RES_PATH));
 
             try (Statement stmt = connection.createStatement();
                  BufferedReader reader = new BufferedReader(new InputStreamReader(scriptStream))) {
