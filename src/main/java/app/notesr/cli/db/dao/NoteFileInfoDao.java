@@ -4,7 +4,6 @@ import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.dto.NoteFileInfoOutputDto;
 import lombok.RequiredArgsConstructor;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
