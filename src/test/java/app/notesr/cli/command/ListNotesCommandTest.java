@@ -17,6 +17,7 @@ import java.util.Set;
 import static app.notesr.cli.command.Command.SUCCESS;
 import static app.notesr.cli.command.ListNotesCommand.MAX_NAME_LENGTH;
 import static app.notesr.cli.command.ListNotesCommand.truncate;
+import static app.notesr.cli.db.DbUtils.dateTimeToString;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -49,15 +50,16 @@ class ListNotesCommandTest {
                     + expected.getId() + "' not found in the output");
 
             String expectedName = truncate(expected.getName(), MAX_NAME_LENGTH);
-            assertTrue(output.contains(expectedName), "Note name '"
-                    + expectedName + "' not found in the output");
+            assertTrue(output.contains(expectedName), "Name of note (id='"
+                    + expected.getId() + "') not found in the output (expected: '" + expectedName + "')");
 
             String expectedText = truncate(expected.getName(), MAX_NAME_LENGTH);
-            assertTrue(output.contains(expectedText), "Note text '"
-                    + expectedText + "' not found in the output");
+            assertTrue(output.contains(expectedText), "Text of note (id='"
+                    + expected.getId() + "') not found in the output (expected: '" + expectedText + "')");
 
-            assertTrue(output.contains(expected.getUpdatedAt().toString()), "Last update time of note 'id="
-                    + expected.getId() + "' not found in the output");
+            String expectedLastUpdateTime = dateTimeToString(expected.getUpdatedAt());
+            assertTrue(output.contains(expectedLastUpdateTime), "Last update time of note (id='"
+                    + expected.getId() + "') not found in the output (expected: '" + expectedLastUpdateTime + "')");
         }
     }
 
