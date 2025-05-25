@@ -15,6 +15,8 @@ import java.io.PrintStream;
 import java.sql.SQLException;
 import java.util.Set;
 
+import static app.notesr.cli.db.DbUtils.dateTimeToString;
+
 @Slf4j
 @CommandLine.Command(name = "list-notes",
         description = "Lists all notes stored in the NoteSR SQLite database.")
@@ -73,7 +75,7 @@ public final class ListNotesCommand extends Command {
                     row.getNoteId(),
                     truncate(row.getNoteShortName(), MAX_NAME_LENGTH),
                     truncate(row.getNoteShortText(), MAX_TEXT_LENGTH),
-                    row.getNoteUpdatedAt(),
+                    dateTimeToString(row.getNoteUpdatedAt()),
                     row.getAttachedFilesCount()
             ));
 
