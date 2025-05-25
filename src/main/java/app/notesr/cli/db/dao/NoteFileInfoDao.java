@@ -26,7 +26,7 @@ public final class NoteFileInfoDao {
             \t\tWHERE f.note_id = n.id
             \t) AS attached_files_count
             FROM notes n
-            ORDER BY id;""";
+            ORDER BY n.updated_at DESC;""";
 
     private final DbConnection db;
 
