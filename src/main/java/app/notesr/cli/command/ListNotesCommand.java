@@ -21,8 +21,8 @@ import java.util.Set;
 public final class ListNotesCommand extends Command {
     private static final int MAX_TABLE_ROW_WIDTH = 182;
 
-    private static final int MAX_NAME_LENGTH = 30;
-    private static final int MAX_TEXT_LENGTH = 30;
+    static final int MAX_NAME_LENGTH = 30;
+    static final int MAX_TEXT_LENGTH = 30;
 
     @CommandLine.Parameters(index = "0", paramLabel = "db_path",
             description = "path to NoteSR SQLite database")
@@ -85,7 +85,7 @@ public final class ListNotesCommand extends Command {
         }
     }
 
-    private String truncate(String text, int maxLength) {
+    static String truncate(String text, int maxLength) {
         if (text.length() < maxLength) {
             return text;
         }
