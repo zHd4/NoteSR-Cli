@@ -12,6 +12,9 @@ import java.io.File;
 import java.io.PrintStream;
 import java.sql.SQLException;
 
+import static app.notesr.cli.command.AnsiColor.BOLD;
+import static app.notesr.cli.command.AnsiColor.MAGENTA;
+import static app.notesr.cli.command.AnsiColor.YELLOW;
 import static app.notesr.cli.db.DbUtils.dateTimeToString;
 
 @Slf4j
@@ -19,12 +22,6 @@ import static app.notesr.cli.db.DbUtils.dateTimeToString;
         description = "Reads a note stored in a NoteSR Backup Database.")
 public final class ReadNoteCommand extends Command {
     private static final int LINE_WIDTH = 50;
-
-    private static final String RESET = "\u001B[0m";
-    private static final String CYAN = "\u001B[36m";
-    private static final String YELLOW = "\u001B[33m";
-    private static final String GREEN = "\u001B[32m";
-    private static final String BOLD = "\u001B[1m";
 
     @CommandLine.Parameters(index = "0", paramLabel = "db_path",
             description = "path to NoteSR Backup Database")
@@ -62,14 +59,13 @@ public final class ReadNoteCommand extends Command {
         String separator = "─".repeat(LINE_WIDTH);
 
         out.println();
-        out.println(CYAN + separator + RESET);
-        out.println(BOLD + "Title: " + RESET + YELLOW + note.getName() + RESET);
-        out.println(CYAN + separator + RESET);
-        out.println(BOLD + "Content:" + RESET);
+        out.println(MAGENTA.apply(separator));
+        out.println(BOLD.apply(note.getName()));
+        out.println(MAGENTA.apply(separator));
         out.println(wrapText(note.getText()));
-        out.println(CYAN + separator + RESET);
-        out.println(BOLD + "Updated at: " + RESET + GREEN + dateTimeToString(note.getUpdatedAt()) + RESET);
-        out.println(CYAN + separator + RESET);
+        out.println(MAGENTA.apply(separator));
+        out.println(BOLD.apply("Updated at: ") + YELLOW.apply(dateTimeToString(note.getUpdatedAt())));
+        out.println(MAGENTA.apply(separator));
         out.println();
     }
 
