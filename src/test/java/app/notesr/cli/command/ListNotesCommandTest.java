@@ -77,10 +77,7 @@ class ListNotesCommandTest {
         Path dbPath = getFixturePath("empty-backup.db");
 
         int exitCode = cmd.execute(dbPath.toString());
-        String output = outputStream.toString();
-
         assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
-        assertEquals("No notes", output.trim(), "Unexpected output");
     }
 
     private Set<Note> getAllNotesFromDb(Path dbPath) throws SQLException {

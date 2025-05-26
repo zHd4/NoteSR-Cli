@@ -49,7 +49,7 @@ public final class ListNotesCommand extends Command {
                 AsciiTable table = getAsciiTable(tableRows);
                 out.println(table.render());
             } else {
-                out.println("No notes");
+                log.info("{}: No notes", dbPath);
             }
 
             exitCode = SUCCESS;
