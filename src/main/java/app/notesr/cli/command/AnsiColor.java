@@ -1,6 +1,5 @@
 package app.notesr.cli.command;
 
-@SuppressWarnings("unused")
 enum AnsiColor {
     BLACK("\u001B[30m"),
     RED("\u001B[31m"),
