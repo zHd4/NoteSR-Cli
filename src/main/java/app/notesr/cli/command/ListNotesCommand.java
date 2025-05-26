@@ -43,10 +43,14 @@ public final class ListNotesCommand extends Command {
 
         try {
             File dbFile = getFile(dbPath);
-            DbConnection db = new DbConnection(dbFile.getAbsolutePath());
-            AsciiTable table = getAsciiTable(db);
+            Set<NoteFileInfoOutputDto> tableRows = getTableRows(dbFile);
 
-            out.println(table.render());
+            if (!tableRows.isEmpty()) {
+                AsciiTable table = getAsciiTable(tableRows);
+                out.println(table.render());
+            } else {
+                out.println("No notes");
+            }
 
             exitCode = SUCCESS;
         } catch (CommandHandlingException e) {
@@ -56,35 +60,38 @@ public final class ListNotesCommand extends Command {
         return exitCode;
     }
 
-    private AsciiTable getAsciiTable(DbConnection db) throws CommandHandlingException {
+    private Set<NoteFileInfoOutputDto> getTableRows(File dbFile) throws CommandHandlingException {
+        DbConnection db = new DbConnection(dbFile.getAbsolutePath());
         NoteFileInfoDao noteFileInfoDao = new NoteFileInfoDao(db);
 
         try {
-            Set<NoteFileInfoOutputDto> tableRows = noteFileInfoDao.getNoteFileInfoOutputTable();
-
-            AsciiTable table = new AsciiTable();
-
-            table.getContext().setGridTheme(TA_GridThemes.FULL);
-            table.getContext().setWidth(MAX_TABLE_ROW_WIDTH);
-
-            table.addRule();
-            table.addRow("ID", "Name", "Text", "Last update", "Files attached");
-            table.addRule();
-
-            tableRows.forEach(row -> table.addRow(
-                    row.getNoteId(),
-                    truncate(row.getNoteShortName(), MAX_NAME_LENGTH),
-                    truncate(row.getNoteShortText(), MAX_TEXT_LENGTH),
-                    dateTimeToString(row.getNoteUpdatedAt()),
-                    row.getAttachedFilesCount()
-            ));
-
-            table.addRule();
-            return table;
+            return noteFileInfoDao.getNoteFileInfoOutputTable();
         } catch (SQLException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
             throw new CommandHandlingException(DB_ERROR);
         }
+    }
+
+    private AsciiTable getAsciiTable(Set<NoteFileInfoOutputDto> tableRows) {
+        AsciiTable table = new AsciiTable();
+
+        table.getContext().setGridTheme(TA_GridThemes.FULL);
+        table.getContext().setWidth(MAX_TABLE_ROW_WIDTH);
+
+        table.addRule();
+        table.addRow("ID", "Name", "Text", "Last update", "Files attached");
+        table.addRule();
+
+        tableRows.forEach(row -> table.addRow(
+                row.getNoteId(),
+                truncate(row.getNoteShortName(), MAX_NAME_LENGTH),
+                truncate(row.getNoteShortText(), MAX_TEXT_LENGTH),
+                dateTimeToString(row.getNoteUpdatedAt()),
+                row.getAttachedFilesCount()
+        ));
+
+        table.addRule();
+        return table;
     }
 
     static String truncate(String text, int maxLength) {
