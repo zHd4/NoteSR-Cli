@@ -19,7 +19,7 @@ import static app.notesr.cli.db.DbUtils.dateTimeToString;
 
 @Slf4j
 @CommandLine.Command(name = "list-notes",
-        description = "Lists all notes stored in the NoteSR SQLite database.")
+        description = "Lists all notes stored in the NoteSR Backup Database.")
 public final class ListNotesCommand extends Command {
     private static final int MAX_TABLE_ROW_WIDTH = 182;
 
@@ -27,7 +27,7 @@ public final class ListNotesCommand extends Command {
     static final int MAX_TEXT_LENGTH = 30;
 
     @CommandLine.Parameters(index = "0", paramLabel = "db_path",
-            description = "path to NoteSR SQLite database")
+            description = "path to NoteSR Backup Database")
     private String dbPath;
 
     @Setter(AccessLevel.PACKAGE)
