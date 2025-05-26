@@ -22,11 +22,11 @@ import static java.util.Objects.requireNonNullElseGet;
 
 @Slf4j
 @CommandLine.Command(name = "compile",
-        description = "Compiles NoteSR SQLite database into NoteSR .bak file.")
+        description = "Compiles NoteSR Backup Database into NoteSR .bak file.")
 public final class CompileCommand extends Command {
 
     @CommandLine.Parameters(index = "0", paramLabel = "db_path",
-            description = "path to NoteSR SQLite database")
+            description = "path to NoteSR Backup Database")
     private String dbPath;
 
     @CommandLine.Parameters(index = "1", paramLabel = "key_path", description = "path to exported key (text file)")
