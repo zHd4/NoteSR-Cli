@@ -1,7 +1,9 @@
 package app.notesr.cli.command;
 
 import app.notesr.cli.db.DbConnection;
+import app.notesr.cli.db.dao.FileInfoDao;
 import app.notesr.cli.db.dao.NoteDao;
+import app.notesr.cli.dto.NoteOutputDto;
 import app.notesr.cli.model.Note;
 import lombok.AccessLevel;
 import lombok.Setter;
@@ -44,9 +46,10 @@ public final class ReadNoteCommand extends Command {
 
         try {
             File dbFile = getFile(dbPath);
-            Note note = getNote(dbFile);
+            DbConnection db = new DbConnection(dbFile.getAbsolutePath());
+            NoteOutputDto noteFileInfoDto = getNoteOutputDto(db);
 
-            renderNote(note);
+            renderNote(noteFileInfoDto);
             exitCode = SUCCESS;
         } catch (CommandHandlingException e) {
             exitCode = e.getExitCode();
@@ -55,7 +58,10 @@ public final class ReadNoteCommand extends Command {
         return exitCode;
     }
 
-    private void renderNote(Note note) {
+    private void renderNote(NoteOutputDto noteOutputDto) {
+        Note note = noteOutputDto.getNote();
+        Long attachmentsCount = noteOutputDto.getAttachmentsCount();
+
         String separator = "─".repeat(LINE_WIDTH);
 
         out.println();
@@ -65,28 +71,35 @@ public final class ReadNoteCommand extends Command {
         out.println(wrapText(note.getText()));
         out.println(MAGENTA.apply(separator));
         out.println(BOLD.apply("Updated at: ") + YELLOW.apply(dateTimeToString(note.getUpdatedAt())));
+        out.println(BOLD.apply("Attached files: ") + YELLOW.apply(attachmentsCount.toString()));
         out.println(MAGENTA.apply(separator));
         out.println();
     }
 
-    private Note getNote(File dbFile) throws CommandHandlingException {
-        DbConnection db = new DbConnection(dbFile.getAbsolutePath());
+    private NoteOutputDto getNoteOutputDto(DbConnection db) throws CommandHandlingException {
         NoteDao noteDao = new NoteDao(db);
+        FileInfoDao fileInfoDao = new FileInfoDao(db);
 
         try {
             Note note = noteDao.getById(noteId);
+            Long attachmentsCount = fileInfoDao.getCountByNoteId(noteId);
 
             if (note == null) {
                 log.error("{}: note with id '{}' not found", dbPath, noteId);
                 throw new CommandHandlingException(DB_ERROR);
             }
 
-            return note;
+            if (attachmentsCount == null) {
+                throw new SQLException("Attachments count is null");
+            }
+
+            return new NoteOutputDto(note, attachmentsCount);
         } catch (SQLException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
             throw new CommandHandlingException(DB_ERROR);
         }
     }
+
 
     static String wrapText(String text) {
         StringBuilder builder = new StringBuilder();
