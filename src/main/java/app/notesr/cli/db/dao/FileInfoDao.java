@@ -88,6 +88,22 @@ public final class FileInfoDao {
         return results;
     }
 
+    public Long getCountByNoteId(String noteId) throws SQLException {
+        Long count = null;
+        String sql = "SELECT COUNT(*) FROM files_info WHERE note_id = ?";
+
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, noteId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                count = rs.getLong(1);
+            }
+        }
+
+        return count;
+    }
+
     public FileInfo getById(String id) throws SQLException {
         String sql = "SELECT * FROM files_info WHERE id = ?";
 
