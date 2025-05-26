@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Set;
 
+import static app.notesr.cli.command.Command.FILE_RW_ERROR;
 import static app.notesr.cli.command.Command.SUCCESS;
 import static app.notesr.cli.command.ListNotesCommand.MAX_NAME_LENGTH;
 import static app.notesr.cli.command.ListNotesCommand.truncate;
@@ -61,6 +62,14 @@ class ListNotesCommandTest {
             assertTrue(output.contains(expectedLastUpdateTime), "Last update time of note (id='"
                     + expected.getId() + "') not found in the output (expected: '" + expectedLastUpdateTime + "')");
         }
+    }
+
+    @Test
+    void testCommandWithInvalidDbPath() {
+        Path dbPath = Path.of("/////some///weird//path///file");
+        int exitCode = cmd.execute(dbPath.toString());
+
+        assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
     }
 
     @Test
