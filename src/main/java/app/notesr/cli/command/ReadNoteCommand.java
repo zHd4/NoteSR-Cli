@@ -5,6 +5,7 @@ import app.notesr.cli.db.dao.FileInfoDao;
 import app.notesr.cli.db.dao.NoteDao;
 import app.notesr.cli.dto.NoteOutputDto;
 import app.notesr.cli.model.Note;
+import app.notesr.cli.util.UuidShortener;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -80,9 +81,12 @@ public final class ReadNoteCommand extends Command {
         NoteDao noteDao = new NoteDao(db);
         FileInfoDao fileInfoDao = new FileInfoDao(db);
 
+        UuidShortener noteIdShortener = new UuidShortener(noteId);
+        String fullNoteId = noteIdShortener.getLongUuid();
+
         try {
-            Note note = noteDao.getById(noteId);
-            Long attachmentsCount = fileInfoDao.getCountByNoteId(noteId);
+            Note note = noteDao.getById(fullNoteId);
+            Long attachmentsCount = fileInfoDao.getCountByNoteId(fullNoteId);
 
             if (note == null) {
                 log.error("{}: note with id '{}' not found", dbPath, noteId);
