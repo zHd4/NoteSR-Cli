@@ -3,6 +3,7 @@ package app.notesr.cli.command;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.NoteFileInfoDao;
 import app.notesr.cli.dto.NotesTableDto;
+import app.notesr.cli.util.UuidShortener;
 import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciithemes.TA_GridThemes;
 import lombok.AccessLevel;
@@ -83,7 +84,7 @@ public final class ListNotesCommand extends Command {
         table.addRule();
 
         tableRows.forEach(row -> table.addRow(
-                row.getNoteId(),
+                shortenId(row.getNoteId()),
                 truncate(row.getNoteShortName(), MAX_NAME_LENGTH),
                 truncate(row.getNoteShortText(), MAX_TEXT_LENGTH),
                 dateTimeToString(row.getNoteUpdatedAt()),
@@ -100,5 +101,10 @@ public final class ListNotesCommand extends Command {
         }
 
         return text.substring(0, maxLength - 1) + "…";
+    }
+
+    static String shortenId(String id) {
+        UuidShortener uuidShortener = new UuidShortener(id);
+        return uuidShortener.getShortUuid();
     }
 }
