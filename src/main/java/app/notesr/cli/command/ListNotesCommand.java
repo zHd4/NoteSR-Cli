@@ -31,6 +31,9 @@ public final class ListNotesCommand extends Command {
             description = "path to NoteSR Backup Database")
     private String dbPath;
 
+    @CommandLine.Option(names = { "-f", "--full-ids" }, description = "Display full notes IDs")
+    private boolean displayFullNotesIds;
+
     @Setter(AccessLevel.PACKAGE)
     private PrintStream out = System.out;
 
@@ -84,7 +87,7 @@ public final class ListNotesCommand extends Command {
         table.addRule();
 
         tableRows.forEach(row -> table.addRow(
-                shortenId(row.getNoteId()),
+                validateNoteId(row.getNoteId()),
                 truncate(row.getNoteShortName(), MAX_NAME_LENGTH),
                 truncate(row.getNoteShortText(), MAX_TEXT_LENGTH),
                 dateTimeToString(row.getNoteUpdatedAt()),
@@ -95,16 +98,16 @@ public final class ListNotesCommand extends Command {
         return table;
     }
 
+    private String validateNoteId(String noteId) {
+        UuidShortener uuidShortener = new UuidShortener(noteId);
+        return displayFullNotesIds ? uuidShortener.getLongUuid() : uuidShortener.getShortUuid();
+    }
+
     static String truncate(String text, int maxLength) {
         if (text.length() < maxLength) {
             return text;
         }
 
         return text.substring(0, maxLength - 1) + "…";
-    }
-
-    static String shortenId(String id) {
-        UuidShortener uuidShortener = new UuidShortener(id);
-        return uuidShortener.getShortUuid();
     }
 }
