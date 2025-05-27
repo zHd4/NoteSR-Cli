@@ -55,7 +55,7 @@ class ReadNoteCommandTest {
         assertTrue(output.contains(testNote.getId()),
                 "Note id not found (ID: " + testNote.getId() + ")");
 
-        assertTrue(output.contains(testNote.getName()),
+        assertTrue(output.contains(wrapText(testNote.getName())),
                 "Note name not found (ID: " + testNote.getId() + ")");
 
         assertTrue(output.contains(wrapText(testNote.getText())),
