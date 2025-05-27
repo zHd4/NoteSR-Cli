@@ -68,7 +68,7 @@ public final class ReadNoteCommand extends Command {
 
         out.println();
         out.println(MAGENTA.apply(separator));
-        out.println(BOLD.apply(note.getName()));
+        out.println(BOLD.apply(wrapText(note.getName())));
         out.println(MAGENTA.apply(separator));
         out.println(wrapText(note.getText()));
         out.println(MAGENTA.apply(separator));
