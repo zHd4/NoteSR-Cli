@@ -17,6 +17,7 @@ import java.util.Set;
 import static app.notesr.cli.command.Command.FILE_RW_ERROR;
 import static app.notesr.cli.command.Command.SUCCESS;
 import static app.notesr.cli.command.ListNotesCommand.MAX_NAME_LENGTH;
+import static app.notesr.cli.command.ListNotesCommand.shortenId;
 import static app.notesr.cli.command.ListNotesCommand.truncate;
 import static app.notesr.cli.db.DbUtils.dateTimeToString;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
@@ -47,20 +48,21 @@ class ListNotesCommandTest {
         assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
 
         for (Note expected : getAllNotesFromDb(dbPath)) {
-            assertTrue(output.contains(expected.getId()), "Note id '"
-                    + expected.getId() + "' not found in the output");
+            String expectedId = shortenId(expected.getId());
+            assertTrue(output.contains(expectedId), "Note id '"
+                    + expectedId + "' not found in the output");
 
             String expectedName = truncate(expected.getName(), MAX_NAME_LENGTH);
             assertTrue(output.contains(expectedName), "Name of note (id='"
-                    + expected.getId() + "') not found in the output (expected: '" + expectedName + "')");
+                    + expectedId + "') not found in the output (expected: '" + expectedName + "')");
 
             String expectedText = truncate(expected.getName(), MAX_NAME_LENGTH);
             assertTrue(output.contains(expectedText), "Text of note (id='"
-                    + expected.getId() + "') not found in the output (expected: '" + expectedText + "')");
+                    + expectedId + "') not found in the output (expected: '" + expectedText + "')");
 
             String expectedLastUpdateTime = dateTimeToString(expected.getUpdatedAt());
             assertTrue(output.contains(expectedLastUpdateTime), "Last update time of note (id='"
-                    + expected.getId() + "') not found in the output (expected: '" + expectedLastUpdateTime + "')");
+                    + expectedId + "') not found in the output (expected: '" + expectedLastUpdateTime + "')");
         }
     }
 
