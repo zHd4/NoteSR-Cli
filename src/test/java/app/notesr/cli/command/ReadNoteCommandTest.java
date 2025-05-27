@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ReadNoteCommandTest {
     private static final Random RANDOM = new Random();
+    private static final String BLANK_UUID = "123e4567-e89b-12d3-a456-426614174000";
 
     private CommandLine cmd;
     private ByteArrayOutputStream outputStream;
@@ -64,18 +65,16 @@ class ReadNoteCommandTest {
     @Test
     void testCommandWithInvalidDbPath() {
         Path dbPath = Path.of("/////some///weird//path///file");
-        String noteId = "note_id";
 
-        int exitCode = cmd.execute(dbPath.toString(), noteId);
+        int exitCode = cmd.execute(dbPath.toString(), BLANK_UUID);
         assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
     }
 
     @Test
     void testCommandWithInvalidNoteId() {
         Path dbPath = getFixturePath("backup.db");
-        String noteId = "invalid_note_id";
 
-        int exitCode = cmd.execute(dbPath.toString(), noteId);
+        int exitCode = cmd.execute(dbPath.toString(), BLANK_UUID);
         assertEquals(DB_ERROR, exitCode, "Expected code " + DB_ERROR);
     }
 
