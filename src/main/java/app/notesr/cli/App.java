@@ -61,12 +61,5 @@ public final class App implements Callable<Integer> {
 
     public static void printUsage(CommandLine cmd) {
         cmd.usage(System.out);
-
-        for (CommandLine sub : cmd.getSubcommands().values()) {
-            System.out.println();
-            System.out.println("=== Command: " + sub.getCommandName() + " ===");
-
-            sub.usage(System.out);
-        }
     }
 }
