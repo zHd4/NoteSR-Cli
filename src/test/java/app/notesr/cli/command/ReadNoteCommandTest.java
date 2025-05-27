@@ -52,6 +52,9 @@ class ReadNoteCommandTest {
 
         assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
 
+        assertTrue(output.contains(testNote.getId()),
+                "Note id not found (ID: " + testNote.getId() + ")");
+
         assertTrue(output.contains(testNote.getName()),
                 "Note name not found (ID: " + testNote.getId() + ")");
 
