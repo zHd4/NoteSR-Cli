@@ -16,6 +16,7 @@ import java.io.PrintStream;
 import java.sql.SQLException;
 
 import static app.notesr.cli.command.AnsiColor.BOLD;
+import static app.notesr.cli.command.AnsiColor.BRIGHT_GREEN;
 import static app.notesr.cli.command.AnsiColor.MAGENTA;
 import static app.notesr.cli.command.AnsiColor.YELLOW;
 import static app.notesr.cli.db.DbUtils.dateTimeToString;
@@ -71,6 +72,7 @@ public final class ReadNoteCommand extends Command {
         out.println(MAGENTA.apply(separator));
         out.println(wrapText(note.getText()));
         out.println(MAGENTA.apply(separator));
+        out.println(BOLD.apply("Full id: ") + BRIGHT_GREEN.apply(note.getId()));
         out.println(BOLD.apply("Updated at: ") + YELLOW.apply(dateTimeToString(note.getUpdatedAt())));
         out.println(BOLD.apply("Attached files: ") + YELLOW.apply(attachmentsCount.toString()));
         out.println(MAGENTA.apply(separator));
