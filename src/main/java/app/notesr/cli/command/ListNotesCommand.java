@@ -31,7 +31,7 @@ public final class ListNotesCommand extends Command {
             description = "path to NoteSR Backup Database")
     private String dbPath;
 
-    @CommandLine.Option(names = { "-f", "--full-ids" }, description = "Display full notes IDs")
+    @CommandLine.Option(names = { "-f", "--full-ids" }, description = "display full notes IDs")
     private boolean displayFullNotesIds;
 
     @Setter(AccessLevel.PACKAGE)
