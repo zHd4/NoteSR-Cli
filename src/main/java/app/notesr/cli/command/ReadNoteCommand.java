@@ -49,9 +49,9 @@ public final class ReadNoteCommand extends Command {
         try {
             File dbFile = getFile(dbPath);
             DbConnection db = new DbConnection(dbFile.getAbsolutePath());
-            NoteOutputDto noteFileInfoDto = getNoteOutputDto(db);
+            NoteOutputDto noteOutputDto = getNoteOutputDto(db);
 
-            renderNote(noteFileInfoDto);
+            renderNote(noteOutputDto);
             exitCode = SUCCESS;
         } catch (CommandHandlingException e) {
             exitCode = e.getExitCode();
