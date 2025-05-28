@@ -30,7 +30,7 @@ public final class NoteFileInfoDao {
 
     private final DbConnection db;
 
-    public Set<NotesTableDto> getNoteFileInfoOutputTable() throws SQLException {
+    public Set<NotesTableDto> getNotesTable() throws SQLException {
         Set<NotesTableDto> results = new LinkedHashSet<>();
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(GET_NOTE_FILE_INFO_OUTPUT_TABLE_QUERY)) {

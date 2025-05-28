@@ -30,7 +30,7 @@ class NoteFileInfoDaoTest {
     private static final int VALUE_CROP_INDEX = 30;
 
     @Test
-    void testGetNoteFileInfoOutputTable() throws SQLException {
+    void testGetNotesTable() throws SQLException {
         DbConnection db = new DbConnection(":memory:");
         NoteFileInfoDao noteFileInfoDao = new NoteFileInfoDao(db);
 
@@ -58,7 +58,7 @@ class NoteFileInfoDaoTest {
                 .sorted(Comparator.comparing(NotesTableDto::getNoteId))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        Set<NotesTableDto> actual = noteFileInfoDao.getNoteFileInfoOutputTable().stream()
+        Set<NotesTableDto> actual = noteFileInfoDao.getNotesTable().stream()
                 .sorted(Comparator.comparing(NotesTableDto::getNoteId))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 

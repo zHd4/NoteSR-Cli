@@ -69,7 +69,7 @@ public final class ListNotesCommand extends Command {
         NoteFileInfoDao noteFileInfoDao = new NoteFileInfoDao(db);
 
         try {
-            return noteFileInfoDao.getNoteFileInfoOutputTable();
+            return noteFileInfoDao.getNotesTable();
         } catch (SQLException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
             throw new CommandHandlingException(DB_ERROR);
