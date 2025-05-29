@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class NotesTableDto {
+public class NotesTableRowDto {
     private String noteId;
     private String noteShortName;
     private String noteShortText;

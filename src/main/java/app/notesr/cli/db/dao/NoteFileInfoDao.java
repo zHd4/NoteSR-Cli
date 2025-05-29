@@ -1,7 +1,7 @@
 package app.notesr.cli.db.dao;
 
 import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.dto.NotesTableDto;
+import app.notesr.cli.dto.NotesTableRowDto;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.PreparedStatement;
@@ -30,14 +30,14 @@ public final class NoteFileInfoDao {
 
     private final DbConnection db;
 
-    public Set<NotesTableDto> getNotesTable() throws SQLException {
-        Set<NotesTableDto> results = new LinkedHashSet<>();
+    public Set<NotesTableRowDto> getNotesTable() throws SQLException {
+        Set<NotesTableRowDto> results = new LinkedHashSet<>();
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(GET_NOTE_FILE_INFO_OUTPUT_TABLE_QUERY)) {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                NotesTableDto notesTableDto = NotesTableDto.builder()
+                NotesTableRowDto notesTableRowDto = NotesTableRowDto.builder()
                         .noteId(rs.getString(1))
                         .noteShortName(rs.getString(2))
                         .noteShortText(rs.getString(3))
@@ -45,7 +45,7 @@ public final class NoteFileInfoDao {
                         .attachedFilesCount(rs.getLong(5))
                         .build();
 
-                results.add(notesTableDto);
+                results.add(notesTableRowDto);
             }
         }
 

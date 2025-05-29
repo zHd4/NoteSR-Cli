@@ -2,7 +2,7 @@ package app.notesr.cli.command;
 
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.NoteFileInfoDao;
-import app.notesr.cli.dto.NotesTableDto;
+import app.notesr.cli.dto.NotesTableRowDto;
 import app.notesr.cli.util.UuidShortener;
 import de.vandermeer.asciitable.AsciiTable;
 import de.vandermeer.asciithemes.TA_GridThemes;
@@ -47,7 +47,7 @@ public final class ListNotesCommand extends Command {
 
         try {
             File dbFile = getFile(dbPath);
-            Set<NotesTableDto> tableRows = getTableRows(dbFile);
+            Set<NotesTableRowDto> tableRows = getTableRows(dbFile);
 
             if (!tableRows.isEmpty()) {
                 AsciiTable table = getAsciiTable(tableRows);
@@ -64,7 +64,7 @@ public final class ListNotesCommand extends Command {
         return exitCode;
     }
 
-    private Set<NotesTableDto> getTableRows(File dbFile) throws CommandHandlingException {
+    private Set<NotesTableRowDto> getTableRows(File dbFile) throws CommandHandlingException {
         DbConnection db = new DbConnection(dbFile.getAbsolutePath());
         NoteFileInfoDao noteFileInfoDao = new NoteFileInfoDao(db);
 
@@ -76,7 +76,7 @@ public final class ListNotesCommand extends Command {
         }
     }
 
-    private AsciiTable getAsciiTable(Set<NotesTableDto> tableRows) {
+    private AsciiTable getAsciiTable(Set<NotesTableRowDto> tableRows) {
         AsciiTable table = new AsciiTable();
 
         table.getContext().setGridTheme(TA_GridThemes.FULL);

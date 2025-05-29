@@ -1,7 +1,7 @@
 package app.notesr.cli.db.dao;
 
 import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.dto.NotesTableDto;
+import app.notesr.cli.dto.NotesTableRowDto;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
 import app.notesr.cli.util.DbUtils;
@@ -34,7 +34,7 @@ class NoteFileInfoDaoTest {
         DbConnection db = new DbConnection(":memory:");
         NoteFileInfoDao noteFileInfoDao = new NoteFileInfoDao(db);
 
-        List<NotesTableDto> notesTableDtos = new LinkedList<>();
+        List<NotesTableRowDto> notesTableRowDtos = new LinkedList<>();
 
         for (Note testNote : ModelGenerator.generateTestNotes(TEST_NOTES_COUNT)) {
             Set<FileInfo> testFilesInfos = ModelGenerator.generateTestFilesInfos(testNote, TEST_FILES_COUNT,
@@ -43,7 +43,7 @@ class NoteFileInfoDaoTest {
             DbUtils.insertNote(db.getConnection(), testNote);
             testFilesInfos.forEach(testFileInfo -> DbUtils.insertFileInfo(db.getConnection(), testFileInfo));
 
-            NotesTableDto notesTableDto = NotesTableDto.builder()
+            NotesTableRowDto notesTableRowDto = NotesTableRowDto.builder()
                     .noteId(testNote.getId())
                     .noteShortName(cropValue(testNote.getName()))
                     .noteShortText(cropValue(testNote.getText()))
@@ -51,15 +51,15 @@ class NoteFileInfoDaoTest {
                     .attachedFilesCount((long) testFilesInfos.size())
                     .build();
 
-            notesTableDtos.add(notesTableDto);
+            notesTableRowDtos.add(notesTableRowDto);
         }
 
-        Set<NotesTableDto> expected = notesTableDtos.stream()
-                .sorted(Comparator.comparing(NotesTableDto::getNoteId))
+        Set<NotesTableRowDto> expected = notesTableRowDtos.stream()
+                .sorted(Comparator.comparing(NotesTableRowDto::getNoteId))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        Set<NotesTableDto> actual = noteFileInfoDao.getNotesTable().stream()
-                .sorted(Comparator.comparing(NotesTableDto::getNoteId))
+        Set<NotesTableRowDto> actual = noteFileInfoDao.getNotesTable().stream()
+                .sorted(Comparator.comparing(NotesTableRowDto::getNoteId))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
         assertFalse(actual.isEmpty(), "The Set must contain DTOs");
