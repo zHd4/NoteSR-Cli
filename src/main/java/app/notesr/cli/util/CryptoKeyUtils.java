@@ -1,4 +1,4 @@
-package app.notesr.cli.crypto;
+package app.notesr.cli.util;
 
 import app.notesr.cli.dto.CryptoKey;
 
