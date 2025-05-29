@@ -18,7 +18,7 @@ public class FileInfoDtoDao {
 
     public Set<FilesTableRowDto> getFilesTableRowsByNoteId(String noteId) throws SQLException {
         Set<FilesTableRowDto> results = new LinkedHashSet<>();
-        String sql = "SELECT id, name, size, created_at, updated_at FROM files_info WHERE note_id = ?";
+        String sql = "SELECT id, name, size, updated_at FROM files_info WHERE note_id = ?";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, noteId);
@@ -29,8 +29,7 @@ public class FileInfoDtoDao {
                         .id(rs.getString(1))
                         .fileName(rs.getString(2))
                         .fileSize(rs.getLong(3))
-                        .createdAt(parseDateTime(rs.getString(4)))
-                        .updatedAt(parseDateTime(rs.getString(5)))
+                        .updatedAt(parseDateTime(rs.getString(4)))
                         .build();
 
                 results.add(fileInfo);

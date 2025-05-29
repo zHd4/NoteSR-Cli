@@ -54,7 +54,6 @@ class FileInfoDtoDaoTest {
                         .id(fileInfo.getId())
                         .fileName(fileInfo.getName())
                         .fileSize(fileInfo.getSize())
-                        .createdAt(fileInfo.getCreatedAt())
                         .updatedAt(fileInfo.getUpdatedAt())
                         .build())
                 .collect(Collectors.toSet());

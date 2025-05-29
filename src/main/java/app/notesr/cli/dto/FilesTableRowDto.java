@@ -11,6 +11,5 @@ public class FilesTableRowDto {
     private String id;
     private String fileName;
     private Long fileSize;
-    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
