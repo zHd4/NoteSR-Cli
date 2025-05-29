@@ -17,11 +17,11 @@ import static app.notesr.cli.util.ModelGenerator.generateTestNotes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class NoteDaoTest {
+class NoteEntityDaoTest {
     private static final int TEST_NOTES_COUNT = 5;
 
     private DbConnection db;
-    private NoteDao noteDao;
+    private NoteEntityDao noteEntityDao;
 
     private LinkedHashSet<Note> testNotes;
 
@@ -29,7 +29,7 @@ class NoteDaoTest {
     void setUp() {
         db = new DbConnection(":memory:");
 
-        noteDao = new NoteDao(db);
+        noteEntityDao = new NoteEntityDao(db);
         testNotes = new LinkedHashSet<>(generateTestNotes(TEST_NOTES_COUNT));
     }
 
@@ -38,7 +38,7 @@ class NoteDaoTest {
         Note expected = testNotes.getFirst();
         Note actual = null;
 
-        noteDao.add(expected);
+        noteEntityDao.add(expected);
 
         String sql = "SELECT * FROM notes WHERE id = ?";
         try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
@@ -62,7 +62,7 @@ class NoteDaoTest {
     @Test
     void testGetAll() throws SQLException {
         testNotes.forEach(testNote -> insertNote(db.getConnection(), testNote));
-        Set<Note> actual = noteDao.getAll();
+        Set<Note> actual = noteEntityDao.getAll();
 
         assertNotNull(actual, "Actual notes must be not null");
         assertEquals(testNotes, actual, "Notes are different");
@@ -72,7 +72,7 @@ class NoteDaoTest {
     void testGetById() throws SQLException {
         for (Note expected : testNotes) {
             insertNote(db.getConnection(), expected);
-            Note actual = noteDao.getById(expected.getId());
+            Note actual = noteEntityDao.getById(expected.getId());
 
             assertNotNull(actual, "Actual note must be not null");
             assertEquals(expected, actual, "Notes are different");

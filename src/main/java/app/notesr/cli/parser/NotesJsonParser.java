@@ -1,7 +1,7 @@
 package app.notesr.cli.parser;
 
 import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.db.dao.NoteDao;
+import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.model.Note;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -14,11 +14,11 @@ import java.time.format.DateTimeFormatter;
 public final class NotesJsonParser extends BaseJsonParser {
     private static final String ROOT_NAME = "notes";
 
-    private final NoteDao noteDao;
+    private final NoteEntityDao noteEntityDao;
 
     public NotesJsonParser(DbConnection db, JsonParser parser, DateTimeFormatter timestampFormatter) {
         super(parser, timestampFormatter);
-        this.noteDao = new NoteDao(db);
+        this.noteEntityDao = new NoteEntityDao(db);
     }
 
     @Override
@@ -40,7 +40,7 @@ public final class NotesJsonParser extends BaseJsonParser {
                 }
             }
 
-            noteDao.add(note);
+            noteEntityDao.add(note);
         } while (parser.nextToken() != JsonToken.END_ARRAY);
     }
 

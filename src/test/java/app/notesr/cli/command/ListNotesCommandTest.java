@@ -1,7 +1,7 @@
 package app.notesr.cli.command;
 
 import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.db.dao.NoteDao;
+import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.model.Note;
 import app.notesr.cli.util.UuidShortener;
 import org.junit.jupiter.api.BeforeEach;
@@ -100,7 +100,7 @@ class ListNotesCommandTest {
 
     private Set<Note> getAllNotesFromDb(Path dbPath) throws SQLException {
         DbConnection db = new DbConnection(dbPath.toString());
-        NoteDao noteDao = new NoteDao(db);
-        return noteDao.getAll();
+        NoteEntityDao noteEntityDao = new NoteEntityDao(db);
+        return noteEntityDao.getAll();
     }
 }

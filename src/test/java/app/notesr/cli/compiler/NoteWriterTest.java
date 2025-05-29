@@ -1,6 +1,6 @@
 package app.notesr.cli.compiler;
 
-import app.notesr.cli.db.dao.NoteDao;
+import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.model.Note;
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -39,7 +39,7 @@ class NoteWriterTest {
 
     private JsonGenerator jsonGenerator;
     private File outputFile;
-    private NoteDao noteDao;
+    private NoteEntityDao noteEntityDao;
     private Set<Note> testNotes;
 
     @BeforeEach
@@ -49,15 +49,15 @@ class NoteWriterTest {
         JsonFactory jsonFactory = new JsonFactory();
         jsonGenerator = jsonFactory.createGenerator(outputFile, JsonEncoding.UTF8);
 
-        noteDao = mock(NoteDao.class);
+        noteEntityDao = mock(NoteEntityDao.class);
         testNotes = generateTestNotes(TEST_NOTES_COUNT);
 
-        when(noteDao.getAll()).thenReturn(testNotes);
+        when(noteEntityDao.getAll()).thenReturn(testNotes);
     }
 
     @Test
     void testWrite() throws SQLException, IOException {
-        NoteWriter noteWriter = new NoteWriter(jsonGenerator, noteDao, DATETIME_FORMATTER);
+        NoteWriter noteWriter = new NoteWriter(jsonGenerator, noteEntityDao, DATETIME_FORMATTER);
         noteWriter.write();
 
         String outputFileJsonData = Files.readString(outputFile.toPath());

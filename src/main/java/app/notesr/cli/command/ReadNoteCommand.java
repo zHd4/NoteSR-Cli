@@ -2,7 +2,7 @@ package app.notesr.cli.command;
 
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.FileInfoEntityDao;
-import app.notesr.cli.db.dao.NoteDao;
+import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.dto.NoteOutputDto;
 import app.notesr.cli.model.Note;
 import app.notesr.cli.util.UuidShortener;
@@ -80,14 +80,14 @@ public final class ReadNoteCommand extends Command {
     }
 
     private NoteOutputDto getNoteOutputDto(DbConnection db) throws CommandHandlingException {
-        NoteDao noteDao = new NoteDao(db);
+        NoteEntityDao noteEntityDao = new NoteEntityDao(db);
         FileInfoEntityDao fileInfoEntityDao = new FileInfoEntityDao(db);
 
         UuidShortener noteIdShortener = new UuidShortener(noteId);
         String fullNoteId = noteIdShortener.getLongUuid();
 
         try {
-            Note note = noteDao.getById(fullNoteId);
+            Note note = noteEntityDao.getById(fullNoteId);
             Long attachmentsCount = fileInfoEntityDao.getCountByNoteId(fullNoteId);
 
             if (note == null) {

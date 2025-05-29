@@ -14,7 +14,7 @@ import static app.notesr.cli.db.DbUtils.dateTimeToString;
 import static app.notesr.cli.db.DbUtils.parseDateTime;
 
 @RequiredArgsConstructor
-public final class NoteDao {
+public final class NoteEntityDao {
     private final DbConnection db;
 
     public void add(Note note) throws SQLException {

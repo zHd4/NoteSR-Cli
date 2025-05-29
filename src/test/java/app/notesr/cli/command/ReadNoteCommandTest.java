@@ -1,7 +1,7 @@
 package app.notesr.cli.command;
 
 import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.db.dao.NoteDao;
+import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.model.Note;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,9 +83,9 @@ class ReadNoteCommandTest {
 
     private Note getTestNote(Path dbPath) throws SQLException {
         DbConnection db = new DbConnection(dbPath.toString());
-        NoteDao noteDao = new NoteDao(db);
+        NoteEntityDao noteEntityDao = new NoteEntityDao(db);
 
-        List<Note> notes = new ArrayList<>(noteDao.getAll());
+        List<Note> notes = new ArrayList<>(noteEntityDao.getAll());
         return notes.get(RANDOM.nextInt(notes.size()));
     }
 }

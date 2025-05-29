@@ -1,6 +1,6 @@
 package app.notesr.cli.compiler;
 
-import app.notesr.cli.db.dao.NoteDao;
+import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.model.Note;
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ class NoteWriter implements Writer {
     static final String NOTES_ARRAY_NAME = "notes";
 
     private final JsonGenerator jsonGenerator;
-    private final NoteDao noteDao;
+    private final NoteEntityDao noteEntityDao;
     private final DateTimeFormatter dateTimeFormatter;
 
     @Override
@@ -23,7 +23,7 @@ class NoteWriter implements Writer {
             jsonGenerator.writeStartObject();
             jsonGenerator.writeArrayFieldStart(NOTES_ARRAY_NAME);
 
-            for (Note note : noteDao.getAll()) {
+            for (Note note : noteEntityDao.getAll()) {
                 writeNote(note);
             }
 
