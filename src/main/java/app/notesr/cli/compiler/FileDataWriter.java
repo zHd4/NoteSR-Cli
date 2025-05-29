@@ -1,6 +1,6 @@
 package app.notesr.cli.compiler;
 
-import app.notesr.cli.db.dao.DataBlockDao;
+import app.notesr.cli.db.dao.DataBlockEntityDao;
 import app.notesr.cli.model.DataBlock;
 import lombok.RequiredArgsConstructor;
 
@@ -14,7 +14,7 @@ import static java.util.Objects.requireNonNull;
 @RequiredArgsConstructor
 class FileDataWriter implements Writer {
     private final File outputDir;
-    private final DataBlockDao dataBlockDao;
+    private final DataBlockEntityDao dataBlockEntityDao;
 
     @Override
     public void write() throws IOException, SQLException {
@@ -26,9 +26,9 @@ class FileDataWriter implements Writer {
             Files.createDirectory(outputDir.toPath());
         }
 
-        for (DataBlock dataBlock : dataBlockDao.getAllDataBlocksWithoutData()) {
+        for (DataBlock dataBlock : dataBlockEntityDao.getAllDataBlocksWithoutData()) {
             File blockDataFile = new File(outputDir, dataBlock.getId());
-            byte[] blockData = requireNonNull(dataBlockDao.getById(dataBlock.getId())).getData();
+            byte[] blockData = requireNonNull(dataBlockEntityDao.getById(dataBlock.getId())).getData();
 
             Files.write(blockDataFile.toPath(), blockData);
         }

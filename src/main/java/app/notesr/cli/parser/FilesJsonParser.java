@@ -1,7 +1,7 @@
 package app.notesr.cli.parser;
 
 import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.db.dao.DataBlockDao;
+import app.notesr.cli.db.dao.DataBlockEntityDao;
 import app.notesr.cli.db.dao.FileInfoEntityDao;
 import app.notesr.cli.exception.BackupDbException;
 import app.notesr.cli.exception.BackupIOException;
@@ -19,12 +19,12 @@ public abstract class FilesJsonParser extends BaseJsonParser {
     private static final String ROOT_NAME = "files_info";
 
     protected final FileInfoEntityDao fileInfoEntityDao;
-    protected final DataBlockDao dataBlockDao;
+    protected final DataBlockEntityDao dataBlockEntityDao;
 
     public FilesJsonParser(DbConnection db, JsonParser parser, DateTimeFormatter timestampFormatter) {
         super(parser, timestampFormatter);
         this.fileInfoEntityDao = new FileInfoEntityDao(db);
-        this.dataBlockDao = new DataBlockDao(db);
+        this.dataBlockEntityDao = new DataBlockEntityDao(db);
     }
 
     @Override

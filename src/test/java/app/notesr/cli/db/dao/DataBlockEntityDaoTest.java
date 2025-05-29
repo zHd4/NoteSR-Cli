@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class DataBlockDaoTest {
+class DataBlockEntityDaoTest {
     public static final int TEST_BLOCK_SIZE = 1000;
 
     public static final int MIN_TEST_FILE_SIZE = 1024;
@@ -32,7 +32,7 @@ class DataBlockDaoTest {
     private static final Random RANDOM = new Random();
 
     private DbConnection db;
-    private DataBlockDao dataBlockDao;
+    private DataBlockEntityDao dataBlockEntityDao;
 
     private long testFileSize;
 
@@ -43,7 +43,7 @@ class DataBlockDaoTest {
     @BeforeEach
     void setUp() {
         db = new DbConnection(":memory:");
-        dataBlockDao = new DataBlockDao(db);
+        dataBlockEntityDao = new DataBlockEntityDao(db);
 
         testFileSize = RANDOM.nextLong(MIN_TEST_FILE_SIZE, MAX_TEST_FILE_SIZE);
 
@@ -58,7 +58,7 @@ class DataBlockDaoTest {
     @Test
     void testAdd() throws SQLException {
         for (DataBlock testDataBlock : testDataBlocks) {
-            dataBlockDao.add(testDataBlock);
+            dataBlockEntityDao.add(testDataBlock);
         }
 
         Set<DataBlock> actual = new LinkedHashSet<>();
@@ -92,7 +92,7 @@ class DataBlockDaoTest {
                 .peek(dataBlock -> dataBlock.setData(null))
                 .collect(Collectors.toSet());
 
-        Set<DataBlock> actual = dataBlockDao.getAllDataBlocksWithoutData();
+        Set<DataBlock> actual = dataBlockEntityDao.getAllDataBlocksWithoutData();
 
         assertNotNull(actual, "Actual data blocks must be not null");
         assertEquals(expected, actual, "Data blocks are different");
@@ -110,7 +110,7 @@ class DataBlockDaoTest {
                 DbUtils.insertDataBlock(db.getConnection(), dataBlock));
 
         Set<String> expected = testDataBlocks.stream().map(DataBlock::getId).collect(Collectors.toSet());
-        Set<String> actual = dataBlockDao.getIdsByFileId(testFileInfo.getId());
+        Set<String> actual = dataBlockEntityDao.getIdsByFileId(testFileInfo.getId());
 
         assertFalse(actual.isEmpty(), "Actual data blocks ids must be not empty");
         assertEquals(expected, actual, "Data blocks ids are different");
@@ -120,7 +120,7 @@ class DataBlockDaoTest {
     void testGetById() throws SQLException {
         for (DataBlock expected : testDataBlocks) {
             DbUtils.insertDataBlock(db.getConnection(), expected);
-            DataBlock actual = dataBlockDao.getById(expected.getId());
+            DataBlock actual = dataBlockEntityDao.getById(expected.getId());
 
             assertNotNull(actual, "Actual data block must be not null");
             assertEquals(expected, actual, "Data blocks are different");

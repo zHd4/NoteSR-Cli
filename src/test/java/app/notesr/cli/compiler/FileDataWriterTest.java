@@ -1,6 +1,6 @@
 package app.notesr.cli.compiler;
 
-import app.notesr.cli.db.dao.DataBlockDao;
+import app.notesr.cli.db.dao.DataBlockEntityDao;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,11 +41,11 @@ class FileDataWriterTest {
     @TempDir
     private Path tempDir;
 
-    private DataBlockDao dataBlockDao;
+    private DataBlockEntityDao dataBlockEntityDao;
 
     @BeforeEach
     void setUp() {
-        dataBlockDao = mock(DataBlockDao.class);
+        dataBlockEntityDao = mock(DataBlockEntityDao.class);
     }
 
     @Test
@@ -64,15 +64,15 @@ class FileDataWriterTest {
         Map<String, DataBlock> testDataBlocksMap = testDataBlocks.stream()
                 .collect(Collectors.toMap(DataBlock::getId, Function.identity()));
 
-        when(dataBlockDao.getAllDataBlocksWithoutData()).thenReturn(testDataBlocksWithoutData);
-        when(dataBlockDao.getById(anyString())).thenAnswer(invocation -> {
+        when(dataBlockEntityDao.getAllDataBlocksWithoutData()).thenReturn(testDataBlocksWithoutData);
+        when(dataBlockEntityDao.getById(anyString())).thenAnswer(invocation -> {
             String id = invocation.getArgument(0);
             return testDataBlocksMap.get(id);
         });
 
         File outputDir = tempDir.resolve("output").toFile();
 
-        FileDataWriter fileDataWriter = new FileDataWriter(outputDir, dataBlockDao);
+        FileDataWriter fileDataWriter = new FileDataWriter(outputDir, dataBlockEntityDao);
         fileDataWriter.write();
 
         Map<String, byte[]> expected = testDataBlocks.stream()
@@ -95,7 +95,7 @@ class FileDataWriterTest {
         when(outputDir.isDirectory()).thenReturn(false);
 
         assertThrows(IllegalArgumentException.class, () -> {
-            FileDataWriter fileDataWriter = new FileDataWriter(outputDir, dataBlockDao);
+            FileDataWriter fileDataWriter = new FileDataWriter(outputDir, dataBlockEntityDao);
             fileDataWriter.write();
         }, "An exception was expected but wasn't thrown");
     }

@@ -1,6 +1,6 @@
 package app.notesr.cli.compiler;
 
-import app.notesr.cli.db.dao.DataBlockDao;
+import app.notesr.cli.db.dao.DataBlockEntityDao;
 import app.notesr.cli.db.dao.FileInfoEntityDao;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
@@ -19,7 +19,7 @@ class FileInfoWriter implements Writer {
 
     private final JsonGenerator jsonGenerator;
     private final FileInfoEntityDao fileInfoEntityDao;
-    private final DataBlockDao dataBlockDao;
+    private final DataBlockEntityDao dataBlockEntityDao;
     private final DateTimeFormatter dateTimeFormatter;
 
     @Override
@@ -28,7 +28,7 @@ class FileInfoWriter implements Writer {
             jsonGenerator.writeStartObject();
 
             writeFilesInfos(fileInfoEntityDao.getAll());
-            writeDataBlocksWithoutData(dataBlockDao.getAllDataBlocksWithoutData());
+            writeDataBlocksWithoutData(dataBlockEntityDao.getAllDataBlocksWithoutData());
 
             jsonGenerator.writeEndObject();
         }

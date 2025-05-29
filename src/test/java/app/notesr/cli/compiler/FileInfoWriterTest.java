@@ -1,6 +1,6 @@
 package app.notesr.cli.compiler;
 
-import app.notesr.cli.db.dao.DataBlockDao;
+import app.notesr.cli.db.dao.DataBlockEntityDao;
 import app.notesr.cli.db.dao.FileInfoEntityDao;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
@@ -52,7 +52,7 @@ class FileInfoWriterTest {
     private File outputFile;
 
     private FileInfoEntityDao fileInfoEntityDao;
-    private DataBlockDao dataBlockDao;
+    private DataBlockEntityDao dataBlockEntityDao;
 
     private Set<FileInfo> testFilesInfos;
     private Set<DataBlock> testDataBlocks;
@@ -65,7 +65,7 @@ class FileInfoWriterTest {
         jsonGenerator = jsonFactory.createGenerator(outputFile, JsonEncoding.UTF8);
 
         fileInfoEntityDao = mock(FileInfoEntityDao.class);
-        dataBlockDao = mock(DataBlockDao.class);
+        dataBlockEntityDao = mock(DataBlockEntityDao.class);
 
         testFilesInfos = generateTestFilesInfos(generateTestNote(), TEST_FILES_COUNT, MIN_FILE_SIZE, MAX_FILE_SIZE);
         testDataBlocks = testFilesInfos.stream()
@@ -74,12 +74,12 @@ class FileInfoWriterTest {
                 .collect(Collectors.toSet());
 
         when(fileInfoEntityDao.getAll()).thenReturn(testFilesInfos);
-        when(dataBlockDao.getAllDataBlocksWithoutData()).thenReturn(testDataBlocks);
+        when(dataBlockEntityDao.getAllDataBlocksWithoutData()).thenReturn(testDataBlocks);
     }
 
     @Test
     void testWrite() throws SQLException, IOException {
-        FileInfoWriter fileInfoWriter = new FileInfoWriter(jsonGenerator, fileInfoEntityDao, dataBlockDao,
+        FileInfoWriter fileInfoWriter = new FileInfoWriter(jsonGenerator, fileInfoEntityDao, dataBlockEntityDao,
                 DATETIME_FORMATTER);
 
         fileInfoWriter.write();

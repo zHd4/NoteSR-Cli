@@ -1,7 +1,7 @@
 package app.notesr.cli.compiler;
 
 import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.db.dao.DataBlockDao;
+import app.notesr.cli.db.dao.DataBlockEntityDao;
 import app.notesr.cli.db.dao.FileInfoEntityDao;
 import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.exception.BackupDbException;
@@ -73,7 +73,7 @@ public final class BackupCompiler implements Runnable {
 
         NoteEntityDao noteEntityDao = new NoteEntityDao(db);
         FileInfoEntityDao fileInfoEntityDao = new FileInfoEntityDao(db);
-        DataBlockDao dataBlockDao = new DataBlockDao(db);
+        DataBlockEntityDao dataBlockEntityDao = new DataBlockEntityDao(db);
 
         JsonGenerator noteJsonGenerator = getJsonGenerator(dir, NOTES_JSON_FILE_NAME);
         JsonGenerator fileInfoJsonGenerator = getJsonGenerator(dir, FILES_INFO_JSON_FILE_NAME);
@@ -82,11 +82,11 @@ public final class BackupCompiler implements Runnable {
         noteWriter.write();
 
         FileInfoWriter fileInfoWriter = new FileInfoWriter(fileInfoJsonGenerator, fileInfoEntityDao,
-                dataBlockDao, DATETIME_FORMATTER);
+                dataBlockEntityDao, DATETIME_FORMATTER);
         fileInfoWriter.write();
 
         File dataBlocksDir = new File(dir, DATA_BLOCKS_DIR_NAME);
-        FileDataWriter fileDataWriter = new FileDataWriter(dataBlocksDir, dataBlockDao);
+        FileDataWriter fileDataWriter = new FileDataWriter(dataBlocksDir, dataBlockEntityDao);
         fileDataWriter.write();
     }
 

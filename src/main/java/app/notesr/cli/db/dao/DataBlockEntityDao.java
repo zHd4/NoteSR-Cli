@@ -11,7 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @RequiredArgsConstructor
-public final class DataBlockDao {
+public final class DataBlockEntityDao {
     private final DbConnection db;
 
     public void add(DataBlock dataBlock) throws SQLException {
