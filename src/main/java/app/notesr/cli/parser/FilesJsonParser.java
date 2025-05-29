@@ -2,7 +2,7 @@ package app.notesr.cli.parser;
 
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.DataBlockDao;
-import app.notesr.cli.db.dao.FileInfoDao;
+import app.notesr.cli.db.dao.FileInfoEntityDao;
 import app.notesr.cli.exception.BackupDbException;
 import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.model.DataBlock;
@@ -18,12 +18,12 @@ import java.time.format.DateTimeFormatter;
 public abstract class FilesJsonParser extends BaseJsonParser {
     private static final String ROOT_NAME = "files_info";
 
-    protected final FileInfoDao fileInfoDao;
+    protected final FileInfoEntityDao fileInfoEntityDao;
     protected final DataBlockDao dataBlockDao;
 
     public FilesJsonParser(DbConnection db, JsonParser parser, DateTimeFormatter timestampFormatter) {
         super(parser, timestampFormatter);
-        this.fileInfoDao = new FileInfoDao(db);
+        this.fileInfoEntityDao = new FileInfoEntityDao(db);
         this.dataBlockDao = new DataBlockDao(db);
     }
 
@@ -45,7 +45,7 @@ public abstract class FilesJsonParser extends BaseJsonParser {
                     transferFileInfoObject(fileInfo);
 
                     if (fileInfo.getId() != null) {
-                        fileInfoDao.add(fileInfo);
+                        fileInfoEntityDao.add(fileInfo);
                     }
                 } while (parser.nextToken() != JsonToken.END_ARRAY);
             }

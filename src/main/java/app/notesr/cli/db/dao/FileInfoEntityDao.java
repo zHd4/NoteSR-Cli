@@ -14,7 +14,7 @@ import static app.notesr.cli.db.DbUtils.dateTimeToString;
 import static app.notesr.cli.db.DbUtils.parseDateTime;
 
 @RequiredArgsConstructor
-public final class FileInfoDao {
+public final class FileInfoEntityDao {
     private final DbConnection db;
 
     public void add(FileInfo fileInfo) throws SQLException {

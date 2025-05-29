@@ -1,7 +1,7 @@
 package app.notesr.cli.compiler;
 
 import app.notesr.cli.db.dao.DataBlockDao;
-import app.notesr.cli.db.dao.FileInfoDao;
+import app.notesr.cli.db.dao.FileInfoEntityDao;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -18,7 +18,7 @@ class FileInfoWriter implements Writer {
     static final String FILES_DATA_BLOCKS_ARRAY_NAME = "files_data_blocks";
 
     private final JsonGenerator jsonGenerator;
-    private final FileInfoDao fileInfoDao;
+    private final FileInfoEntityDao fileInfoEntityDao;
     private final DataBlockDao dataBlockDao;
     private final DateTimeFormatter dateTimeFormatter;
 
@@ -27,7 +27,7 @@ class FileInfoWriter implements Writer {
         try (jsonGenerator) {
             jsonGenerator.writeStartObject();
 
-            writeFilesInfos(fileInfoDao.getAll());
+            writeFilesInfos(fileInfoEntityDao.getAll());
             writeDataBlocksWithoutData(dataBlockDao.getAllDataBlocksWithoutData());
 
             jsonGenerator.writeEndObject();
