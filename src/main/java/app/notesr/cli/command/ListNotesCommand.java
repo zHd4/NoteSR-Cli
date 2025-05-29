@@ -88,8 +88,8 @@ public final class ListNotesCommand extends Command {
 
         tableRows.forEach(row -> table.addRow(
                 validateNoteId(row.getNoteId()),
-                truncate(row.getNoteShortName(), MAX_NAME_LENGTH),
-                truncate(row.getNoteShortText(), MAX_TEXT_LENGTH),
+                truncateText(row.getNoteShortName(), MAX_NAME_LENGTH),
+                truncateText(row.getNoteShortText(), MAX_TEXT_LENGTH),
                 dateTimeToString(row.getNoteUpdatedAt()),
                 row.getAttachedFilesCount()
         ));
@@ -101,13 +101,5 @@ public final class ListNotesCommand extends Command {
     private String validateNoteId(String noteId) {
         UuidShortener uuidShortener = new UuidShortener(noteId);
         return displayFullNotesIds ? uuidShortener.getLongUuid() : uuidShortener.getShortUuid();
-    }
-
-    static String truncate(String text, int maxLength) {
-        if (text.length() < maxLength) {
-            return text;
-        }
-
-        return text.substring(0, maxLength - 1) + "…";
     }
 }
