@@ -1,5 +1,6 @@
 package app.notesr.cli.crypto;
 
+import app.notesr.cli.dto.CryptoKey;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

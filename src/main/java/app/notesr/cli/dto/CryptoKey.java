@@ -1,4 +1,4 @@
-package app.notesr.cli.crypto;
+package app.notesr.cli.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,5 +1,6 @@
 package app.notesr.cli.crypto;
 
+import app.notesr.cli.dto.CryptoKey;
 import lombok.AllArgsConstructor;
 
 import javax.crypto.Cipher;

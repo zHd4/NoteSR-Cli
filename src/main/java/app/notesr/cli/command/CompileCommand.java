@@ -2,7 +2,7 @@ package app.notesr.cli.command;
 
 import app.notesr.cli.VersionProvider;
 import app.notesr.cli.compiler.BackupCompiler;
-import app.notesr.cli.crypto.CryptoKey;
+import app.notesr.cli.dto.CryptoKey;
 import app.notesr.cli.crypto.FileCryptor;
 import app.notesr.cli.crypto.FileEncryptionException;
 import app.notesr.cli.exception.BackupDbException;

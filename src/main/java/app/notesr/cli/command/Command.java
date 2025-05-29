@@ -1,6 +1,6 @@
 package app.notesr.cli.command;
 
-import app.notesr.cli.crypto.CryptoKey;
+import app.notesr.cli.dto.CryptoKey;
 import app.notesr.cli.crypto.CryptoKeyUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

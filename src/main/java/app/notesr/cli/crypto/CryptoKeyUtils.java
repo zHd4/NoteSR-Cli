@@ -1,5 +1,7 @@
 package app.notesr.cli.crypto;
 
+import app.notesr.cli.dto.CryptoKey;
+
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
