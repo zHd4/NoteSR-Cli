@@ -20,7 +20,7 @@ import app.notesr.cli.util.ModelGenerator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class NoteFileInfoDaoTest {
+class NoteFileInfoDtoDaoTest {
     private static final int TEST_NOTES_COUNT = 5;
     private static final int TEST_FILES_COUNT = 5;
 
@@ -32,7 +32,7 @@ class NoteFileInfoDaoTest {
     @Test
     void testGetNotesTable() throws SQLException {
         DbConnection db = new DbConnection(":memory:");
-        NoteFileInfoDao noteFileInfoDao = new NoteFileInfoDao(db);
+        NoteFileInfoDtoDao noteFileInfoDtoDao = new NoteFileInfoDtoDao(db);
 
         List<NotesTableRowDto> notesTableRowDtos = new LinkedList<>();
 
@@ -58,7 +58,7 @@ class NoteFileInfoDaoTest {
                 .sorted(Comparator.comparing(NotesTableRowDto::getNoteId))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        Set<NotesTableRowDto> actual = noteFileInfoDao.getNotesTable().stream()
+        Set<NotesTableRowDto> actual = noteFileInfoDtoDao.getNotesTable().stream()
                 .sorted(Comparator.comparing(NotesTableRowDto::getNoteId))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
 

@@ -13,7 +13,7 @@ import java.util.Set;
 import static app.notesr.cli.db.DbUtils.parseDateTime;
 
 @RequiredArgsConstructor
-public final class NoteFileInfoDao {
+public final class NoteFileInfoDtoDao {
     private static final String GET_NOTE_FILE_INFO_OUTPUT_TABLE_QUERY = """
             SELECT
             \tn.id,

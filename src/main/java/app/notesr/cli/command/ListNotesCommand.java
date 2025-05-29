@@ -1,7 +1,7 @@
 package app.notesr.cli.command;
 
 import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.db.dao.NoteFileInfoDao;
+import app.notesr.cli.db.dao.NoteFileInfoDtoDao;
 import app.notesr.cli.dto.NotesTableRowDto;
 import app.notesr.cli.util.UuidShortener;
 import de.vandermeer.asciitable.AsciiTable;
@@ -66,10 +66,10 @@ public final class ListNotesCommand extends Command {
 
     private Set<NotesTableRowDto> getTableRows(File dbFile) throws CommandHandlingException {
         DbConnection db = new DbConnection(dbFile.getAbsolutePath());
-        NoteFileInfoDao noteFileInfoDao = new NoteFileInfoDao(db);
+        NoteFileInfoDtoDao noteFileInfoDtoDao = new NoteFileInfoDtoDao(db);
 
         try {
-            return noteFileInfoDao.getNotesTable();
+            return noteFileInfoDtoDao.getNotesTable();
         } catch (SQLException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
             throw new CommandHandlingException(DB_ERROR);
