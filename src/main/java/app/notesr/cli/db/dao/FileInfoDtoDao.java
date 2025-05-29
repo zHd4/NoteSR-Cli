@@ -13,7 +13,7 @@ import java.util.Set;
 import static app.notesr.cli.db.DbUtils.parseDateTime;
 
 @RequiredArgsConstructor
-public class FileInfoDtoDao {
+public final class FileInfoDtoDao {
     private final DbConnection db;
 
     public Set<FilesTableRowDto> getFilesTableRowsByNoteId(String noteId) throws SQLException {
