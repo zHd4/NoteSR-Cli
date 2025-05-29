@@ -85,6 +85,16 @@ class FileInfoEntityDaoTest {
     }
 
     @Test
+    void testGetCountByNoteId() throws SQLException {
+        testFileInfos.forEach(fileInfo -> DbUtils.insertFileInfo(db.getConnection(), fileInfo));
+
+        Long expected = (long) testFileInfos.size();
+        Long actual = fileInfoEntityDao.getCountByNoteId(testNote.getId());
+
+        assertEquals(expected, actual, "Unexpected files infos count");
+    }
+
+    @Test
     void testGetByNoteId() throws SQLException {
         Note additionalTestNote = generateTestNote();
 
