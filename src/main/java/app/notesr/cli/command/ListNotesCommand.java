@@ -83,8 +83,8 @@ public final class ListNotesCommand extends Command {
                         dto.getAttachedFilesCount().toString()
                 )).toList();
 
-        TablePrinter tablePrinter = new TablePrinter();
-        return tablePrinter.printTable(headers, rows);
+        TableRenderer tableRenderer = new TableRenderer();
+        return tableRenderer.render(headers, rows);
     }
 
     private String validateNoteId(String noteId) {

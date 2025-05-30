@@ -5,10 +5,10 @@ import lombok.Setter;
 import java.util.List;
 
 @Setter
-final class TablePrinter {
+final class TableRenderer {
     private int padding = 1;
 
-    public String printTable(List<String> headers, List<List<String>> rows) {
+    public String render(List<String> headers, List<List<String>> rows) {
         int[] columnWidths = computeColumnWidths(headers, rows);
 
         StringBuilder builder = new StringBuilder();

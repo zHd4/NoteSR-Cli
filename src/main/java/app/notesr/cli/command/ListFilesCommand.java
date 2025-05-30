@@ -89,8 +89,8 @@ public final class ListFilesCommand extends Command {
                         dateTimeToString(dto.getUpdatedAt())
                         )).toList();
 
-        TablePrinter tablePrinter = new TablePrinter();
-        return tablePrinter.printTable(headers, rows);
+        TableRenderer tableRenderer = new TableRenderer();
+        return tableRenderer.render(headers, rows);
     }
 
     private String validateFileId(String fileId) {
