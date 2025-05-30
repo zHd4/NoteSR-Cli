@@ -4,8 +4,6 @@ import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.NoteFileInfoDtoDao;
 import app.notesr.cli.dto.NotesTableRowDto;
 import app.notesr.cli.util.UuidShortener;
-import de.vandermeer.asciitable.AsciiTable;
-import de.vandermeer.asciithemes.TA_GridThemes;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +12,7 @@ import picocli.CommandLine;
 import java.io.File;
 import java.io.PrintStream;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 
 import static app.notesr.cli.db.DbUtils.dateTimeToString;
@@ -22,8 +21,6 @@ import static app.notesr.cli.db.DbUtils.dateTimeToString;
 @CommandLine.Command(name = "list-notes",
         description = "Lists all notes stored in the NoteSR Backup Database.")
 public final class ListNotesCommand extends Command {
-    private static final int MAX_TABLE_ROW_WIDTH = 182;
-
     static final int MAX_NAME_LENGTH = 30;
     static final int MAX_TEXT_LENGTH = 30;
 
@@ -50,8 +47,7 @@ public final class ListNotesCommand extends Command {
             Set<NotesTableRowDto> tableRows = getTableRows(dbFile);
 
             if (!tableRows.isEmpty()) {
-                AsciiTable table = getAsciiTable(tableRows);
-                out.println(table.render());
+                out.println(getTable(tableRows));
             } else {
                 log.info("{}: No notes", dbPath);
             }
@@ -76,26 +72,19 @@ public final class ListNotesCommand extends Command {
         }
     }
 
-    private AsciiTable getAsciiTable(Set<NotesTableRowDto> tableRows) {
-        AsciiTable table = new AsciiTable();
+    private String getTable(Set<NotesTableRowDto> tableDtoRows) {
+        List<String> headers = List.of("ID", "Name", "Text", "Last update", "Files attached");
+        List<List<String>> rows = tableDtoRows.stream()
+                .map(dto -> List.of(
+                        validateNoteId(dto.getNoteId()),
+                        truncateText(dto.getNoteShortName(), MAX_NAME_LENGTH),
+                        truncateText(dto.getNoteShortText(), MAX_TEXT_LENGTH),
+                        dateTimeToString(dto.getNoteUpdatedAt()),
+                        dto.getAttachedFilesCount().toString()
+                )).toList();
 
-        table.getContext().setGridTheme(TA_GridThemes.FULL);
-        table.getContext().setWidth(MAX_TABLE_ROW_WIDTH);
-
-        table.addRule();
-        table.addRow("ID", "Name", "Text", "Last update", "Files attached");
-        table.addRule();
-
-        tableRows.forEach(row -> table.addRow(
-                validateNoteId(row.getNoteId()),
-                truncateText(row.getNoteShortName(), MAX_NAME_LENGTH),
-                truncateText(row.getNoteShortText(), MAX_TEXT_LENGTH),
-                dateTimeToString(row.getNoteUpdatedAt()),
-                row.getAttachedFilesCount()
-        ));
-
-        table.addRule();
-        return table;
+        TablePrinter tablePrinter = new TablePrinter();
+        return tablePrinter.printTable(headers, rows);
     }
 
     private String validateNoteId(String noteId) {
