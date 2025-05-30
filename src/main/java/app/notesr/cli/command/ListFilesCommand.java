@@ -4,8 +4,6 @@ import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.FileInfoDtoDao;
 import app.notesr.cli.dto.FilesTableRowDto;
 import app.notesr.cli.util.UuidShortener;
-import de.vandermeer.asciitable.AsciiTable;
-import de.vandermeer.asciithemes.TA_GridThemes;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +13,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Set;
 
 import static app.notesr.cli.db.DbUtils.dateTimeToString;
@@ -23,7 +22,6 @@ import static app.notesr.cli.db.DbUtils.dateTimeToString;
 @CommandLine.Command(name = "list-files",
         description = "Lists attached files to a specific note.")
 public final class ListFilesCommand extends Command {
-    private static final int MAX_TABLE_ROW_WIDTH = 182;
     static final int MAX_FILE_NAME_LENGTH = 30;
 
     @CommandLine.Parameters(index = "0", paramLabel = "db_path",
@@ -53,8 +51,7 @@ public final class ListFilesCommand extends Command {
             Set<FilesTableRowDto> tableRows = getTableRows(dbFile);
 
             if (!tableRows.isEmpty()) {
-                AsciiTable table = getAsciiTable(tableRows);
-                out.println(table.render());
+                out.println(getTable(tableRows));
             } else {
                 log.info("{}: The note does not contain attachments", validateFileId(noteId));
             }
@@ -82,25 +79,18 @@ public final class ListFilesCommand extends Command {
         }
     }
 
-    private AsciiTable getAsciiTable(Set<FilesTableRowDto> tableRows) {
-        AsciiTable table = new AsciiTable();
+    private String getTable(Set<FilesTableRowDto> tableDtoRows) {
+        List<String> headers = List.of("ID", "Name", "Size", "Last update");
+        List<List<String>> rows = tableDtoRows.stream()
+                .map(dto -> List.of(
+                        validateFileId(dto.getId()),
+                        truncateText(dto.getFileName(), MAX_FILE_NAME_LENGTH),
+                        getReadableSize(dto.getFileSize()),
+                        dateTimeToString(dto.getUpdatedAt())
+                        )).toList();
 
-        table.getContext().setGridTheme(TA_GridThemes.FULL);
-        table.getContext().setWidth(MAX_TABLE_ROW_WIDTH);
-
-        table.addRule();
-        table.addRow("ID", "Name", "Size", "Last update");
-        table.addRule();
-
-        tableRows.forEach(row -> table.addRow(
-                validateFileId(row.getId()),
-                truncateText(row.getFileName(), MAX_FILE_NAME_LENGTH),
-                getReadableSize(row.getFileSize()),
-                dateTimeToString(row.getUpdatedAt())
-        ));
-
-        table.addRule();
-        return table;
+        TablePrinter tablePrinter = new TablePrinter();
+        return tablePrinter.printTable(headers, rows);
     }
 
     private String validateFileId(String fileId) {
