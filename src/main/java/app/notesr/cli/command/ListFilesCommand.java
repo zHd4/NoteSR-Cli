@@ -43,7 +43,7 @@ public final class ListFilesCommand extends Command {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer call() {
         int exitCode;
 
         try {
