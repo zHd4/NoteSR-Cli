@@ -19,7 +19,6 @@ import java.util.Random;
 import static app.notesr.cli.command.Command.DB_ERROR;
 import static app.notesr.cli.command.Command.FILE_RW_ERROR;
 import static app.notesr.cli.command.Command.SUCCESS;
-import static app.notesr.cli.command.ReadNoteCommand.wrapText;
 import static app.notesr.cli.db.DbUtils.dateTimeToString;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -79,6 +78,10 @@ class ReadNoteCommandTest {
 
         int exitCode = cmd.execute(dbPath.toString(), BLANK_UUID);
         assertEquals(DB_ERROR, exitCode, "Expected code " + DB_ERROR);
+    }
+
+    private String wrapText(String text) {
+        return String.join("\n", ReadNoteCommand.wrapText(text));
     }
 
     private Note getTestNote(Path dbPath) throws SQLException {
