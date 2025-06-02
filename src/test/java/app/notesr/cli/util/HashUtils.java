@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public class HashUtils {
     public static String computeSha512(String filePath) throws NoSuchAlgorithmException, IOException {
@@ -21,6 +22,23 @@ public class HashUtils {
         StringBuilder hexDigestBuilder = new StringBuilder();
 
         for (byte b : digest.digest()) {
+            hexDigestBuilder.append(String.format("%02x", b));
+        }
+
+        return hexDigestBuilder.toString();
+    }
+
+    public static String computeSha512(List<byte[]> dataBlocks) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-512");
+
+        for (byte[] block : dataBlocks) {
+            digest.update(block);
+        }
+
+        byte[] hashBytes = digest.digest();
+        StringBuilder hexDigestBuilder = new StringBuilder(hashBytes.length * 2);
+
+        for (byte b : hashBytes) {
             hexDigestBuilder.append(String.format("%02x", b));
         }
 
