@@ -1,5 +1,6 @@
 package app.notesr.cli.command;
 
+import app.notesr.cli.db.ConnectionException;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.FileInfoEntityDao;
 import app.notesr.cli.db.dao.NoteEntityDao;
@@ -54,6 +55,9 @@ public final class ReadNoteCommand extends Command {
             exitCode = SUCCESS;
         } catch (CommandHandlingException e) {
             exitCode = e.getExitCode();
+        } catch (ConnectionException e) {
+            log.error(e.getMessage());
+            exitCode = DB_ERROR;
         }
 
         return exitCode;
