@@ -48,7 +48,7 @@ public class DbConnection {
                 }
             }
         } catch (IOException | SQLException e) {
-            throw new RuntimeException(e);
+            throw new ConnectionException(e);
         }
     }
 
