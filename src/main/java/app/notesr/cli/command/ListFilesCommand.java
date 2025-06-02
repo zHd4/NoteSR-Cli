@@ -1,5 +1,6 @@
 package app.notesr.cli.command;
 
+import app.notesr.cli.db.ConnectionException;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.FileInfoDtoDao;
 import app.notesr.cli.dto.FilesTableRowDto;
@@ -59,6 +60,9 @@ public final class ListFilesCommand extends Command {
             exitCode = SUCCESS;
         } catch (CommandHandlingException e) {
             exitCode = e.getExitCode();
+        } catch (ConnectionException e) {
+            log.error(e.getMessage());
+            exitCode = DB_ERROR;
         }
 
         return exitCode;
