@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static app.notesr.cli.db.DbUtils.parseDateTime;
+import static app.notesr.cli.db.DateTimeUtils.parseDateTime;
 
 @RequiredArgsConstructor
 public final class FileInfoDtoDao {

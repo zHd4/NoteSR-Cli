@@ -26,7 +26,7 @@ import static app.notesr.cli.command.Command.SUCCESS;
 import static app.notesr.cli.command.Command.truncateText;
 import static app.notesr.cli.command.ListFilesCommand.MAX_FILE_NAME_LENGTH;
 import static app.notesr.cli.command.ListFilesCommand.getReadableSize;
-import static app.notesr.cli.db.DbUtils.dateTimeToString;
+import static app.notesr.cli.db.DateTimeUtils.dateTimeToString;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

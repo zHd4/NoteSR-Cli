@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static app.notesr.cli.db.DbUtils.dateTimeToString;
+import static app.notesr.cli.db.DateTimeUtils.dateTimeToString;
 
 @Slf4j
 @CommandLine.Command(name = "read-note",

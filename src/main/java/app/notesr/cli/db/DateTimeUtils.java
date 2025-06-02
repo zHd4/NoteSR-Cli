@@ -3,7 +3,7 @@ package app.notesr.cli.db;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class DbUtils {
+public class DateTimeUtils {
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static String dateTimeToString(LocalDateTime dateTime) {

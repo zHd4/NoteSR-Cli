@@ -16,7 +16,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Set;
 
-import static app.notesr.cli.db.DbUtils.dateTimeToString;
+import static app.notesr.cli.db.DateTimeUtils.dateTimeToString;
 
 @Slf4j
 @CommandLine.Command(name = "list-files",

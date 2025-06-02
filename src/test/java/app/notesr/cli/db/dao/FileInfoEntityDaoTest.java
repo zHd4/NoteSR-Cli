@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static app.notesr.cli.db.DbUtils.parseDateTime;
+import static app.notesr.cli.db.DateTimeUtils.parseDateTime;
 import static app.notesr.cli.util.ModelGenerator.generateTestFilesInfos;
 import static app.notesr.cli.util.ModelGenerator.generateTestNote;
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static app.notesr.cli.db.DbUtils.dateTimeToString;
+import static app.notesr.cli.db.DateTimeUtils.dateTimeToString;
 
 public class DbUtils {
     public static void insertNote(Connection connection, Note note) {

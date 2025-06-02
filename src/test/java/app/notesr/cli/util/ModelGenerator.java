@@ -10,7 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
 
-import static app.notesr.cli.db.DbUtils.truncateDateTime;
+import static app.notesr.cli.db.DateTimeUtils.truncateDateTime;
 import static java.util.UUID.randomUUID;
 
 public class ModelGenerator {
