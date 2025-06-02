@@ -1,5 +1,6 @@
 package app.notesr.cli.command;
 
+import app.notesr.cli.db.ConnectionException;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.NoteFileInfoDtoDao;
 import app.notesr.cli.dto.NotesTableRowDto;
@@ -55,6 +56,9 @@ public final class ListNotesCommand extends Command {
             exitCode = SUCCESS;
         } catch (CommandHandlingException e) {
             exitCode = e.getExitCode();
+        } catch (ConnectionException e) {
+            log.error(e.getMessage());
+            exitCode = DB_ERROR;
         }
 
         return exitCode;
