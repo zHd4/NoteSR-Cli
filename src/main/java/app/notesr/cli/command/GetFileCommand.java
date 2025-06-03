@@ -112,9 +112,9 @@ public final class GetFileCommand extends Command {
         return outputFile;
     }
 
-    private void writeFileData(DbConnection db, String fileId, File outputFile) throws SQLException, IOException {
+    private void writeFileData(DbConnection db, String fullFileId, File outputFile) throws SQLException, IOException {
         DataBlockEntityDao dataBlockEntityDao = new DataBlockEntityDao(db);
-        Set<String> dataBlocksIds = dataBlockEntityDao.getIdsByFileId(fileId);
+        Set<String> dataBlocksIds = dataBlockEntityDao.getIdsByFileId(fullFileId);
 
         try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
             for (String dataBlockId : dataBlocksIds) {
