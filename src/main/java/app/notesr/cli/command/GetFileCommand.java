@@ -20,7 +20,7 @@ import java.util.Set;
 
 @Slf4j
 @CommandLine.Command(name = "get-file",
-        description = "Saves a file attached to a note that is stored in a NoteSR Backup Database.")
+        description = "Saves a file attached to a specific note stored in a NoteSR Backup Database.")
 public final class GetFileCommand extends Command {
     @CommandLine.Parameters(index = "0", paramLabel = "db_path",
             description = "path to NoteSR Backup Database")
