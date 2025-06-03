@@ -21,7 +21,7 @@ import static app.notesr.cli.db.DateTimeUtils.dateTimeToString;
 
 @Slf4j
 @CommandLine.Command(name = "list-files",
-        description = "Lists attached files to a specific note.")
+        description = "Lists attached files to a specific note stored in a NoteSR Backup Database.")
 public final class ListFilesCommand extends Command {
     static final int MAX_FILE_NAME_LENGTH = 30;
 
