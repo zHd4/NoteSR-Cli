@@ -74,7 +74,7 @@ public final class GetFileCommand extends Command {
 
             log.info("Saving file {} with id {}", fileInfo.getName(), fileInfo.getId());
             writeFileData(db, fullFileId, outputFile);
-            log.info("Saved successfully");
+            log.info("Saved successfully to: {}", outputFile.getAbsolutePath());
         } catch (SQLException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
             throw new CommandHandlingException(DB_ERROR);
