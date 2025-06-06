@@ -69,11 +69,11 @@ tasks.register('jacocoRootReport', JacocoReport) {
     })
 
     def allSourceDirs = subprojects.collectMany { project ->
-        project.sourceSets.main.java.srcDirs
+        project.sourceSets.main.java.srcDirs.findAll { it.exists() }
     }
 
-    sourceDirectories.setFrom files(allSourceDirs)
-    additionalSourceDirs.setFrom files(allSourceDirs)
+    sourceDirectories.setFrom(files(allSourceDirs))
+    additionalSourceDirs.setFrom(files(allSourceDirs))
 
     def allClassDirs = subprojects.collectMany { project ->
         def classesDir = project.layout.buildDirectory.dir("classes/java/main").get().asFile
