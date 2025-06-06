@@ -68,18 +68,21 @@ tasks.register('jacocoRootReport', JacocoReport) {
         project.layout.buildDirectory.file("jacoco/test.exec").get().asFile
     })
 
-    def allSourceDirs = subprojects.collect { it.sourceSets.main.allSource.srcDirs }
-    additionalSourceDirs.setFrom files(allSourceDirs)
-    sourceDirectories.setFrom files(allSourceDirs)
-
-    def allClassDirs = subprojects.collect { project ->
-        def classesDir = project.layout.buildDirectory.dir("classes/java/main").get().asFile
-        return project.fileTree(classesDir) {
-            exclude '**/generated/**'
-        }
+    def allSourceDirs = subprojects.collectMany { project ->
+        project.sourceSets.main.java.srcDirs
     }
 
-    classDirectories.setFrom files(allClassDirs.flatten())
+    sourceDirectories.setFrom files(allSourceDirs)
+    additionalSourceDirs.setFrom files(allSourceDirs)
+
+    def allClassDirs = subprojects.collectMany { project ->
+        def classesDir = project.layout.buildDirectory.dir("classes/java/main").get().asFile
+        project.fileTree(classesDir) {
+            exclude '**/generated/**'
+        }.files
+    }
+
+    classDirectories.setFrom files(allClassDirs)
 
     reports {
         xml.required = true
