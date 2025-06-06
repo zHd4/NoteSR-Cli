@@ -27,6 +27,6 @@ jobs:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
         with:
           coverageCommand: |
-            export JACOCO_SOURCE_PATH=$(find . -type d -path "*/src/main/java" | paste -sd "," -)
-            make report
+            bash -c "export JACOCO_SOURCE_PATH=$(find . -type d -path '*/src/main/java' | paste -sd ',' -) 
+            && make report"
           coverageLocations: ${{github.workspace}}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml:jacoco
