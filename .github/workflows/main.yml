@@ -24,9 +24,9 @@ jobs:
           files: ${{github.workspace}}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
       - uses: paambaati/codeclimate-action@v5.0.0
         env:
-          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
-          coverageCommand: |
-            bash -c "export JACOCO_SOURCE_PATH=$(find . -type d -path '*/src/main/java' | paste -sd ',' -) 
+          coverageCommand: >
+            bash -c "export JACOCO_SOURCE_PATH=$(find . -type d -path '*/src/main/java' | paste -sd ',' -) \
             && make report"
-          coverageLocations: ${{github.workspace}}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml:jacoco
+          coverageLocations: ${{ github.workspace }}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml:jacoco
