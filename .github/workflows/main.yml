@@ -25,7 +25,8 @@ jobs:
       - uses: paambaati/codeclimate-action@v5.0.0
         env:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
-          JACOCO_SOURCE_PATH: $(find . -type d -path "*/src/main/java" | paste -sd "," -)
         with:
-          coverageCommand: make report
+          coverageCommand: |
+            export JACOCO_SOURCE_PATH=$(find . -type d -path "*/src/main/java" | paste -sd "," -)
+            make report
           coverageLocations: ${{github.workspace}}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml:jacoco
