@@ -1,5 +1,5 @@
 plugins {
-    id 'application'
+    id 'java'
     id 'checkstyle'
     id 'jacoco'
 }
@@ -8,56 +8,88 @@ group = 'app.notesr.cli'
 version = '1.0'
 ext.defaultNoteSrVersion = '5.1'
 
-repositories {
-    mavenCentral()
-}
-
-application {
-    mainClass = 'app.notesr.cli.App'
-    applicationName = 'notesr-cli'
-}
-
-checkstyle {
-    toolVersion = '10.12.4'
-    configFile = rootProject.file('config/checkstyle/checkstyle.xml')
-}
-
-tasks.check.dependsOn tasks.checkstyleMain, tasks.checkstyleTest
-
-tasks.build {
-    dependsOn 'test'
-}
-
-tasks.named('test', Test) {
-    useJUnitPlatform()
-
-    maxHeapSize = '1G'
-
-    testLogging {
-        events "passed", "skipped", "failed"
+allprojects {
+    repositories {
+        mavenCentral()
     }
 }
 
-test {
-    useJUnitPlatform()
-    finalizedBy jacocoTestReport
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'checkstyle'
+    apply plugin: 'jacoco'
+
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+
+    dependencies {
+        implementation 'org.slf4j:slf4j-api:2.0.9'
+        implementation 'org.slf4j:slf4j-simple:2.0.9'
+        compileOnly 'org.projectlombok:lombok:1.18.32'
+        annotationProcessor 'org.projectlombok:lombok:1.18.32'
+        testImplementation platform('org.junit:junit-bom:5.10.0')
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+        testImplementation 'org.mockito:mockito-inline:5.2.0'
+        testImplementation 'org.mockito:mockito-junit-jupiter:5.17.0'
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+    }
+
+    test {
+        useJUnitPlatform()
+        finalizedBy jacocoTestReport
+        maxHeapSize = '1G'
+
+        testLogging {
+            events "passed", "skipped", "failed"
+        }
+    }
+
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.required = true
+        }
+    }
+
+    checkstyle {
+        toolVersion = '10.12.4'
+        configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+    }
+
+    tasks.matching { it.name == 'check' }.configureEach {
+        dependsOn tasks.matching { t -> t.name == 'checkstyleMain' || t.name == 'checkstyleTest' }
+    }
 }
 
-jacocoTestReport {
-    dependsOn test
+tasks.register('jacocoRootReport', JacocoReport) {
+    dependsOn subprojects.collect { it.tasks.named("test") }
+
+    executionData.setFrom files(subprojects.collect { project ->
+        project.layout.buildDirectory.file("jacoco/test.exec").get().asFile
+    })
+
+    def allSourceDirs = subprojects.collect { it.sourceSets.main.allSource.srcDirs }
+    additionalSourceDirs.setFrom files(allSourceDirs)
+    sourceDirectories.setFrom files(allSourceDirs)
+
+    def allClassDirs = subprojects.collect { project ->
+        def classesDir = project.layout.buildDirectory.dir("classes/java/main").get().asFile
+        return project.fileTree(classesDir) {
+            exclude '**/generated/**'
+        }
+    }
+
+    classDirectories.setFrom files(allClassDirs.flatten())
 
     reports {
         xml.required = true
+        html.required = true
+        csv.required = false
     }
 }
 
-compileJava {
-    options.release = 21
-}
-
-jar {
-    archiveBaseName.set('NoteSR-Cli')
-    archiveVersion.set(project.version.toString())
+tasks.named('build') {
+    dependsOn tasks.named('jacocoRootReport')
 }
 
 tasks.register("generateVersionProperties") {
@@ -81,18 +113,15 @@ tasks.named("processResources") {
     }
 }
 
-dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0'
-    implementation 'org.xerial:sqlite-jdbc:3.49.0.0'
-    implementation 'net.datafaker:datafaker:2.0.2'
-    implementation 'info.picocli:picocli:4.7.5'
-    implementation 'org.slf4j:slf4j-api:2.0.9'
-    implementation 'org.slf4j:slf4j-simple:2.0.9'
-    compileOnly 'org.projectlombok:lombok:1.18.32'
-    annotationProcessor 'org.projectlombok:lombok:1.18.32'
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    testImplementation 'org.mockito:mockito-inline:5.2.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:5.17.0'
+tasks.register('copyCliBinaryToRoot', Copy) {
+    dependsOn ':cli:installDist'
+
+    from('cli/build/install/notesr-cli')
+    into(layout.buildDirectory.dir("notesr-cli"))
+
+    includeEmptyDirs = false
+}
+
+tasks.named('build') {
+    dependsOn tasks.named('copyCliBinaryToRoot')
 }

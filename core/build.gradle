@@ -1,0 +1,17 @@
+dependencies {
+    implementation project(':model')
+    implementation project(':util')
+    implementation project(':test-utils')
+    implementation project(':db')
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0'
+    implementation project(':shared-resources')
+    testImplementation project(':test-common')
+}
+
+tasks.register('copySharedResources', Copy) {
+    from project(":shared-resources").file("src/test/resources")
+    into layout.buildDirectory.dir("resources/test")
+}
+
+processTestResources.dependsOn copySharedResources

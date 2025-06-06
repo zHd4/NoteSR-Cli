@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':model')
+    testImplementation project(':test-common')
+    implementation project(':shared-resources')
+
+}

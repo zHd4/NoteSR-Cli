@@ -1,0 +1,34 @@
+apply plugin: 'application'
+
+dependencies {
+    implementation project(':core')
+    implementation project(':model')
+    implementation project(':test-utils')
+    implementation project(':util')
+    implementation project(':db')
+    implementation project(':shared-resources')
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0'
+    implementation 'info.picocli:picocli:4.7.5'
+    implementation 'net.datafaker:datafaker:2.0.2'
+    testImplementation project(':test-common')
+}
+
+application {
+    mainClass = 'app.notesr.cli.App'
+    applicationName = 'notesr-cli'
+}
+
+jar {
+    archiveBaseName.set('NoteSR-Cli')
+    archiveVersion.set(project.version.toString())
+}
+
+tasks.register('copySharedResources', Copy) {
+    from project(":shared-resources").file("src/test/resources")
+    into layout.buildDirectory.dir("resources/test")
+}
+
+processTestResources.dependsOn copySharedResources
+build.dependsOn installDist

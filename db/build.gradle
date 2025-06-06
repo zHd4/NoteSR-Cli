@@ -1,0 +1,8 @@
+dependencies {
+    implementation project(':model')
+    implementation project(':util')
+    implementation project(':test-utils')
+    implementation project(':shared-resources')
+
+    implementation 'org.xerial:sqlite-jdbc:3.49.0.0'
+}
