@@ -46,16 +46,16 @@ jobs:
         run: |
           ./gradlew clean jacocoRootReport
           
-          ls -la ./build/reports/jacoco/jacocoRootReport
-          
-          echo "================================================"
-          
-          ls -la ./build/reports/jacoco/jacocoRootReport/xml
-
-#          ./cc-test-reporter format-coverage \
-#            build/reports/jacoco/jacocoRootReport/xml/jacocoRootReport.xml \
-#            --input-type jacoco
+#          ls -la ./build/reports/jacoco/jacocoRootReport
 #
-#          ./cc-test-reporter upload-coverage
+#          echo "================================================"
+#
+#          ls -la ./build/reports/jacoco/jacocoRootReport/xml
+
+          ./cc-test-reporter format-coverage \
+            build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml \
+            --input-type jacoco
+
+          ./cc-test-reporter upload-coverage
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
