@@ -62,32 +62,17 @@ subprojects {
 }
 
 tasks.register('jacocoRootReport', JacocoReport) {
-    dependsOn subprojects.collect { it.tasks.named("test") }
+    description = 'Generates an aggregate report from all subprojects'
+    dependsOn(subprojects.test)
 
-    executionData.setFrom files(subprojects.collect { project ->
-        project.layout.buildDirectory.file("jacoco/test.exec").get().asFile
-    })
-
-    def allSourceDirs = subprojects.collectMany { project ->
-        project.sourceSets.main.java.srcDirs.findAll { it.exists() }
-    }
-
-    sourceDirectories.setFrom(files(allSourceDirs))
-    additionalSourceDirs.setFrom(files(allSourceDirs))
-
-    def allClassDirs = subprojects.collectMany { project ->
-        def classesDir = project.layout.buildDirectory.dir("classes/java/main").get().asFile
-        project.fileTree(classesDir) {
-            exclude '**/generated/**'
-        }.files
-    }
-
-    classDirectories.setFrom files(allClassDirs)
+    additionalSourceDirs.from = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories.from = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories.from = files(subprojects.sourceSets.main.output)
+    executionData.from = files(subprojects.jacocoTestReport.executionData)
 
     reports {
-        xml.required = true
         html.required = true
-        csv.required = false
+        xml.required = true
     }
 }
 
