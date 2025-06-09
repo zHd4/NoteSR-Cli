@@ -42,7 +42,7 @@ jobs:
 
       - name: Upload coverage to Code Climate
         run: |
-          ./cc-test-reporter format-coverage \
+          ls build/reports/jacoco/jacocoRootReport/xml/jacocoRootReport.xml && ./cc-test-reporter format-coverage \
             build/reports/jacoco/jacocoRootReport/xml/jacocoRootReport.xml \
             --input-type jacoco
 
