@@ -46,7 +46,11 @@ jobs:
         run: |
           ./gradlew clean jacocoRootReport
           
-           ls -la ./build/reports/jacoco
+          ls -la ./build/reports/jacoco/jacocoRootReport
+          
+          echo "================================================"
+          
+          ls -la ./build/reports/jacoco/jacocoRootReport/xml
 
 #          ./cc-test-reporter format-coverage \
 #            build/reports/jacoco/jacocoRootReport/xml/jacocoRootReport.xml \
