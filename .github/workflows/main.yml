@@ -18,15 +18,15 @@ jobs:
           java-version: '22'
           distribution: 'temurin'
       - run: ./gradlew build
-#      - uses: qltysh/qlty-action/coverage@v1
-#        with:
-#          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
-#          files: ${{github.workspace}}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
-#      - uses: paambaati/codeclimate-action@v5.0.0
-#        env:
-#          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-#        with:
-#          coverageCommand: >
-#            bash -c "export JACOCO_SOURCE_PATH=$(find . -type d -path '*/src/main/java' | paste -sd ',' -)\
-#            && make report"
-#          coverageLocations: ${{ github.workspace }}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml:jacoco
+      - uses: qltysh/qlty-action/coverage@v1
+        with:
+          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: ${{github.workspace}}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
+      - uses: paambaati/codeclimate-action@v5.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: >
+            bash -c "export JACOCO_SOURCE_PATH=$(find . -type d -path '*/src/main/java' | paste -sd ',' -)\
+            && make report"
+          coverageLocations: ${{ github.workspace }}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml:jacoco
