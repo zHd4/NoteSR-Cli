@@ -22,16 +22,6 @@ jobs:
         with:
           token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
           files: ${{github.workspace}}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
-#      - uses: paambaati/codeclimate-action@v5.0.0
-#        env:
-#          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-#        with:
-#          coverageCommand: >
-#            bash -c "export JACOCO_SOURCE_PATH=$(find . -type d -path '*/src/main/java' | paste -sd ',' -)\
-#            && make report"
-#          coverageLocations: ${{ github.workspace }}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml:jacoco
-#      - name: Run tests and generate JaCoCo report
-#        run: ./gradlew clean jacocoRootReport
       - name: Download Code Climate Test Reporter
         run: |
           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
@@ -43,8 +33,6 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
       - name: Upload coverage to Code Climate
         run: |
-          ./gradlew clean jacocoRootReport
-
           ./cc-test-reporter format-coverage \
             build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml \
             --input-type jacoco
