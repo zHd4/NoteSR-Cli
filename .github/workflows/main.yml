@@ -30,8 +30,8 @@ jobs:
 #            bash -c "export JACOCO_SOURCE_PATH=$(find . -type d -path '*/src/main/java' | paste -sd ',' -)\
 #            && make report"
 #          coverageLocations: ${{ github.workspace }}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml:jacoco
-      - name: Run tests and generate JaCoCo report
-        run: ./gradlew clean jacocoRootReport
+#      - name: Run tests and generate JaCoCo report
+#        run: ./gradlew clean jacocoRootReport
       - name: Download Code Climate Test Reporter
         run: |
           curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
@@ -44,7 +44,7 @@ jobs:
 
       - name: Upload coverage to Code Climate
         run: |
-          ls build/reports/jacoco/jacocoRootReport/xml/jacocoRootReport.xml && ./cc-test-reporter format-coverage \
+          ./gradlew clean jacocoRootReport && ls . && ls build && ls ./build/reports && ./cc-test-reporter format-coverage \
             build/reports/jacoco/jacocoRootReport/xml/jacocoRootReport.xml \
             --input-type jacoco
 
