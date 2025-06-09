@@ -35,7 +35,8 @@ jobs:
         run: |
           ./cc-test-reporter format-coverage \
             build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml \
-            --repo-root $(pwd) \
+            --prefix $(pwd) \
+            --add-prefix src/main/java \
             --input-type jacoco
 
           ./cc-test-reporter upload-coverage
