@@ -22,23 +22,3 @@ jobs:
         with:
           token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
           files: ${{github.workspace}}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
-      - name: Download Code Climate Test Reporter
-        run: |
-          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          chmod +x ./cc-test-reporter
-
-      - name: Before-build (Code Climate)
-        run: ./cc-test-reporter before-build
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-      - name: Upload coverage to Code Climate
-        run: |
-          ./cc-test-reporter format-coverage \
-            build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml \
-            --prefix $(pwd) \
-            --add-prefix src/main/java \
-            --input-type jacoco
-
-          ./cc-test-reporter upload-coverage
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
