@@ -64,6 +64,8 @@ subprojects {
 }
 
 tasks.register('jacocoRootReport', JacocoReport) {
+    dependsOn subprojects.test
+
     reports {
         xml.required = true
         html.required = true
@@ -85,7 +87,7 @@ tasks.register('jacocoRootReport', JacocoReport) {
 }
 
 tasks.named('build') {
-    dependsOn tasks.named('copyCliBinaryToRoot')
+    dependsOn tasks.named('jacocoRootReport')
 }
 
 tasks.register("generateVersionProperties") {
@@ -116,6 +118,10 @@ tasks.register('copyCliBinaryToRoot', Copy) {
     into(layout.buildDirectory.dir("notesr-cli"))
 
     includeEmptyDirs = false
+}
+
+tasks.named('build') {
+    dependsOn tasks.named('copyCliBinaryToRoot')
 }
 
 sonar {
