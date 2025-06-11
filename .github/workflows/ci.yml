@@ -22,8 +22,6 @@ jobs:
         with:
           token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
           files: ${{github.workspace}}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
-      - name: Run coverage
-        run: ./gradlew clean jacocoRootReport
       - name: SonarCloud Scan via Gradle
         run: ./gradlew sonarqube
         env:
