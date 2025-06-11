@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'checkstyle'
     id 'jacoco'
+    id "org.sonarqube" version "6.2.0.5505"
 }
 
 group = 'app.notesr.cli'
@@ -48,6 +49,7 @@ subprojects {
         dependsOn test
         reports {
             xml.required = true
+            html.required = true
         }
     }
 
@@ -62,17 +64,25 @@ subprojects {
 }
 
 tasks.register('jacocoRootReport', JacocoReport) {
-    description = 'Generates an aggregate report from all subprojects'
-    dependsOn(subprojects.test)
-
-    additionalSourceDirs.from = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories.from = files(subprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories.from = files(subprojects.sourceSets.main.output)
-    executionData.from = files(subprojects.jacocoTestReport.executionData)
+    dependsOn subprojects.test
 
     reports {
-        html.required = true
         xml.required = true
+        html.required = true
+    }
+
+    def executionDataFiles = files(subprojects.collect {
+        fileTree(dir: layout.buildDirectory, includes: [
+                'jacoco/test.exec',
+                'jacoco/test*.exec'
+        ])
+    })
+
+    executionData executionDataFiles
+
+    subprojects.each { subproject ->
+        sourceDirectories.from files("${subproject.projectDir}/src/main/java")
+        classDirectories.from fileTree(layout.buildDirectory.dir("classes/java/main"))
     }
 }
 
@@ -112,4 +122,15 @@ tasks.register('copyCliBinaryToRoot', Copy) {
 
 tasks.named('build') {
     dependsOn tasks.named('copyCliBinaryToRoot')
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "zHd4_NoteSR-Cli"
+        property "sonar.organization", "zhd4"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.coverage.jacoco.xmlReportPaths",
+                layout.buildDirectory.file("reports/jacoco/jacocoRootReport/jacocoRootReport.xml")
+    }
 }
