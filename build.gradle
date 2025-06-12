@@ -71,10 +71,10 @@ tasks.register('jacocoRootReport', JacocoReport) {
         html.required = true
     }
 
-    def executionDataFiles = files(subprojects.collect {
-        fileTree(dir: layout.buildDirectory, includes: [
-                'jacoco/test.exec',
-                'jacoco/test*.exec'
+    def executionDataFiles = files(subprojects.collect {subproject ->
+        fileTree(dir: "${subproject.buildDir}/jacoco", includes: [
+                'test.exec',
+                'test*.exec'
         ])
     })
 
@@ -82,7 +82,7 @@ tasks.register('jacocoRootReport', JacocoReport) {
 
     subprojects.each { subproject ->
         sourceDirectories.from files("${subproject.projectDir}/src/main/java")
-        classDirectories.from fileTree(layout.buildDirectory.dir("classes/java/main"))
+        classDirectories.from fileTree(dir: "${subproject.buildDir}/classes/java/main")
     }
 }
 
@@ -131,6 +131,7 @@ sonar {
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.coverage.jacoco.xmlReportPaths",
-                layout.buildDirectory.file("reports/jacoco/jacocoRootReport/jacocoRootReport.xml")
+                layout.buildDirectory.file("reports/jacoco/jacocoRootReport/jacocoRootReport.xml").get()
+                        .asFile.absolutePath
     }
 }
