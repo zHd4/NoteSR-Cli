@@ -1,7 +1,11 @@
 package app.notesr.cli.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.io.File;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PathUtils {
     public static String getNameWithoutExtension(File file) {
         String name = file.getName();
