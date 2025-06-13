@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import java.io.File;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class PathUtils {
+public class FileUtils {
     public static String getNameWithoutExtension(File file) {
         String name = file.getName();
         int dotIndex = name.indexOf('.');
