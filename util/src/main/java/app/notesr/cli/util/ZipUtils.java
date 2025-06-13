@@ -1,5 +1,8 @@
 package app.notesr.cli.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,6 +17,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ZipUtils {
     private static final byte[] ZIP_SIGNATURE = new byte[] {0x50, 0x4B, 0x03, 0x04};
 
