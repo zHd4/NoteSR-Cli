@@ -65,8 +65,8 @@ public final class DataBlockEntityDao {
     }
 
     public DataBlock getById(String id) throws SQLException {
-        String sql = "SELECT * " +
-                "FROM data_blocks WHERE id = ?";
+        String sql = "SELECT * "
+                + "FROM data_blocks WHERE id = ?";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, id);

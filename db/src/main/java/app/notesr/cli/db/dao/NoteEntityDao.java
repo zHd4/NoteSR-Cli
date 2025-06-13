@@ -33,8 +33,8 @@ public final class NoteEntityDao {
     public Set<Note> getAll() throws SQLException {
         Set<Note> results = new LinkedHashSet<>();
 
-        String sql = "SELECT * " +
-                "FROM notes;";
+        String sql = "SELECT * "
+                + "FROM notes;";
         try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
 
@@ -54,8 +54,8 @@ public final class NoteEntityDao {
     }
 
     public Note getById(String id) throws SQLException {
-        String sql = "SELECT * " +
-                "FROM notes WHERE id = ?";
+        String sql = "SELECT * "
+                + "FROM notes WHERE id = ?";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, id);

@@ -37,8 +37,8 @@ public final class FileInfoEntityDao {
 
     public Set<FileInfo> getAll() throws SQLException {
         Set<FileInfo> results = new LinkedHashSet<>();
-        String sql = "SELECT * " +
-                "FROM files_info";
+        String sql = "SELECT * "
+                + "FROM files_info";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             ResultSet rs = stmt.executeQuery();
@@ -64,8 +64,8 @@ public final class FileInfoEntityDao {
 
     public Set<FileInfo> getByNoteId(String noteId) throws SQLException {
         Set<FileInfo> results = new LinkedHashSet<>();
-        String sql = "SELECT * " +
-                "FROM files_info WHERE note_id = ?";
+        String sql = "SELECT * "
+                + "FROM files_info WHERE note_id = ?";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, noteId);
@@ -107,8 +107,8 @@ public final class FileInfoEntityDao {
     }
 
     public FileInfo getById(String id) throws SQLException {
-        String sql = "SELECT * " +
-                "FROM files_info WHERE id = ?";
+        String sql = "SELECT * "
+                + "FROM files_info WHERE id = ?";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, id);
