@@ -50,7 +50,9 @@ public final class PutFileCommand extends Command {
             File dbFile = getFile(dbPath);
             File fileToPut = getFile(filePath);
 
+            log.info("Adding file {}", fileToPut.getAbsolutePath());
             putFile(dbFile, fileToPut);
+            log.info("File added successfully");
 
             exitCode = SUCCESS;
         } catch (CommandHandlingException e) {
