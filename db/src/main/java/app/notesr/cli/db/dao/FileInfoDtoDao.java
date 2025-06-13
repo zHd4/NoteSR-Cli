@@ -18,7 +18,7 @@ public final class FileInfoDtoDao {
 
     public Set<FilesTableRowDto> getFilesTableRowsByNoteId(String noteId) throws SQLException {
         Set<FilesTableRowDto> results = new LinkedHashSet<>();
-        String sql = "SELECT id, name, size, updated_at FROM files_info WHERE note_id = ?";
+        String sql = "SELECT id, name, size, updated_at FROM files_info WHERE note_id = ? ORDER BY updated_at DESC;";
 
         try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, noteId);
