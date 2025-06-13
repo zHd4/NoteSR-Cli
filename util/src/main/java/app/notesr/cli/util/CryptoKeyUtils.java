@@ -1,10 +1,13 @@
 package app.notesr.cli.util;
 
 import app.notesr.cli.dto.CryptoKey;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CryptoKeyUtils {
     private static final int KEY_SIZE = 256;
     private static final int SALT_SIZE = 16;
