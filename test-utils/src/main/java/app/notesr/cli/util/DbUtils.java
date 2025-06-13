@@ -5,6 +5,8 @@ import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,6 +21,7 @@ import java.util.Map;
 
 import static app.notesr.cli.util.DateTimeUtils.dateTimeToString;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DbUtils {
     public static void insertNote(Connection connection, Note note) {
         String sql = "INSERT INTO notes (id, name, text, updated_at) VALUES (?, ?, ?, ?)";

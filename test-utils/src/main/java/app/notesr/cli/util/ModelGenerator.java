@@ -3,6 +3,8 @@ package app.notesr.cli.util;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import net.datafaker.Faker;
 
 import java.time.LocalDateTime;
@@ -13,6 +15,7 @@ import java.util.Set;
 import static app.notesr.cli.util.DateTimeUtils.truncateDateTime;
 import static java.util.UUID.randomUUID;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ModelGenerator {
     private static final Faker FAKER = new Faker();
     private static final Random RANDOM = new Random();
