@@ -76,9 +76,10 @@ class PutFileCommandTest {
     @Test
     void testCommandWithInvalidDb() throws IOException {
         Path dbPath = tempDir.resolve("invalid_db.db");
-        Path filePath = Path.of("/////some///weird//path///file");
+        Path filePath = tempDir.resolve("file.txt");
 
         Files.writeString(dbPath, "Lorem ipsum");
+        Files.writeString(filePath, "Hello world!");
 
         int exitCode = cmd.execute(dbPath.toString(), BLANK_UUID, filePath.toString());
         assertEquals(DB_ERROR, exitCode, "Expected code " + DB_ERROR);
