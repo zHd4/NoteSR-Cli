@@ -5,6 +5,7 @@ import app.notesr.cli.command.DecryptCommand;
 import app.notesr.cli.command.GetFileCommand;
 import app.notesr.cli.command.ListFilesCommand;
 import app.notesr.cli.command.ListNotesCommand;
+import app.notesr.cli.command.PutFileCommand;
 import app.notesr.cli.command.ReadNoteCommand;
 import picocli.CommandLine;
 
@@ -15,7 +16,7 @@ import java.util.concurrent.Callable;
         description = "Decrypts and manages exported NoteSR backups",
         mixinStandardHelpOptions = true,
         subcommands = {DecryptCommand.class, CompileCommand.class, ListNotesCommand.class, ReadNoteCommand.class,
-            ListFilesCommand.class, GetFileCommand.class})
+            ListFilesCommand.class, GetFileCommand.class, PutFileCommand.class})
 public final class App implements Callable<Integer> {
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
