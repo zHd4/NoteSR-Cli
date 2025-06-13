@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import static app.notesr.cli.util.DateTimeUtils.dateTimeToString;
+import static app.notesr.cli.util.FileUtils.getReadableSize;
 
 @Slf4j
 @CommandLine.Command(name = "list-files",
@@ -100,17 +101,5 @@ public final class ListFilesCommand extends Command {
     private String validateFileId(String fileId) {
         UuidShortener uuidShortener = new UuidShortener(fileId);
         return displayFullFilesIds ? uuidShortener.getLongUuid() : uuidShortener.getShortUuid();
-    }
-
-    static String getReadableSize(long size) {
-        String[] units = new String[] {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
-
-        if (size > 0) {
-            int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-            return new DecimalFormat("#,##0.#")
-                    .format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
-        }
-
-        return "0 B";
     }
 }
