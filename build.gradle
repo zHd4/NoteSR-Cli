@@ -47,6 +47,7 @@ subprojects {
 
     jacocoTestReport {
         dependsOn test
+
         reports {
             xml.required = true
             html.required = true
@@ -71,7 +72,11 @@ tasks.register('jacocoRootReport', JacocoReport) {
         html.required = true
     }
 
-    def executionDataFiles = files(subprojects.collect {subproject ->
+    def excludedModules = ['test-utils', 'test-common']
+
+    def executionDataFiles = files(subprojects.findAll { subproject ->
+        !excludedModules.contains(subproject.name)
+    }.collect { subproject ->
         fileTree(dir: subproject.layout.buildDirectory.dir('jacoco').get().asFile, includes: [
                 'test.exec',
                 'test*.exec'
@@ -82,7 +87,14 @@ tasks.register('jacocoRootReport', JacocoReport) {
 
     subprojects.each { subproject ->
         sourceDirectories.from files("${subproject.projectDir}/src/main/java")
-        classDirectories.from fileTree(dir: subproject.layout.buildDirectory.dir('classes/java/main').get().asFile)
+
+        def classDir = subproject.layout.buildDirectory.dir('classes/java/main').get().asFile
+
+        if (excludedModules.contains(subproject.name)) {
+            classDirectories.from files()
+        } else {
+            classDirectories.from fileTree(dir: classDir)
+        }
     }
 }
 
@@ -130,6 +142,7 @@ sonar {
         property "sonar.organization", "zhd4"
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.coverage.exclusions", "**/test-utils/**/*"
         property "sonar.coverage.jacoco.xmlReportPaths",
                 layout.buildDirectory.file("reports/jacoco/jacocoRootReport/jacocoRootReport.xml").get()
                         .asFile.absolutePath
