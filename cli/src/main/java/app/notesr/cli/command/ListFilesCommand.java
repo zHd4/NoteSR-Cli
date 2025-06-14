@@ -13,7 +13,6 @@ import picocli.CommandLine;
 import java.io.File;
 import java.io.PrintStream;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Set;
 
