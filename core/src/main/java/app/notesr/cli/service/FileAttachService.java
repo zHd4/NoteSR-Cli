@@ -30,11 +30,12 @@ public final class FileAttachService {
         }
 
         FileInfo fileInfo = buildFileInfo(file, fullNoteId);
-        new FileInfoEntityDao(db).add(fileInfo);
 
+        FileInfoEntityDao fileInfoEntityDao = new FileInfoEntityDao(db);
         DataBlockEntityDao dataBlockDao = new DataBlockEntityDao(db);
         ChunkedFileUploader fileUploader = new ChunkedFileUploader(dataBlockDao);
 
+        fileInfoEntityDao.add(fileInfo);
         fileUploader.upload(fileInfo.getId(), file);
     }
 
