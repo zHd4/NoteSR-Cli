@@ -29,7 +29,7 @@ import static app.notesr.cli.command.DecryptCommand.SUCCESS;
 import static app.notesr.cli.util.DbUtils.serializeTableAsJson;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
-import static app.notesr.cli.util.PathUtils.getNameWithoutExtension;
+import static app.notesr.cli.util.FileUtils.getNameWithoutExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

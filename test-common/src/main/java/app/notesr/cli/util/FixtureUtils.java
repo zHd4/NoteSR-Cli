@@ -12,6 +12,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
+import static java.util.UUID.randomUUID;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FixtureUtils {
     public static String readFixture(String path) throws IOException {
@@ -26,7 +28,8 @@ public class FixtureUtils {
                 "Resource not found: " + fixturePath
         )) {
 
-            Path tempFile = Files.createTempFile("fixture-", "-" + Paths.get(fixturePath).getFileName());
+            Path tempFile = Files.createTempFile("fixture-" + randomUUID(),
+                    "-" + Paths.get(fixturePath).getFileName());
             Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
             tempFile.toFile().deleteOnExit();
             return tempFile;
