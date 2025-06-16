@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'checkstyle'
     id 'jacoco'
-    id "org.sonarqube" version "6.2.0.5505"
 }
 
 group = 'app.notesr.cli'
@@ -134,17 +133,4 @@ tasks.register('copyCliBinaryToRoot', Copy) {
 
 tasks.named('build') {
     dependsOn tasks.named('copyCliBinaryToRoot')
-}
-
-sonar {
-    properties {
-        property "sonar.projectKey", "zHd4_NoteSR-Cli"
-        property "sonar.organization", "zhd4"
-        property "sonar.host.url", "https://sonarcloud.io"
-        property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.coverage.exclusions", "**/test-utils/**/*"
-        property "sonar.coverage.jacoco.xmlReportPaths",
-                layout.buildDirectory.file("reports/jacoco/jacocoRootReport/jacocoRootReport.xml").get()
-                        .asFile.absolutePath
-    }
 }
