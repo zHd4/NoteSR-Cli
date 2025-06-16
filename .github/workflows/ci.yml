@@ -24,10 +24,3 @@ jobs:
         with:
           token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
           files: ${{github.workspace}}/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
-      - name: Upload coverage to DeepSource
-        run: |
-          curl https://deepsource.io/cli | sh
-          cd ./bin
-          ./deepsource report --analyzer java --coverage-file build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml --format jacoco
-        env:
-            DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
