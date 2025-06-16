@@ -27,6 +27,7 @@ jobs:
       - name: Upload coverage to DeepSource
         run: |
           curl https://deepsource.io/cli | sh
-          deepsource report --analyzer java --coverage-file build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml --format jacoco
+          cd ./bin
+          ./deepsource report --analyzer java --coverage-file build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml --format jacoco
         env:
             DEEPSOURCE_DSN: ${{ secrets.DEEPSOURCE_DSN }}
