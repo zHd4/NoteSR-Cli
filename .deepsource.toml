@@ -2,6 +2,11 @@ version = 1
 
 [[analyzers]]
 name = "java"
+enabled = true
 
-[analyzers.meta]
-runtime_version = "21"
+    [analyzers.meta]
+    runtime_version = "21"
+
+    [analyzers.java.coverage]
+    report_path = "build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+    format = "jacoco"
