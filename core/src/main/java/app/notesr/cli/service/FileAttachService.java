@@ -7,6 +7,7 @@ import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.exception.NoteNotFoundException;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.util.ChunkedFileUploader;
+import app.notesr.cli.util.MediaThumbnailUtils;
 import app.notesr.cli.util.UuidShortener;
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +21,9 @@ import static java.util.UUID.randomUUID;
 
 @RequiredArgsConstructor
 public final class FileAttachService {
+    private static final int THUMBNAIL_SIZE = 100;
+    private static final int THUMBNAIL_VIDEO_SECONDS = 1;
+
     private final DbConnection db;
 
     public void attachFile(File file, String noteId) throws IOException, SQLException, NoteNotFoundException {
@@ -51,9 +55,26 @@ public final class FileAttachService {
                 .noteId(noteId)
                 .name(file.getName())
                 .type(Files.probeContentType(file.toPath()))
+                .thumbnail(getFileThumbnail(file))
                 .size(Files.size(file.toPath()))
                 .createdAt(now)
                 .updatedAt(now)
                 .build();
+    }
+
+    public byte[] getFileThumbnail(File file) throws IOException {
+        String mimeType = Files.probeContentType(file.toPath());
+
+        if (mimeType != null) {
+            if (mimeType.startsWith("image/")) {
+                return MediaThumbnailUtils.getImageThumbnail(file, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+            }
+
+            if (mimeType.startsWith("video/")) {
+                return MediaThumbnailUtils.getVideoThumbnail(file, THUMBNAIL_SIZE, THUMBNAIL_SIZE, THUMBNAIL_VIDEO_SECONDS);
+            }
+        }
+
+        return null;
     }
 }

@@ -3,6 +3,7 @@ package app.notesr.cli.command;
 import app.notesr.cli.db.ConnectionException;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.exception.NoteNotFoundException;
+import app.notesr.cli.exception.ThumbnailExtractionException;
 import app.notesr.cli.service.FileAttachService;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
@@ -61,6 +62,9 @@ public final class PutFileCommand extends Command {
             throw new CommandHandlingException(DB_ERROR);
         } catch (IOException e) {
             log.error("{}: failed to read file, details:\n{}", fileToPut.getAbsolutePath(), e.getMessage());
+            throw new CommandHandlingException(FILE_RW_ERROR);
+        } catch (ThumbnailExtractionException e) {
+            log.error("{}: failed to extract thumbnail, details:\n{}", fileToPut.getAbsolutePath(), e.getMessage());
             throw new CommandHandlingException(FILE_RW_ERROR);
         } catch (SQLException e) {
             log.error("{}: failed to access database, details:\n{}", dbPath, e.getMessage());
