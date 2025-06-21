@@ -18,7 +18,7 @@ public interface FileInfoEntityDao {
         ) VALUES (
             :id, :noteId, :size, :name, :type, :thumbnail, :createdAt, :updatedAt
         )
-    """)
+        """)
     void add(@BindBean FileInfo fileInfo);
 
     @SqlQuery("SELECT * FROM files_info")

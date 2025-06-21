@@ -70,7 +70,8 @@ public final class FileAttachService {
             }
 
             if (mimeType.startsWith("video/")) {
-                return MediaThumbnailUtils.getVideoThumbnail(file, THUMBNAIL_SIZE, THUMBNAIL_SIZE, THUMBNAIL_VIDEO_SECONDS);
+                return MediaThumbnailUtils.getVideoThumbnail(file, THUMBNAIL_SIZE, THUMBNAIL_SIZE,
+                        THUMBNAIL_VIDEO_SECONDS);
             }
         }
 

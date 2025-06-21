@@ -13,9 +13,9 @@ import java.util.Set;
 public interface DataBlockEntityDao {
 
     @SqlUpdate("""
-        INSERT INTO data_blocks (id, file_id, block_order, data)
-        VALUES (:id, :fileId, :blockOrder, :data)
-    """)
+            INSERT INTO data_blocks (id, file_id, block_order, data)
+            VALUES (:id, :fileId, :blockOrder, :data)
+            """)
     void add(@BindBean DataBlock dataBlock);
 
     @SqlQuery("SELECT id, file_id, block_order FROM data_blocks")

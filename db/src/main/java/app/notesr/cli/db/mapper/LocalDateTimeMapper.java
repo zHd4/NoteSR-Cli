@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class LocalDateTimeMapper implements ColumnMapper<LocalDateTime> {
+public final class LocalDateTimeMapper implements ColumnMapper<LocalDateTime> {
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override

@@ -22,6 +22,6 @@ public interface NoteFileInfoDtoDao {
             ) AS attached_files_count
         FROM notes n
         ORDER BY n.updated_at DESC
-    """)
+        """)
     Set<NotesTableRowDto> getNotesTable();
 }

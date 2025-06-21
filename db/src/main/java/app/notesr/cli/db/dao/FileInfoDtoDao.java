@@ -15,6 +15,6 @@ public interface FileInfoDtoDao {
         FROM files_info
         WHERE note_id = :noteId
         ORDER BY updated_at DESC
-    """)
+        """)
     Set<FilesTableRowDto> getFilesTableRowsByNoteId(@Bind("noteId") String noteId);
 }
