@@ -3,7 +3,6 @@ package app.notesr.cli.command;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.model.Note;
-import app.notesr.cli.util.UuidShortener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
@@ -45,18 +44,7 @@ class ListNotesCommandTest {
         String output = outputStream.toString();
 
         assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
-        assertNotes(dbPath, output, false);
-    }
-
-    @Test
-    void testCommandWithFullNotesIds() {
-        Path dbPath = getFixturePath("backup.db");
-
-        int exitCode = cmd.execute(dbPath.toString(), "--full-ids");
-        String output = outputStream.toString();
-
-        assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
-        assertNotes(dbPath, output, true);
+        assertNotes(dbPath, output);
     }
 
     @Test
@@ -75,10 +63,9 @@ class ListNotesCommandTest {
         assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
     }
 
-    private void assertNotes(Path dbPath, String receivedOutput, boolean displayFullNotesIds) {
+    private void assertNotes(Path dbPath, String receivedOutput) {
         for (Note expected : getAllNotesFromDb(dbPath)) {
-            UuidShortener noteIdShortener = new UuidShortener(expected.getId());
-            String expectedId = displayFullNotesIds ? noteIdShortener.getLongUuid() : noteIdShortener.getShortUuid();
+            String expectedId = expected.getId();
 
             assertTrue(receivedOutput.contains(expectedId), "Note id '"
                     + expectedId + "' not found in the output");

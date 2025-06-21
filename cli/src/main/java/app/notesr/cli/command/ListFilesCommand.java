@@ -4,7 +4,6 @@ import app.notesr.cli.db.ConnectionException;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.FileInfoDtoDao;
 import app.notesr.cli.dto.FilesTableRowDto;
-import app.notesr.cli.util.UuidShortener;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +33,6 @@ public final class ListFilesCommand extends Command {
             description = "note id")
     private String noteId;
 
-    @CommandLine.Option(names = { "-f", "--full-ids" }, description = "display full files IDs")
-    private boolean displayFullFilesIds;
-
     @Setter(AccessLevel.PACKAGE)
     private PrintStream out = System.out;
 
@@ -55,7 +51,7 @@ public final class ListFilesCommand extends Command {
             if (!tableRows.isEmpty()) {
                 out.println(getTable(tableRows));
             } else {
-                log.info("{}: The note does not contain attachments", validateFileId(noteId));
+                log.info("{}: The note does not contain attachments", noteId);
             }
 
             exitCode = SUCCESS;
@@ -73,11 +69,8 @@ public final class ListFilesCommand extends Command {
         DbConnection db = new DbConnection(dbFile.getAbsolutePath());
         FileInfoDtoDao fileInfoDtoDao = db.getConnection().onDemand(FileInfoDtoDao.class);
 
-        UuidShortener noteIdShortener = new UuidShortener(noteId);
-        String fullNoteId = noteIdShortener.getLongUuid();
-
         try {
-            return fileInfoDtoDao.getFilesTableRowsByNoteId(fullNoteId);
+            return fileInfoDtoDao.getFilesTableRowsByNoteId(noteId);
         } catch (MappingException | UnableToProduceResultException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
             throw new CommandHandlingException(DB_ERROR);
@@ -88,7 +81,7 @@ public final class ListFilesCommand extends Command {
         List<String> headers = List.of("ID", "Name", "Size", "Last update");
         List<List<String>> rows = tableDtoRows.stream()
                 .map(dto -> List.of(
-                        validateFileId(dto.getId()),
+                        dto.getId(),
                         truncateText(dto.getFileName(), MAX_FILE_NAME_LENGTH),
                         getReadableSize(dto.getFileSize()),
                         dateTimeToString(dto.getUpdatedAt())
@@ -96,10 +89,5 @@ public final class ListFilesCommand extends Command {
 
         TableRenderer tableRenderer = new TableRenderer();
         return tableRenderer.render(headers, rows);
-    }
-
-    private String validateFileId(String fileId) {
-        UuidShortener uuidShortener = new UuidShortener(fileId);
-        return displayFullFilesIds ? uuidShortener.getLongUuid() : uuidShortener.getShortUuid();
     }
 }

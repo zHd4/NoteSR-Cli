@@ -8,7 +8,6 @@ import app.notesr.cli.exception.NoteNotFoundException;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.util.ChunkedFileUploader;
 import app.notesr.cli.util.MediaThumbnailUtils;
-import app.notesr.cli.util.UuidShortener;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
@@ -26,13 +25,11 @@ public final class FileAttachService {
     private final DbConnection db;
 
     public void attachFile(File file, String noteId) throws IOException, NoteNotFoundException {
-        String fullNoteId = new UuidShortener(noteId).getLongUuid();
-
-        if (!isNoteExists(fullNoteId)) {
+        if (!isNoteExists(noteId)) {
             throw new NoteNotFoundException(noteId);
         }
 
-        FileInfo fileInfo = buildFileInfo(file, fullNoteId);
+        FileInfo fileInfo = buildFileInfo(file, noteId);
 
         FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
         DataBlockEntityDao dataBlockDao = db.getConnection().onDemand(DataBlockEntityDao.class);

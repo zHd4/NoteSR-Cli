@@ -5,7 +5,6 @@ import app.notesr.cli.db.dao.FileInfoEntityDao;
 import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
-import app.notesr.cli.util.UuidShortener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
@@ -59,22 +58,7 @@ class ListFilesCommandTest {
         String output = outputStream.toString();
 
         assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
-        assertFiles(testFilesInfos, output, false);
-    }
-
-    @Test
-    void testCommandWithFullNotesIds() {
-        Path dbPath = getFixturePath("backup.db");
-        AbstractMap.SimpleEntry<Note, Set<FileInfo>> noteAttachmentsEntry = getRandomNoteWithAttachments(dbPath);
-
-        Note testNote = noteAttachmentsEntry.getKey();
-        Set<FileInfo> testFilesInfos = noteAttachmentsEntry.getValue();
-
-        int exitCode = cmd.execute(dbPath.toString(), testNote.getId(), "--full-ids");
-        String output = outputStream.toString();
-
-        assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
-        assertFiles(testFilesInfos, output, true);
+        assertFiles(testFilesInfos, output);
     }
 
     @Test
@@ -93,10 +77,9 @@ class ListFilesCommandTest {
         assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
     }
 
-    private void assertFiles(Set<FileInfo> testFilesInfos, String receivedOutput, boolean displayFullFilesIds) {
+    private void assertFiles(Set<FileInfo> testFilesInfos, String receivedOutput) {
         for (FileInfo expected : testFilesInfos) {
-            UuidShortener fileIdShortener = new UuidShortener(expected.getId());
-            String expectedId = displayFullFilesIds ? fileIdShortener.getLongUuid() : fileIdShortener.getShortUuid();
+            String expectedId = expected.getId();
 
             assertTrue(receivedOutput.contains(expectedId), "File id '"
                     + expectedId + "' not found in the output");

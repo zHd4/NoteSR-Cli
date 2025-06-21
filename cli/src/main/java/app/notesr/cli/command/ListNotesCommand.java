@@ -4,7 +4,6 @@ import app.notesr.cli.db.ConnectionException;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.NoteFileInfoDtoDao;
 import app.notesr.cli.dto.NotesTableRowDto;
-import app.notesr.cli.util.UuidShortener;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +29,6 @@ public final class ListNotesCommand extends Command {
     @CommandLine.Parameters(index = "0", paramLabel = "db_path",
             description = "path to NoteSR Backup Database")
     private String dbPath;
-
-    @CommandLine.Option(names = { "-f", "--full-ids" }, description = "display full notes IDs")
-    private boolean displayFullNotesIds;
 
     @Setter(AccessLevel.PACKAGE)
     private PrintStream out = System.out;
@@ -82,7 +78,7 @@ public final class ListNotesCommand extends Command {
         List<String> headers = List.of("ID", "Name", "Text", "Last update", "Files attached");
         List<List<String>> rows = tableDtoRows.stream()
                 .map(dto -> List.of(
-                        validateNoteId(dto.getNoteId()),
+                        dto.getNoteId(),
                         truncateText(dto.getNoteShortName(), MAX_NAME_LENGTH),
                         truncateText(dto.getNoteShortText(), MAX_TEXT_LENGTH),
                         dateTimeToString(dto.getNoteUpdatedAt()),
@@ -91,10 +87,5 @@ public final class ListNotesCommand extends Command {
 
         TableRenderer tableRenderer = new TableRenderer();
         return tableRenderer.render(headers, rows);
-    }
-
-    private String validateNoteId(String noteId) {
-        UuidShortener uuidShortener = new UuidShortener(noteId);
-        return displayFullNotesIds ? uuidShortener.getLongUuid() : uuidShortener.getShortUuid();
     }
 }

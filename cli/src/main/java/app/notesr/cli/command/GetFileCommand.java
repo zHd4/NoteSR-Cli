@@ -6,7 +6,6 @@ import app.notesr.cli.db.dao.DataBlockEntityDao;
 import app.notesr.cli.db.dao.FileInfoEntityDao;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
-import app.notesr.cli.util.UuidShortener;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.mapper.MappingException;
 import org.jdbi.v3.core.result.UnableToProduceResultException;
@@ -60,11 +59,8 @@ public final class GetFileCommand extends Command {
         DbConnection db = new DbConnection(dbFile.getAbsolutePath());
         FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
 
-        UuidShortener fileIdShortener = new UuidShortener(fileId);
-
         try {
-            String fullFileId = fileIdShortener.getLongUuid();
-            FileInfo fileInfo = fileInfoEntityDao.getById(fullFileId);
+            FileInfo fileInfo = fileInfoEntityDao.getById(fileId);
 
             if (fileInfo == null) {
                 log.error("{}: file with id '{}' not found", dbPath, fileId);
@@ -74,7 +70,7 @@ public final class GetFileCommand extends Command {
             File outputFile = getOutputFile(dbFile, fileInfo.getName());
 
             log.info("Saving file {} with id {}", fileInfo.getName(), fileInfo.getId());
-            writeFileData(db, fullFileId, outputFile);
+            writeFileData(db, fileId, outputFile);
             log.info("Saved successfully to: {}", outputFile.getAbsolutePath());
         } catch (MappingException | UnableToProduceResultException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
