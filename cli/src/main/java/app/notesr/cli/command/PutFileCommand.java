@@ -6,11 +6,11 @@ import app.notesr.cli.exception.NoteNotFoundException;
 import app.notesr.cli.exception.ThumbnailExtractionException;
 import app.notesr.cli.service.FileAttachService;
 import lombok.extern.slf4j.Slf4j;
+import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 import picocli.CommandLine;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 
 @Slf4j
 @CommandLine.Command(name = "put-file",
@@ -66,7 +66,7 @@ public final class PutFileCommand extends Command {
         } catch (ThumbnailExtractionException e) {
             log.error("{}: failed to extract thumbnail, details:\n{}", fileToPut.getAbsolutePath(), e.getMessage());
             throw new CommandHandlingException(FILE_RW_ERROR);
-        } catch (SQLException e) {
+        } catch (UnableToExecuteStatementException e) {
             log.error("{}: failed to access database, details:\n{}", dbPath, e.getMessage());
             throw new CommandHandlingException(DB_ERROR);
         }

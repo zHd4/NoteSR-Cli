@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureRandom;
-import java.sql.SQLException;
+
 import java.util.List;
 import java.util.Random;
 
@@ -59,7 +59,7 @@ class DecryptCommandTest {
 
     @ParameterizedTest
     @ValueSource(strings = {FORMAT_V1, FORMAT_V2})
-    void testWithAllArgs(String formatVersion) throws IOException, SQLException {
+    void testWithAllArgs(String formatVersion) throws IOException {
         final String notesTableName = "notes";
         final String filesInfosTableName = "files_info";
         final String dataBlocksTableName = "data_blocks";

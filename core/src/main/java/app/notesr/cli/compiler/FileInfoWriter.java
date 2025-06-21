@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
@@ -23,7 +22,7 @@ class FileInfoWriter implements Writer {
     private final DateTimeFormatter dateTimeFormatter;
 
     @Override
-    public void write() throws IOException, SQLException {
+    public void write() throws IOException {
         try (jsonGenerator) {
             jsonGenerator.writeStartObject();
 
@@ -82,7 +81,7 @@ class FileInfoWriter implements Writer {
 
         jsonGenerator.writeStringField("id", dataBlock.getId());
         jsonGenerator.writeStringField("file_id", dataBlock.getFileId());
-        jsonGenerator.writeNumberField("order", dataBlock.getOrder());
+        jsonGenerator.writeNumberField("order", dataBlock.getBlockOrder());
 
         jsonGenerator.writeEndObject();
     }

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 
 @RequiredArgsConstructor
@@ -18,7 +17,7 @@ class NoteWriter implements Writer {
     private final DateTimeFormatter dateTimeFormatter;
 
     @Override
-    public void write() throws IOException, SQLException {
+    public void write() throws IOException {
         try (jsonGenerator) {
             jsonGenerator.writeStartObject();
             jsonGenerator.writeArrayFieldStart(NOTES_ARRAY_NAME);

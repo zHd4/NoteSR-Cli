@@ -1,5 +1,6 @@
 package app.notesr.cli.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,9 @@ import lombok.NoArgsConstructor;
 public class DataBlock {
     private String id;
     private String fileId;
-    private Long order;
+
+    @JsonAlias({"order"})
+    private Long blockOrder;
+
     private byte[] data;
 }

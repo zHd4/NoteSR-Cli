@@ -47,7 +47,7 @@ public class ModelGenerator {
         return DataBlock.builder()
                 .id(randomUUID().toString())
                 .fileId(fileInfo.getId())
-                .order(order)
+                .blockOrder(order)
                 .data(data)
                 .build();
     }

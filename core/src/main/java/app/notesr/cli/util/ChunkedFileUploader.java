@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Arrays;
 
 import static java.util.UUID.randomUUID;
@@ -17,7 +16,7 @@ public final class ChunkedFileUploader {
     static final int CHUNK_SIZE = 500_000;
     private final DataBlockEntityDao dao;
 
-    public void upload(String fileId, File file) throws IOException, SQLException {
+    public void upload(String fileId, File file) throws IOException {
         try (FileInputStream stream = new FileInputStream(file)) {
             byte[] chunk = new byte[CHUNK_SIZE];
             long order = 0;
@@ -28,7 +27,7 @@ public final class ChunkedFileUploader {
                 DataBlock dataBlock = DataBlock.builder()
                         .id(randomUUID().toString())
                         .fileId(fileId)
-                        .order(order++)
+                        .blockOrder(order++)
                         .data(data)
                         .build();
                 dao.add(dataBlock);

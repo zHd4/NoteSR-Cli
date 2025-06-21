@@ -8,11 +8,13 @@ import app.notesr.cli.util.UuidShortener;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jdbi.v3.core.mapper.MappingException;
+import org.jdbi.v3.core.result.UnableToProduceResultException;
 import picocli.CommandLine;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.sql.SQLException;
+
 import java.util.List;
 import java.util.Set;
 
@@ -66,11 +68,11 @@ public final class ListNotesCommand extends Command {
 
     private Set<NotesTableRowDto> getTableRows(File dbFile) throws CommandHandlingException {
         DbConnection db = new DbConnection(dbFile.getAbsolutePath());
-        NoteFileInfoDtoDao noteFileInfoDtoDao = new NoteFileInfoDtoDao(db);
+        NoteFileInfoDtoDao noteFileInfoDtoDao = db.getConnection().onDemand(NoteFileInfoDtoDao.class);
 
         try {
             return noteFileInfoDtoDao.getNotesTable();
-        } catch (SQLException e) {
+        } catch (MappingException | UnableToProduceResultException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
             throw new CommandHandlingException(DB_ERROR);
         }

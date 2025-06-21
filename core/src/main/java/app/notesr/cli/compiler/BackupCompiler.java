@@ -12,12 +12,13 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import lombok.Setter;
+import org.jdbi.v3.core.mapper.MappingException;
+import org.jdbi.v3.core.result.UnableToProduceResultException;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 
 @Getter
@@ -58,7 +59,7 @@ public final class BackupCompiler implements Runnable {
             ZipUtils.zipDirectory(tempDirPath.toString(), outputPath.toString());
         } catch (IOException e) {
             throw new BackupIOException(e);
-        } catch (SQLException e) {
+        } catch (MappingException | UnableToProduceResultException e) {
             throw new BackupDbException(e);
         }
     }
@@ -68,12 +69,12 @@ public final class BackupCompiler implements Runnable {
         Files.writeString(versionFilePath, noteSrVersion);
     }
 
-    private void writeData(File dir) throws IOException, SQLException {
+    private void writeData(File dir) throws IOException {
         DbConnection db = new DbConnection(dbPath.toString());
 
-        NoteEntityDao noteEntityDao = new NoteEntityDao(db);
-        FileInfoEntityDao fileInfoEntityDao = new FileInfoEntityDao(db);
-        DataBlockEntityDao dataBlockEntityDao = new DataBlockEntityDao(db);
+        NoteEntityDao noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
+        FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
+        DataBlockEntityDao dataBlockEntityDao = db.getConnection().onDemand(DataBlockEntityDao.class);
 
         JsonGenerator noteJsonGenerator = getJsonGenerator(dir, NOTES_JSON_FILE_NAME);
         JsonGenerator fileInfoJsonGenerator = getJsonGenerator(dir, FILES_INFO_JSON_FILE_NAME);

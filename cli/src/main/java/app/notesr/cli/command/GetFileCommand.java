@@ -8,6 +8,8 @@ import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.util.UuidShortener;
 import lombok.extern.slf4j.Slf4j;
+import org.jdbi.v3.core.mapper.MappingException;
+import org.jdbi.v3.core.result.UnableToProduceResultException;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -15,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.Set;
 
 @Slf4j
@@ -57,7 +58,7 @@ public final class GetFileCommand extends Command {
 
     private void saveFile(File dbFile) throws CommandHandlingException {
         DbConnection db = new DbConnection(dbFile.getAbsolutePath());
-        FileInfoEntityDao fileInfoEntityDao = new FileInfoEntityDao(db);
+        FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
 
         UuidShortener fileIdShortener = new UuidShortener(fileId);
 
@@ -75,7 +76,7 @@ public final class GetFileCommand extends Command {
             log.info("Saving file {} with id {}", fileInfo.getName(), fileInfo.getId());
             writeFileData(db, fullFileId, outputFile);
             log.info("Saved successfully to: {}", outputFile.getAbsolutePath());
-        } catch (SQLException e) {
+        } catch (MappingException | UnableToProduceResultException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
             throw new CommandHandlingException(DB_ERROR);
         } catch (IOException e) {
@@ -112,8 +113,8 @@ public final class GetFileCommand extends Command {
         return outputFile;
     }
 
-    private void writeFileData(DbConnection db, String fullFileId, File outputFile) throws SQLException, IOException {
-        DataBlockEntityDao dataBlockEntityDao = new DataBlockEntityDao(db);
+    private void writeFileData(DbConnection db, String fullFileId, File outputFile) throws IOException {
+        DataBlockEntityDao dataBlockEntityDao = db.getConnection().onDemand(DataBlockEntityDao.class);
         Set<String> dataBlocksIds = dataBlockEntityDao.getIdsByFileId(fullFileId);
 
         try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {

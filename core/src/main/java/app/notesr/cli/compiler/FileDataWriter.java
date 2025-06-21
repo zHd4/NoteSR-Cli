@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.sql.SQLException;
 
 import static java.util.Objects.requireNonNull;
 
@@ -17,7 +16,7 @@ class FileDataWriter implements Writer {
     private final DataBlockEntityDao dataBlockEntityDao;
 
     @Override
-    public void write() throws IOException, SQLException {
+    public void write() throws IOException {
         if (outputDir.exists()) {
             if (!outputDir.isDirectory()) {
                 throw new IllegalArgumentException(outputDir.getAbsolutePath() + " isn't directory");

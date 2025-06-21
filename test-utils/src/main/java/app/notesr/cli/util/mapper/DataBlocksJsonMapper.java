@@ -15,7 +15,7 @@ public final class DataBlocksJsonMapper extends JsonMapper<DataBlock> {
                 .map(line -> DataBlock.builder()
                         .id((String) line.get("id"))
                         .fileId((String) line.get("file_id"))
-                        .order(Long.valueOf((Integer) line.get("block_order")))
+                        .blockOrder(Long.valueOf((Integer) line.get("block_order")))
                         .data(parseDataBlockData(line.get("data")))
                         .build())
                 .toList();
@@ -24,8 +24,8 @@ public final class DataBlocksJsonMapper extends JsonMapper<DataBlock> {
     private static byte[] parseDataBlockData(Object data) {
         if (data instanceof String) {
             return Base64.getDecoder().decode(String.valueOf(data));
-        } else if (data instanceof byte[]) {
-            return (byte[]) data;
+        } else if (data instanceof byte[] bytes) {
+            return bytes;
         } else {
             throw new IllegalArgumentException("Unexpected instance");
         }

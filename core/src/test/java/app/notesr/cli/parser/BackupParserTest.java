@@ -14,7 +14,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.List;
 
 import static app.notesr.cli.util.DbUtils.serializeTableAsJson;
@@ -46,7 +45,7 @@ class BackupParserTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"v1.json", "v2.zip"})
-    void testParser(String format) throws IOException, SQLException {
+    void testParser(String format) throws IOException {
         String[] parsedFormat = format.split("\\.");
 
         String formatVersion = parsedFormat[0];

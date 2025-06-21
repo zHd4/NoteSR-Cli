@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.Random;
 
 import static app.notesr.cli.util.ChunkedFileUploader.CHUNK_SIZE;
@@ -26,7 +25,7 @@ class ChunkedFileUploaderTest {
     private Path tempDir;
 
     @Test
-    void testUpload() throws IOException, SQLException {
+    void testUpload() throws IOException {
         byte[] testFileData = getRandomData();
         File testFile = createTestFile(testFileData);
         String testFileId = randomUUID().toString();

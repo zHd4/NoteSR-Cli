@@ -1,50 +1,51 @@
 package app.notesr.cli.db;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DbConnectionTest {
-    private static DbConnection dbConnection;
-
-    @BeforeAll
-    public static void beforeAll() {
-        dbConnection = new DbConnection(":memory:");
-    }
 
     @Test
-    void testConnectionAvailable() throws SQLException {
-        assertNotNull(dbConnection.getConnection(), "Connection is null");
-        assertTrue(dbConnection.getConnection().isValid(30), "Invalid connection");
-        assertFalse(dbConnection.getConnection().isClosed(), "Connection closed");
-    }
+    void testDbStructureAgainstExpectedSchema(@TempDir Path tempDir) {
+        DbConnection db = new DbConnection(tempDir.resolve("test.db").toString());
+        Jdbi jdbi = db.getConnection();
 
-    @Test
-    void testTablesExists() throws SQLException {
-        List<String> tables = List.of("notes", "files_info", "data_blocks");
+        Map<String, List<String>> expectedSchema = Map.of(
+                "notes", List.of("id", "name", "text", "updated_at"),
+                "files_info", List.of("id", "note_id", "name", "type", "thumbnail", "size", "created_at", "updated_at"),
+                "data_blocks", List.of("id", "file_id", "block_order", "data")
+        );
 
-        for (String table : tables) {
-            assertTrue(isTableExists(table), "Table " + table + " wasn't created");
-        }
-    }
+        Set<String> actualTables = new HashSet<>(jdbi.withHandle(handle ->
+                handle.createQuery("SELECT name FROM sqlite_master WHERE type='table'")
+                        .mapTo(String.class)
+                        .list()
+        ));
 
-    private boolean isTableExists(String name) throws SQLException {
-        Connection connection = dbConnection.getConnection();
-        String sql = "SELECT name FROM sqlite_master WHERE type='table' AND name=?";
+        for (Map.Entry<String, List<String>> entry : expectedSchema.entrySet()) {
+            String tableName = entry.getKey();
+            List<String> expectedColumns = entry.getValue();
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, name);
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next();
+            assertTrue(actualTables.contains(tableName), "Expected table: " + tableName);
+
+            List<String> actualColumns = jdbi.withHandle(handle ->
+                    handle.createQuery("PRAGMA table_info(" + tableName + ")")
+                            .map((rs, ctx) -> rs.getString("name"))
+                            .list()
+            );
+
+            for (String column : expectedColumns) {
+                assertTrue(actualColumns.contains(column),
+                        "Expected column '" + column + "' in table '" + tableName + "'");
             }
         }
     }

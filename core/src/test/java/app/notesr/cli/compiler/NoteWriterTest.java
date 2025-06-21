@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
@@ -43,7 +42,7 @@ class NoteWriterTest {
     private Set<Note> testNotes;
 
     @BeforeEach
-    void setUp() throws SQLException, IOException {
+    void setUp() throws IOException {
         outputFile = tempDir.resolve("test.json").toFile();
 
         JsonFactory jsonFactory = new JsonFactory();
@@ -56,7 +55,7 @@ class NoteWriterTest {
     }
 
     @Test
-    void testWrite() throws SQLException, IOException {
+    void testWrite() throws IOException {
         NoteWriter noteWriter = new NoteWriter(jsonGenerator, noteEntityDao, DATETIME_FORMATTER);
         noteWriter.write();
 

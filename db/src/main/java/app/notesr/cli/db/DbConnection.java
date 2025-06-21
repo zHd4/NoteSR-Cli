@@ -1,15 +1,16 @@
 package app.notesr.cli.db;
 
+import app.notesr.cli.db.mapper.LocalDateTimeMapper;
 import lombok.Getter;
+import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,7 +19,7 @@ public class DbConnection {
     private static final String INIT_DB_SCRIPT_RES_PATH = "/init_db_struct.sql";
 
     private final String subname;
-    private final Connection connection;
+    private final Jdbi connection;
 
     public DbConnection(String subname) {
         this.subname = subname;
@@ -28,35 +29,35 @@ public class DbConnection {
     }
 
     private void createStructure() {
-        try {
-            InputStream scriptStream = requireNonNull(this.getClass().getResourceAsStream(INIT_DB_SCRIPT_RES_PATH));
+        try (InputStream scriptStream = requireNonNull(getClass().getResourceAsStream(INIT_DB_SCRIPT_RES_PATH));
+             BufferedReader reader = new BufferedReader(new InputStreamReader(scriptStream))) {
 
-            try (Statement stmt = connection.createStatement();
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(scriptStream))) {
-                stmt.execute("PRAGMA foreign_keys = ON;");
+            connection.useHandle(handle -> {
+                handle.execute("PRAGMA foreign_keys = ON;");
+                String sql = reader.lines().collect(Collectors.joining("\n"));
 
-                StringBuilder sql = new StringBuilder();
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    sql.append(line).append("\n");
-
-                    if (line.trim().endsWith(";")) {
-                        stmt.executeUpdate(sql.toString());
-                        sql.setLength(0);
+                for (String statement : sql.split("(?m);\\s*$")) {
+                    if (!statement.trim().isEmpty()) {
+                        handle.execute(statement);
                     }
                 }
-            }
-        } catch (IOException | SQLException e) {
+            });
+        } catch (IOException | RuntimeException e) {
             throw new ConnectionException(e);
         }
     }
 
-    private static Connection connect(String subname) {
+    private static Jdbi connect(String subname) {
         try {
             String url = "jdbc:sqlite:" + subname;
-            return DriverManager.getConnection(url);
-        } catch (SQLException e) {
+            Jdbi jdbi = Jdbi.create(url);
+
+            jdbi.installPlugin(new SqlObjectPlugin());
+            jdbi.registerColumnMapper(LocalDateTime.class, new LocalDateTimeMapper());
+            jdbi.registerArgument(new LocalDateTimeArgumentFactory());
+
+            return jdbi;
+        } catch (RuntimeException e) {
             throw new ConnectionException(e);
         }
     }

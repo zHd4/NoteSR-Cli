@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -49,7 +48,7 @@ class PutFileCommandTest {
     }
 
     @Test
-    void testCommand() throws SQLException, IOException, NoSuchAlgorithmException {
+    void testCommand() throws IOException, NoSuchAlgorithmException {
         Path dbPath = getFixturePath("backup.db");
         Path testFilePath = tempDir.resolve("test_file");
         Note testNote = getRandomNote(dbPath);
@@ -85,11 +84,11 @@ class PutFileCommandTest {
         assertEquals(DB_ERROR, exitCode, "Expected code " + DB_ERROR);
     }
 
-    private void assertFileAdded(Path dbPath, Path filePath, String noteId) throws SQLException, IOException,
+    private void assertFileAdded(Path dbPath, Path filePath, String noteId) throws IOException,
             NoSuchAlgorithmException {
         DbConnection db = new DbConnection(dbPath.toString());
-        FileInfoEntityDao fileInfoEntityDao = new FileInfoEntityDao(db);
-        DataBlockEntityDao dataBlockEntityDao = new DataBlockEntityDao(db);
+        FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
+        DataBlockEntityDao dataBlockEntityDao = db.getConnection().onDemand(DataBlockEntityDao.class);
 
         String fileName = filePath.toFile().getName();
         long fileSize = Files.size(filePath);
@@ -114,15 +113,14 @@ class PutFileCommandTest {
         assertEquals(expectedFileHash, actualFileHash, "Unexpected file hash");
     }
 
-    private FileInfo getFileInfo(FileInfoEntityDao fileInfoEntityDao, String noteId, String fileName)
-            throws SQLException {
+    private FileInfo getFileInfo(FileInfoEntityDao fileInfoEntityDao, String noteId, String fileName) {
         return fileInfoEntityDao.getByNoteId(noteId).stream()
                 .filter(file -> fileName.equals(file.getName()))
                 .findAny()
                 .orElse(null);
     }
 
-    private Set<DataBlock> getDataBlocks(DataBlockEntityDao dataBlockEntityDao, String fileId) throws SQLException {
+    private Set<DataBlock> getDataBlocks(DataBlockEntityDao dataBlockEntityDao, String fileId) {
         Set<DataBlock> dataBlocks = new LinkedHashSet<>();
 
         for (String dataBlockId : dataBlockEntityDao.getIdsByFileId(fileId)) {
@@ -132,9 +130,9 @@ class PutFileCommandTest {
         return dataBlocks;
     }
 
-    private Note getRandomNote(Path dbPath) throws SQLException {
+    private Note getRandomNote(Path dbPath) {
         DbConnection db = new DbConnection(dbPath.toString());
-        NoteEntityDao noteEntityDao = new NoteEntityDao(db);
+        NoteEntityDao noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
         List<Note> notes = new ArrayList<>(noteEntityDao.getAll());
 
         return notes.get(RANDOM.nextInt(notes.size()));

@@ -14,7 +14,6 @@ import picocli.CommandLine;
 
 import java.io.File;
 import java.io.PrintStream;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,30 +92,21 @@ public final class ReadNoteCommand extends Command {
     }
 
     private NoteOutputDto getNoteOutputDto(DbConnection db) throws CommandHandlingException {
-        NoteEntityDao noteEntityDao = new NoteEntityDao(db);
-        FileInfoEntityDao fileInfoEntityDao = new FileInfoEntityDao(db);
+        NoteEntityDao noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
+        FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
 
         UuidShortener noteIdShortener = new UuidShortener(noteId);
         String fullNoteId = noteIdShortener.getLongUuid();
 
-        try {
-            Note note = noteEntityDao.getById(fullNoteId);
-            Long attachmentsCount = fileInfoEntityDao.getCountByNoteId(fullNoteId);
+        Note note = noteEntityDao.getById(fullNoteId);
+        Long attachmentsCount = fileInfoEntityDao.getCountByNoteId(fullNoteId);
 
-            if (note == null) {
-                log.error("{}: note with id '{}' not found", dbPath, noteId);
-                throw new CommandHandlingException(DB_ERROR);
-            }
-
-            if (attachmentsCount == null) {
-                throw new SQLException("Attachments count is null");
-            }
-
-            return new NoteOutputDto(note, attachmentsCount);
-        } catch (SQLException e) {
-            log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
+        if (note == null) {
+            log.error("{}: note with id '{}' not found", dbPath, noteId);
             throw new CommandHandlingException(DB_ERROR);
         }
+
+        return new NoteOutputDto(note, attachmentsCount);
     }
 
 

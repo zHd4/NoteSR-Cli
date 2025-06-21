@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 
 final class FilesJsonParserV1 extends FilesJsonParser {
@@ -19,7 +18,7 @@ final class FilesJsonParserV1 extends FilesJsonParser {
     }
 
     @Override
-    protected void transferFilesData() throws IOException, SQLException {
+    protected void transferFilesData() throws IOException {
         if (skipTo(ROOT_NAME)) {
             if (parser.nextToken() == JsonToken.START_ARRAY) {
                 do {
@@ -64,7 +63,7 @@ final class FilesJsonParserV1 extends FilesJsonParser {
                             continue;
                         }
 
-                        dataBlock.setOrder(parser.getValueAsLong());
+                        dataBlock.setBlockOrder(parser.getValueAsLong());
                     }
 
                     case "data" -> {

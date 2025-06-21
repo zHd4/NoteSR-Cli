@@ -12,7 +12,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.Set;
 
 import static app.notesr.cli.command.Command.FILE_RW_ERROR;
@@ -39,7 +38,7 @@ class ListNotesCommandTest {
     }
 
     @Test
-    void testCommand() throws SQLException {
+    void testCommand() {
         Path dbPath = getFixturePath("backup.db");
 
         int exitCode = cmd.execute(dbPath.toString());
@@ -50,7 +49,7 @@ class ListNotesCommandTest {
     }
 
     @Test
-    void testCommandWithFullNotesIds() throws SQLException {
+    void testCommandWithFullNotesIds() {
         Path dbPath = getFixturePath("backup.db");
 
         int exitCode = cmd.execute(dbPath.toString(), "--full-ids");
@@ -76,7 +75,7 @@ class ListNotesCommandTest {
         assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
     }
 
-    private void assertNotes(Path dbPath, String receivedOutput, boolean displayFullNotesIds) throws SQLException {
+    private void assertNotes(Path dbPath, String receivedOutput, boolean displayFullNotesIds) {
         for (Note expected : getAllNotesFromDb(dbPath)) {
             UuidShortener noteIdShortener = new UuidShortener(expected.getId());
             String expectedId = displayFullNotesIds ? noteIdShortener.getLongUuid() : noteIdShortener.getShortUuid();
@@ -98,9 +97,9 @@ class ListNotesCommandTest {
         }
     }
 
-    private Set<Note> getAllNotesFromDb(Path dbPath) throws SQLException {
+    private Set<Note> getAllNotesFromDb(Path dbPath) {
         DbConnection db = new DbConnection(dbPath.toString());
-        NoteEntityDao noteEntityDao = new NoteEntityDao(db);
+        NoteEntityDao noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
         return noteEntityDao.getAll();
     }
 }

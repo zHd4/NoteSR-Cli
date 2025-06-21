@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 import static java.util.UUID.randomUUID;
@@ -26,7 +25,7 @@ public final class FileAttachService {
 
     private final DbConnection db;
 
-    public void attachFile(File file, String noteId) throws IOException, SQLException, NoteNotFoundException {
+    public void attachFile(File file, String noteId) throws IOException, NoteNotFoundException {
         String fullNoteId = new UuidShortener(noteId).getLongUuid();
 
         if (!isNoteExists(fullNoteId)) {
@@ -35,16 +34,16 @@ public final class FileAttachService {
 
         FileInfo fileInfo = buildFileInfo(file, fullNoteId);
 
-        FileInfoEntityDao fileInfoEntityDao = new FileInfoEntityDao(db);
-        DataBlockEntityDao dataBlockDao = new DataBlockEntityDao(db);
+        FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
+        DataBlockEntityDao dataBlockDao = db.getConnection().onDemand(DataBlockEntityDao.class);
         ChunkedFileUploader fileUploader = new ChunkedFileUploader(dataBlockDao);
 
         fileInfoEntityDao.add(fileInfo);
         fileUploader.upload(fileInfo.getId(), file);
     }
 
-    private boolean isNoteExists(String fullNoteId) throws SQLException {
-        NoteEntityDao dao = new NoteEntityDao(db);
+    private boolean isNoteExists(String fullNoteId) {
+        NoteEntityDao dao = db.getConnection().onDemand(NoteEntityDao.class);
         return dao.getById(fullNoteId) != null;
     }
 

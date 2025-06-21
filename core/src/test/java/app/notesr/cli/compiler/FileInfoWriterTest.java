@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
@@ -58,7 +57,7 @@ class FileInfoWriterTest {
     private Set<DataBlock> testDataBlocks;
 
     @BeforeEach
-    void setUp() throws IOException, SQLException {
+    void setUp() throws IOException {
         outputFile = tempDir.resolve("output.json").toFile();
 
         JsonFactory jsonFactory = new JsonFactory();
@@ -78,7 +77,7 @@ class FileInfoWriterTest {
     }
 
     @Test
-    void testWrite() throws SQLException, IOException {
+    void testWrite() throws IOException {
         FileInfoWriter fileInfoWriter = new FileInfoWriter(jsonGenerator, fileInfoEntityDao, dataBlockEntityDao,
                 DATETIME_FORMATTER);
 

@@ -14,7 +14,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +48,7 @@ class ListFilesCommandTest {
     }
 
     @Test
-    void testCommand() throws SQLException {
+    void testCommand() {
         Path dbPath = getFixturePath("backup.db");
         AbstractMap.SimpleEntry<Note, Set<FileInfo>> noteAttachmentsEntry = getRandomNoteWithAttachments(dbPath);
 
@@ -64,7 +63,7 @@ class ListFilesCommandTest {
     }
 
     @Test
-    void testCommandWithFullNotesIds() throws SQLException {
+    void testCommandWithFullNotesIds() {
         Path dbPath = getFixturePath("backup.db");
         AbstractMap.SimpleEntry<Note, Set<FileInfo>> noteAttachmentsEntry = getRandomNoteWithAttachments(dbPath);
 
@@ -116,11 +115,11 @@ class ListFilesCommandTest {
         }
     }
 
-    private AbstractMap.SimpleEntry<Note, Set<FileInfo>> getRandomNoteWithAttachments(Path dbPath) throws SQLException {
+    private AbstractMap.SimpleEntry<Note, Set<FileInfo>> getRandomNoteWithAttachments(Path dbPath) {
         DbConnection db = new DbConnection(dbPath.toString());
 
-        NoteEntityDao noteEntityDao = new NoteEntityDao(db);
-        FileInfoEntityDao fileInfoEntityDao = new FileInfoEntityDao(db);
+        NoteEntityDao noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
+        FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
 
         List<Note> notes = new ArrayList<>(noteEntityDao.getAll());
 

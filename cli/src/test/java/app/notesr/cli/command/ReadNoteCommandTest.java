@@ -11,7 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -42,7 +41,7 @@ class ReadNoteCommandTest {
     }
 
     @Test
-    void testCommand() throws SQLException {
+    void testCommand() {
         Path dbPath = getFixturePath("backup.db");
         Note testNote = getTestNote(dbPath);
 
@@ -84,9 +83,9 @@ class ReadNoteCommandTest {
         return String.join("\n", ReadNoteCommand.wrapText(text));
     }
 
-    private Note getTestNote(Path dbPath) throws SQLException {
+    private Note getTestNote(Path dbPath) {
         DbConnection db = new DbConnection(dbPath.toString());
-        NoteEntityDao noteEntityDao = new NoteEntityDao(db);
+        NoteEntityDao noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
 
         List<Note> notes = new ArrayList<>(noteEntityDao.getAll());
         return notes.get(RANDOM.nextInt(notes.size()));

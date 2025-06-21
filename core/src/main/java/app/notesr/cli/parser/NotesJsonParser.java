@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -18,11 +17,11 @@ public final class NotesJsonParser extends BaseJsonParser {
 
     public NotesJsonParser(DbConnection db, JsonParser parser, DateTimeFormatter timestampFormatter) {
         super(parser, timestampFormatter);
-        this.noteEntityDao = new NoteEntityDao(db);
+        this.noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
     }
 
     @Override
-    public void transferToDb() throws IOException, SQLException {
+    public void transferToDb() throws IOException {
         String field;
 
         if (!skipTo(ROOT_NAME)) {

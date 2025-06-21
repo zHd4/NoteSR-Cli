@@ -3,7 +3,6 @@ package app.notesr.cli.command;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.DataBlockEntityDao;
 import app.notesr.cli.db.dao.FileInfoEntityDao;
-import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -45,7 +43,7 @@ class GetFileCommandTest {
     }
 
     @Test
-    void testCommand() throws SQLException, NoSuchAlgorithmException, IOException {
+    void testCommand() throws NoSuchAlgorithmException, IOException {
         Path dbPath = getFixturePath("backup.db");
         Path outputPath = tempDir.resolve("output_file");
 
@@ -90,24 +88,19 @@ class GetFileCommandTest {
         assertEquals(DB_ERROR, exitCode, "Expected code " + DB_ERROR);
     }
 
-    private String getTestFileId(DbConnection db) throws SQLException {
-        FileInfoEntityDao fileInfoEntityDao = new FileInfoEntityDao(db);
+    private String getTestFileId(DbConnection db) {
+        FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
         List<FileInfo> filesInfos = new ArrayList<>(fileInfoEntityDao.getAll());
 
         return filesInfos.get(RANDOM.nextInt(filesInfos.size())).getId();
     }
 
-    private List<byte[]> getFileData(DbConnection db, String fileId) throws SQLException {
-        DataBlockEntityDao dataBlockEntityDao = new DataBlockEntityDao(db);
+    private List<byte[]> getFileData(DbConnection db, String fileId) {
+        DataBlockEntityDao dataBlockEntityDao = db.getConnection().onDemand(DataBlockEntityDao.class);
         Set<String> dataBlocksIds = dataBlockEntityDao.getIdsByFileId(fileId);
 
-        return dataBlocksIds.stream().map(id -> {
-            try {
-                DataBlock dataBlock = requireNonNull(dataBlockEntityDao.getById(id));
-                return dataBlock.getData();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }).toList();
+        return dataBlocksIds.stream()
+                .map(id -> requireNonNull(dataBlockEntityDao.getById(id)).getData())
+                .toList();
     }
 }

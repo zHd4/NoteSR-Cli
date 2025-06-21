@@ -3,15 +3,12 @@ package app.notesr.cli.parser;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.DataBlockEntityDao;
 import app.notesr.cli.db.dao.FileInfoEntityDao;
-import app.notesr.cli.exception.BackupDbException;
-import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -23,36 +20,30 @@ public abstract class FilesJsonParser extends BaseJsonParser {
 
     public FilesJsonParser(DbConnection db, JsonParser parser, DateTimeFormatter timestampFormatter) {
         super(parser, timestampFormatter);
-        this.fileInfoEntityDao = new FileInfoEntityDao(db);
-        this.dataBlockEntityDao = new DataBlockEntityDao(db);
+        this.fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
+        this.dataBlockEntityDao = db.getConnection().onDemand(DataBlockEntityDao.class);
     }
 
     @Override
-    public final void transferToDb() throws IOException, SQLException {
+    public final void transferToDb() throws IOException {
         transferFilesInfo();
         transferFilesData();
     }
 
-    protected final void transferFilesInfo() {
-        try {
-            if (!skipTo(ROOT_NAME)) {
-                throw new BackupParserException("'" + ROOT_NAME + "' field not found in json");
-            }
+    protected final void transferFilesInfo() throws IOException {
+        if (!skipTo(ROOT_NAME)) {
+            throw new BackupParserException("'" + ROOT_NAME + "' field not found in json");
+        }
 
-            if (parser.nextToken() == JsonToken.START_ARRAY) {
-                do {
-                    FileInfo fileInfo = new FileInfo();
-                    transferFileInfoObject(fileInfo);
+        if (parser.nextToken() == JsonToken.START_ARRAY) {
+            do {
+                FileInfo fileInfo = new FileInfo();
+                transferFileInfoObject(fileInfo);
 
-                    if (fileInfo.getId() != null) {
-                        fileInfoEntityDao.add(fileInfo);
-                    }
-                } while (parser.nextToken() != JsonToken.END_ARRAY);
-            }
-        } catch (IOException e) {
-            throw new BackupIOException(e);
-        } catch (SQLException e) {
-            throw new BackupDbException(e);
+                if (fileInfo.getId() != null) {
+                    fileInfoEntityDao.add(fileInfo);
+                }
+            } while (parser.nextToken() != JsonToken.END_ARRAY);
         }
     }
 
@@ -149,7 +140,7 @@ public abstract class FilesJsonParser extends BaseJsonParser {
         }
     }
 
-    protected abstract void transferFilesData() throws IOException, SQLException;
+    protected abstract void transferFilesData() throws IOException;
 
     protected abstract void parseDataBlockObject(DataBlock dataBlock) throws IOException;
 }

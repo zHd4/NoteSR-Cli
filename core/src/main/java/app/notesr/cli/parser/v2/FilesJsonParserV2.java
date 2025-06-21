@@ -10,7 +10,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 
 final class FilesJsonParserV2 extends FilesJsonParser {
@@ -26,7 +25,7 @@ final class FilesJsonParserV2 extends FilesJsonParser {
     }
 
     @Override
-    protected void transferFilesData() throws IOException, SQLException {
+    protected void transferFilesData() throws IOException {
         if (skipTo(ROOT_NAME)) {
             if (parser.nextToken() == JsonToken.START_ARRAY) {
                 do {
@@ -74,7 +73,7 @@ final class FilesJsonParserV2 extends FilesJsonParser {
                             continue;
                         }
 
-                        dataBlock.setOrder(parser.getValueAsLong());
+                        dataBlock.setBlockOrder(parser.getValueAsLong());
                     }
 
                     default -> {

@@ -15,7 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
+
 import java.util.Random;
 import java.util.Set;
 
@@ -46,7 +46,7 @@ class FileAttachServiceTest {
     }
 
     @Test
-    void testAttachFile() throws IOException, SQLException, NoteNotFoundException {
+    void testAttachFile() throws IOException, NoteNotFoundException {
         File testFile = createTestFile();
         Note testNote = getTestNote();
 
@@ -60,11 +60,11 @@ class FileAttachServiceTest {
         assertThrows(NoteNotFoundException.class, () -> fileAttachService.attachFile(testFile, BLANK_UUID));
     }
 
-    private void assertFileAttached(Note note, File file) throws SQLException, IOException {
+    private void assertFileAttached(Note note, File file) throws IOException {
         String expectedFileName = file.getName();
         long expectedFileSize = Files.size(file.toPath());
 
-        FileInfoEntityDao fileInfoEntityDao = new FileInfoEntityDao(db);
+        FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
         Set<FileInfo> attachedFilesInfos = fileInfoEntityDao.getByNoteId(note.getId());
 
         FileInfo actualFileInfo = attachedFilesInfos.stream()
@@ -86,8 +86,8 @@ class FileAttachServiceTest {
         return testFile;
     }
 
-    private Note getTestNote() throws SQLException {
-        NoteEntityDao noteEntityDao = new NoteEntityDao(db);
+    private Note getTestNote() {
+        NoteEntityDao noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
         return noteEntityDao.getAll().stream().findFirst().orElseThrow();
     }
 }

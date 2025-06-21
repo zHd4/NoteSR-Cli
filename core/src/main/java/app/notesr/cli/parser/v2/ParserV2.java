@@ -7,11 +7,11 @@ import app.notesr.cli.parser.FilesJsonParser;
 import app.notesr.cli.parser.NotesJsonParser;
 import app.notesr.cli.parser.Parser;
 import app.notesr.cli.util.ZipUtils;
+import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.sql.SQLException;
 
 public final class ParserV2 extends Parser {
     private static final String NOTES_JSON_FILE_NAME = "notes.json";
@@ -44,7 +44,7 @@ public final class ParserV2 extends Parser {
             filesJsonParser.transferToDb();
         } catch (IOException e) {
             throw new BackupIOException(e);
-        } catch (SQLException e) {
+        } catch (UnableToExecuteStatementException e) {
             throw new BackupDbException(e);
         }
     }

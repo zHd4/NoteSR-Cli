@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -49,7 +48,7 @@ class FileDataWriterTest {
     }
 
     @Test
-    void testWrite() throws SQLException, IOException {
+    void testWrite() throws IOException {
         FileInfo testFileInfo = generateTestFileInfo(generateTestNote(), RANDOM.nextLong(MIN_FILE_SIZE, MAX_FILE_SIZE));
         Set<DataBlock> testDataBlocks = generateTestDataBlocks(testFileInfo, TEST_BLOCK_SIZE);
 
@@ -57,7 +56,7 @@ class FileDataWriterTest {
                 .map(dataBlock -> DataBlock.builder()
                         .id(dataBlock.getId())
                         .fileId(dataBlock.getFileId())
-                        .order(dataBlock.getOrder())
+                        .blockOrder(dataBlock.getBlockOrder())
                         .build())
                 .collect(Collectors.toSet());
 
