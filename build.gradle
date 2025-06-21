@@ -101,27 +101,6 @@ tasks.named('build') {
     dependsOn tasks.named('jacocoRootReport')
 }
 
-tasks.register("generateVersionProperties") {
-    def outputDir = layout.buildDirectory.dir("generated-resources")
-
-    outputs.dir outputDir
-    doLast {
-        def file = outputDir.get().file("version.properties").asFile
-        file.parentFile.mkdirs()
-        file.text = """
-            utility.version=${project.version}
-            noteSr.defaultVersion=${project.defaultNoteSrVersion}
-        """.stripIndent().trim()
-    }
-}
-
-tasks.named("processResources") {
-    dependsOn("generateVersionProperties")
-    from(layout.buildDirectory.dir("generated-resources")) {
-        into "."
-    }
-}
-
 tasks.register('copyCliBinaryToRoot', Copy) {
     dependsOn ':cli:installDist'
 
