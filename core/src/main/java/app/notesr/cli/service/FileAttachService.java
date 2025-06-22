@@ -31,12 +31,14 @@ public final class FileAttachService {
 
         FileInfo fileInfo = buildFileInfo(file, noteId);
 
-        FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
-        DataBlockEntityDao dataBlockDao = db.getConnection().onDemand(DataBlockEntityDao.class);
-        ChunkedFileUploader fileUploader = new ChunkedFileUploader(dataBlockDao);
+        db.getConnection().useTransaction(handle -> {
+            FileInfoEntityDao fileInfoEntityDao = handle.attach(FileInfoEntityDao.class);
+            fileInfoEntityDao.add(fileInfo);
 
-        fileInfoEntityDao.add(fileInfo);
-        fileUploader.upload(fileInfo.getId(), file);
+            DataBlockEntityDao dataBlockDao = handle.attach(DataBlockEntityDao.class);
+            ChunkedFileUploader fileUploader = new ChunkedFileUploader(dataBlockDao);
+            fileUploader.upload(fileInfo.getId(), file);
+        });
     }
 
     private boolean isNoteExists(String fullNoteId) {
