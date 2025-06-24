@@ -3,7 +3,9 @@ package app.notesr.cli.command;
 import app.notesr.cli.db.ConnectionException;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.FileInfoDtoDao;
+import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.dto.FilesTableRowDto;
+import app.notesr.cli.exception.NoteNotFoundException;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -67,12 +69,21 @@ public final class ListFilesCommand extends Command {
 
     private Set<FilesTableRowDto> getTableRows(File dbFile) throws CommandHandlingException {
         DbConnection db = new DbConnection(dbFile.getAbsolutePath());
+
+        NoteEntityDao noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
         FileInfoDtoDao fileInfoDtoDao = db.getConnection().onDemand(FileInfoDtoDao.class);
 
         try {
+            if (noteEntityDao.getById(noteId) == null) {
+                throw new NoteNotFoundException(noteId);
+            }
+
             return fileInfoDtoDao.getFilesTableRowsByNoteId(noteId);
         } catch (MappingException | UnableToProduceResultException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
+            throw new CommandHandlingException(DB_ERROR);
+        } catch (NoteNotFoundException e) {
+            log.error(e.getMessage());
             throw new CommandHandlingException(DB_ERROR);
         }
     }

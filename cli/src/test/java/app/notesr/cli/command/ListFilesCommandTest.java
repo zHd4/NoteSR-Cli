@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import static app.notesr.cli.command.Command.DB_ERROR;
 import static app.notesr.cli.command.Command.FILE_RW_ERROR;
 import static app.notesr.cli.command.Command.SUCCESS;
 import static app.notesr.cli.command.Command.truncateText;
@@ -74,7 +75,7 @@ class ListFilesCommandTest {
         Path dbPath = getFixturePath("empty-backup.db");
 
         int exitCode = cmd.execute(dbPath.toString(), BLANK_UUID);
-        assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
+        assertEquals(DB_ERROR, exitCode, "Expected code " + DB_ERROR);
     }
 
     private void assertFiles(Set<FileInfo> testFilesInfos, String receivedOutput) {
