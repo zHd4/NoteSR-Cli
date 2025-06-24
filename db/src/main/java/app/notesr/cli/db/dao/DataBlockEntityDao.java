@@ -7,6 +7,7 @@ import org.jdbi.v3.sqlobject.customizer.BindBean;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @RegisterBeanMapper(DataBlock.class)
@@ -22,7 +23,7 @@ public interface DataBlockEntityDao {
     Set<DataBlock> getAllDataBlocksWithoutData();
 
     @SqlQuery("SELECT id FROM data_blocks WHERE file_id = :fileId ORDER BY block_order")
-    Set<String> getIdsByFileId(@Bind("fileId") String fileId);
+    LinkedHashSet<String> getIdsByFileId(@Bind("fileId") String fileId);
 
     @SqlQuery("SELECT * FROM data_blocks WHERE id = :id")
     DataBlock getById(@Bind("id") String id);

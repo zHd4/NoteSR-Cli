@@ -4,7 +4,7 @@ import app.notesr.cli.dto.NotesTableRowDto;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 
-import java.util.Set;
+import java.util.LinkedHashSet;
 
 @RegisterBeanMapper(NotesTableRowDto.class)
 public interface NoteFileInfoDtoDao {
@@ -23,5 +23,5 @@ public interface NoteFileInfoDtoDao {
         FROM notes n
         ORDER BY n.updated_at DESC
         """)
-    Set<NotesTableRowDto> getNotesTable();
+    LinkedHashSet<NotesTableRowDto> getNotesTable();
 }
