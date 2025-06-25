@@ -28,7 +28,7 @@ class FileExtractionServiceTest {
     private FileExtractionService service;
 
     @TempDir
-    File tempDir;
+    private File tempDir;
 
     @BeforeEach
     void setUp() {
