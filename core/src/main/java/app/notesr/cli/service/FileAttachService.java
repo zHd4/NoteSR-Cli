@@ -60,7 +60,7 @@ public final class FileAttachService {
                 .build();
     }
 
-    public byte[] getFileThumbnail(File file) throws IOException {
+    private byte[] getFileThumbnail(File file) throws IOException {
         String mimeType = Files.probeContentType(file.toPath());
 
         if (mimeType != null) {
