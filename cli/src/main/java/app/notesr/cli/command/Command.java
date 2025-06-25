@@ -82,6 +82,10 @@ abstract class Command implements Callable<Integer> {
     }
 
     protected final void cleanTempFiles(List<File> files) {
+        if (files.isEmpty()) {
+            return;
+        }
+
         try {
             log.info("Cleaning temporary files");
 
