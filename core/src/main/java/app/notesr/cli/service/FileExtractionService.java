@@ -29,7 +29,7 @@ public final class FileExtractionService {
 
                 if (dataBlock == null || dataBlock.getData() == null) {
                     throw new NullPointerException("Data block with id " + id
-                            + " not found, possible file database corrupted");
+                            + " not found, possible database corrupted");
                 }
 
                 output.write(dataBlock.getData());
