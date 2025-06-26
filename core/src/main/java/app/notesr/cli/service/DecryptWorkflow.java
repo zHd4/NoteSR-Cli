@@ -13,13 +13,13 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public final class DecryptWorkflow {
-    private final DecryptionService decryptionService;
+    private final BackupDecryptionService backupDecryptionService;
     private final BackupParsingService parsingService;
 
     public void run(File encryptedBackup, CryptoKey cryptoKey, File outputFile, List<File> tempFiles)
             throws IOException, FileDecryptionException {
         log.info("Decrypting {}", encryptedBackup.getAbsolutePath());
-        File decrypted = decryptionService.decrypt(encryptedBackup, cryptoKey);
+        File decrypted = backupDecryptionService.decrypt(encryptedBackup, cryptoKey);
         tempFiles.add(decrypted);
         log.info("Decryption finished successfully");
 

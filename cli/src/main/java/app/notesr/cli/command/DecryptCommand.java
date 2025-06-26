@@ -8,7 +8,7 @@ import app.notesr.cli.parser.BackupParserException;
 import app.notesr.cli.parser.UnexpectedFieldException;
 import app.notesr.cli.service.BackupParsingService;
 import app.notesr.cli.service.DecryptWorkflow;
-import app.notesr.cli.service.DecryptionService;
+import app.notesr.cli.service.BackupDecryptionService;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 
@@ -67,10 +67,10 @@ public final class DecryptCommand extends Command {
         try {
             CryptoKey cryptoKey = getCryptoKey(keyFile);
 
-            DecryptionService decryptionService = new DecryptionService();
+            BackupDecryptionService backupDecryptionService = new BackupDecryptionService();
             BackupParsingService backupParsingService = new BackupParsingService();
 
-            DecryptWorkflow workflow = new DecryptWorkflow(decryptionService, backupParsingService);
+            DecryptWorkflow workflow = new DecryptWorkflow(backupDecryptionService, backupParsingService);
             workflow.run(encryptedBackupFile, cryptoKey, outputDbFile, tempFiles);
         } catch (FileDecryptionException e) {
             log.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);

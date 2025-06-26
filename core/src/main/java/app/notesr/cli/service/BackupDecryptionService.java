@@ -12,7 +12,7 @@ import java.nio.file.Files;
 
 import static app.notesr.cli.validation.BackupValidator.isValid;
 
-public final class DecryptionService {
+public final class BackupDecryptionService {
     public File decrypt(File encryptedBackup, CryptoKey cryptoKey) throws FileDecryptionException, IOException {
         File decryptedBackup = new File(encryptedBackup.getAbsolutePath() + "_decrypted");
 

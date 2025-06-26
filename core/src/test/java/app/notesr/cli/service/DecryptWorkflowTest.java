@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 
 class DecryptWorkflowTest {
-    private DecryptionService decryptionService;
+    private BackupDecryptionService backupDecryptionService;
     private BackupParsingService parsingService;
     private DecryptWorkflow workflow;
     private File encrypted;
@@ -34,10 +34,10 @@ class DecryptWorkflowTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        decryptionService = mock(DecryptionService.class);
+        backupDecryptionService = mock(BackupDecryptionService.class);
         parsingService = mock(BackupParsingService.class);
 
-        workflow = new DecryptWorkflow(decryptionService, parsingService);
+        workflow = new DecryptWorkflow(backupDecryptionService, parsingService);
 
         encrypted = new File("file.notesr.bak");
         output = new File("output.db");
@@ -51,7 +51,7 @@ class DecryptWorkflowTest {
         Path tempDir = Path.of("temp-dir");
         List<File> tempFiles = new ArrayList<>();
 
-        when(decryptionService.decrypt(encrypted, cryptoKey)).thenReturn(decrypted);
+        when(backupDecryptionService.decrypt(encrypted, cryptoKey)).thenReturn(decrypted);
         when(parsingService.parse(decrypted, output)).thenReturn(tempDir);
 
         workflow.run(encrypted, cryptoKey, output, tempFiles);
@@ -64,7 +64,7 @@ class DecryptWorkflowTest {
     @Test
     void runWithDecryptionFailureThrowsFileDecryptionException() throws Exception {
         List<File> tempFiles = new ArrayList<>();
-        when(decryptionService.decrypt(encrypted, cryptoKey)).thenThrow(new FileDecryptionException());
+        when(backupDecryptionService.decrypt(encrypted, cryptoKey)).thenThrow(new FileDecryptionException());
         assertThrows(FileDecryptionException.class, () ->
                         workflow.run(encrypted, cryptoKey, output, tempFiles),
                 "Decryption failure should throw FileDecryptionException");
@@ -74,7 +74,7 @@ class DecryptWorkflowTest {
     void runWithParsingFailureThrowsBackupParserException() throws Exception {
         List<File> tempFiles = new ArrayList<>();
 
-        when(decryptionService.decrypt(encrypted, cryptoKey)).thenReturn(decrypted);
+        when(backupDecryptionService.decrypt(encrypted, cryptoKey)).thenReturn(decrypted);
         when(parsingService.parse(decrypted, output)).thenThrow(new BackupParserException("Invalid format"));
 
         assertThrows(BackupParserException.class, () ->

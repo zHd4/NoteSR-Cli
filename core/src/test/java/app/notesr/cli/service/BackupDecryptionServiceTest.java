@@ -16,8 +16,8 @@ import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DecryptionServiceTest {
-    private final DecryptionService decryptionService = new DecryptionService();
+class BackupDecryptionServiceTest {
+    private final BackupDecryptionService backupDecryptionService = new BackupDecryptionService();
 
     @ParameterizedTest
     @ValueSource(strings = {"encrypted-v1.notesr.bak", "encrypted-v2.notesr.bak"})
@@ -26,7 +26,7 @@ class DecryptionServiceTest {
         Path keyPath = getFixturePath("crypto_key.txt");
 
         CryptoKey key = hexToCryptoKey(Files.readString(keyPath), KEY_GENERATOR_ALGORITHM);
-        File decryptedBackupFile = decryptionService.decrypt(encryptedBackupFile, key);
+        File decryptedBackupFile = backupDecryptionService.decrypt(encryptedBackupFile, key);
 
         assertTrue(decryptedBackupFile.exists(), "Decrypted file should exist");
         assertTrue(decryptedBackupFile.length() > 0, "Decrypted file should not be empty");
@@ -43,7 +43,7 @@ class DecryptionServiceTest {
                 salt);
 
         assertThrows(FileDecryptionException.class, () ->
-                decryptionService.decrypt(encryptedBackupFile, invalidKey),
+                backupDecryptionService.decrypt(encryptedBackupFile, invalidKey),
                 "Decrypting with an invalid key should throw FileDecryptionException");
     }
 }
