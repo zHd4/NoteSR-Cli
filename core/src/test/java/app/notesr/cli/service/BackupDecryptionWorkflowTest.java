@@ -23,10 +23,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-class DecryptWorkflowTest {
+class BackupDecryptionWorkflowTest {
     private BackupDecryptionService backupDecryptionService;
     private BackupParsingService parsingService;
-    private DecryptWorkflow workflow;
+    private BackupDecryptionWorkflow workflow;
     private File encrypted;
     private CryptoKey cryptoKey;
     private File output;
@@ -37,7 +37,7 @@ class DecryptWorkflowTest {
         backupDecryptionService = mock(BackupDecryptionService.class);
         parsingService = mock(BackupParsingService.class);
 
-        workflow = new DecryptWorkflow(backupDecryptionService, parsingService);
+        workflow = new BackupDecryptionWorkflow(backupDecryptionService, parsingService);
 
         encrypted = new File("file.notesr.bak");
         output = new File("output.db");

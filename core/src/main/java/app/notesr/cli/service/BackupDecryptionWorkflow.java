@@ -12,7 +12,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public final class DecryptWorkflow {
+public final class BackupDecryptionWorkflow {
     private final BackupDecryptionService backupDecryptionService;
     private final BackupParsingService parsingService;
 
