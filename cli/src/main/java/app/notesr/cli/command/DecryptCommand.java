@@ -7,7 +7,7 @@ import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.parser.BackupParserException;
 import app.notesr.cli.parser.UnexpectedFieldException;
 import app.notesr.cli.service.BackupParsingService;
-import app.notesr.cli.service.BackupDecryptionWorkflow;
+import app.notesr.cli.service.workflow.BackupDecryptionWorkflow;
 import app.notesr.cli.service.BackupDecryptionService;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;

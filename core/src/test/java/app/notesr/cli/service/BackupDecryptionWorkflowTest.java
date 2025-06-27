@@ -3,6 +3,7 @@ package app.notesr.cli.service;
 import app.notesr.cli.dto.CryptoKey;
 import app.notesr.cli.crypto.FileDecryptionException;
 import app.notesr.cli.parser.BackupParserException;
+import app.notesr.cli.service.workflow.BackupDecryptionWorkflow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
