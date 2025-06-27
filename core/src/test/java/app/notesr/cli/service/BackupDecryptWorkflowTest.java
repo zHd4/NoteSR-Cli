@@ -3,7 +3,7 @@ package app.notesr.cli.service;
 import app.notesr.cli.dto.CryptoKey;
 import app.notesr.cli.crypto.FileDecryptionException;
 import app.notesr.cli.parser.BackupParserException;
-import app.notesr.cli.service.workflow.BackupDecryptionWorkflow;
+import app.notesr.cli.service.workflow.BackupDecryptWorkflow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,10 +24,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-class BackupDecryptionWorkflowTest {
+class BackupDecryptWorkflowTest {
     private BackupDecryptionService backupDecryptionService;
     private BackupParsingService parsingService;
-    private BackupDecryptionWorkflow workflow;
+    private BackupDecryptWorkflow workflow;
     private File encrypted;
     private CryptoKey cryptoKey;
     private File output;
@@ -38,7 +38,7 @@ class BackupDecryptionWorkflowTest {
         backupDecryptionService = mock(BackupDecryptionService.class);
         parsingService = mock(BackupParsingService.class);
 
-        workflow = new BackupDecryptionWorkflow(backupDecryptionService, parsingService);
+        workflow = new BackupDecryptWorkflow(backupDecryptionService, parsingService);
 
         encrypted = new File("file.notesr.bak");
         output = new File("output.db");

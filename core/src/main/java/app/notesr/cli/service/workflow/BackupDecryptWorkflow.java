@@ -14,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public final class BackupDecryptionWorkflow {
+public final class BackupDecryptWorkflow {
     private final BackupDecryptionService backupDecryptionService;
     private final BackupParsingService parsingService;
 
