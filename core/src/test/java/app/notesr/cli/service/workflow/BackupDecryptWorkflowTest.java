@@ -1,9 +1,10 @@
-package app.notesr.cli.service;
+package app.notesr.cli.service.workflow;
 
 import app.notesr.cli.dto.CryptoKey;
 import app.notesr.cli.crypto.FileDecryptionException;
 import app.notesr.cli.parser.BackupParserException;
-import app.notesr.cli.service.workflow.BackupDecryptWorkflow;
+import app.notesr.cli.service.BackupDecryptionService;
+import app.notesr.cli.service.BackupParsingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
