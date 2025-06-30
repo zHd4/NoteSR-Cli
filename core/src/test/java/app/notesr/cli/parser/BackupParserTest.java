@@ -51,7 +51,8 @@ class BackupParserTest {
         String formatVersion = parsedFormat[0];
         String backupExtension = parsedFormat[1];
 
-        Path backupPath = getFixturePath(String.format(BACKUP_FIXTURE_PATH_FORMAT, formatVersion, backupExtension));
+        Path backupPath = getFixturePath(String.format(BACKUP_FIXTURE_PATH_FORMAT, formatVersion, backupExtension),
+                tempDir);
         BackupParser parser = new BackupParser(backupPath, dbPath);
 
         parser.setTempDirPath(parserTempDirPath);
@@ -67,14 +68,14 @@ class BackupParserTest {
         FilesInfosJsonMapper filesInfosMapper = new FilesInfosJsonMapper();
         DataBlocksJsonMapper dataBlocksMapper = new DataBlocksJsonMapper();
 
-        List<Note> expectedNotes = notesMapper.map(readFixture(notesPath));
+        List<Note> expectedNotes = notesMapper.map(readFixture(notesPath, tempDir));
         List<Note> actualNotes = notesMapper.map(serializeTableAsJson(db.getConnection(), NOTES_TABLE_NAME));
 
-        List<FileInfo> expectedFilesInfos = filesInfosMapper.map(readFixture(filesInfosPath));
+        List<FileInfo> expectedFilesInfos = filesInfosMapper.map(readFixture(filesInfosPath, tempDir));
         List<FileInfo> actualFilesInfos =
                 filesInfosMapper.map(serializeTableAsJson(db.getConnection(), FILES_INFOS_TABLE_NAME));
 
-        List<DataBlock> expectedDataBlocks = dataBlocksMapper.map(readFixture(dataBlocksPath));
+        List<DataBlock> expectedDataBlocks = dataBlocksMapper.map(readFixture(dataBlocksPath, tempDir));
         List<DataBlock> actualDataBlocks =
                 dataBlocksMapper.map(serializeTableAsJson(db.getConnection(), DATA_BLOCKS_TABLE_NAME));
 

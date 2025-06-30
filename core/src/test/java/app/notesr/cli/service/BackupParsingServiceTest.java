@@ -23,7 +23,7 @@ class BackupParsingServiceTest {
 
     @Test
     void parseWithValidDecryptedFileReturnsTempDirPath() {
-        File decryptedBackupFile = getFixturePath("v2.notesr.bak.decrypted").toFile();
+        File decryptedBackupFile = getFixturePath("v2.notesr.bak.decrypted", tempDir).toFile();
         File outputDbFile = tempDir.resolve("output.db").toFile();
 
         Path parserTempDir = service.parse(decryptedBackupFile, outputDbFile);
@@ -34,7 +34,7 @@ class BackupParsingServiceTest {
 
     @Test
     void parseWithValidDecryptedFileDoesNotReturnsExistingTempDirPath() {
-        File decryptedBackupFile = getFixturePath("v1.notesr.bak.decrypted").toFile();
+        File decryptedBackupFile = getFixturePath("v1.notesr.bak.decrypted", tempDir).toFile();
         File outputDbFile = tempDir.resolve("output.db").toFile();
 
         Path parserTempDir = service.parse(decryptedBackupFile, outputDbFile);

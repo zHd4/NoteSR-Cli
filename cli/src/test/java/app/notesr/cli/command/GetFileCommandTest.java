@@ -44,7 +44,7 @@ class GetFileCommandTest {
 
     @Test
     void testCommand() throws NoSuchAlgorithmException, IOException {
-        Path dbPath = getFixturePath("backup.db");
+        Path dbPath = getFixturePath("backup.db", tempDir);
         Path outputPath = tempDir.resolve("output_file");
 
         DbConnection db = new DbConnection(dbPath.toString());
@@ -82,7 +82,7 @@ class GetFileCommandTest {
 
     @Test
     void testCommandWithInvalidFileId() {
-        Path dbPath = getFixturePath("backup.db");
+        Path dbPath = getFixturePath("backup.db", tempDir);
 
         int exitCode = cmd.execute(dbPath.toString(), BLANK_UUID);
         assertEquals(DB_ERROR, exitCode, "Expected code " + DB_ERROR);

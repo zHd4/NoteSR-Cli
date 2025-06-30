@@ -5,6 +5,7 @@ import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.model.Note;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
 
 import java.io.ByteArrayOutputStream;
@@ -30,6 +31,9 @@ class ReadNoteCommandTest {
     private CommandLine cmd;
     private ByteArrayOutputStream outputStream;
 
+    @TempDir
+    private Path tempDir;
+
     @BeforeEach
     void setUp() {
         ReadNoteCommand readNoteCommand = new ReadNoteCommand();
@@ -42,7 +46,7 @@ class ReadNoteCommandTest {
 
     @Test
     void testCommand() {
-        Path dbPath = getFixturePath("backup.db");
+        Path dbPath = getFixturePath("backup.db", tempDir);
         Note testNote = getTestNote(dbPath);
 
         int exitCode = cmd.execute(dbPath.toString(), testNote.getId());
@@ -73,7 +77,7 @@ class ReadNoteCommandTest {
 
     @Test
     void testCommandWithInvalidNoteId() {
-        Path dbPath = getFixturePath("backup.db");
+        Path dbPath = getFixturePath("backup.db", tempDir);
 
         int exitCode = cmd.execute(dbPath.toString(), BLANK_UUID);
         assertEquals(DB_ERROR, exitCode, "Expected code " + DB_ERROR);

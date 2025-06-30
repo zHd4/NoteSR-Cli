@@ -5,6 +5,7 @@ import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.model.Note;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
 
 import java.io.ByteArrayOutputStream;
@@ -26,6 +27,9 @@ class ListNotesCommandTest {
     private CommandLine cmd;
     private ByteArrayOutputStream outputStream;
 
+    @TempDir
+    private Path tempDir;
+
     @BeforeEach
     void setUp() {
         ListNotesCommand listNotesCommand = new ListNotesCommand();
@@ -38,7 +42,7 @@ class ListNotesCommandTest {
 
     @Test
     void testCommand() {
-        Path dbPath = getFixturePath("backup.db");
+        Path dbPath = getFixturePath("backup.db", tempDir);
 
         int exitCode = cmd.execute(dbPath.toString());
         String output = outputStream.toString();
@@ -57,7 +61,7 @@ class ListNotesCommandTest {
 
     @Test
     void testCommandWithEmptyDb() {
-        Path dbPath = getFixturePath("empty-backup.db");
+        Path dbPath = getFixturePath("empty-backup.db", tempDir);
 
         int exitCode = cmd.execute(dbPath.toString());
         assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);

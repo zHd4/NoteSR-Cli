@@ -26,7 +26,7 @@ class BackupCompilerTest {
 
     @BeforeEach
     void setUp() {
-        dbPath = getFixturePath("backup.db");
+        dbPath = getFixturePath("backup.db", tempDir);
         outputPath = tempDir.resolve("output.zip");
         tempDirPath = tempDir.resolve("output_temp");
     }

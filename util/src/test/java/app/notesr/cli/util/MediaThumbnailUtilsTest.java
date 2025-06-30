@@ -3,6 +3,7 @@ package app.notesr.cli.util;
 import app.notesr.cli.exception.ThumbnailExtractionException;
 import org.jcodec.api.JCodecException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -11,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,10 +26,13 @@ class MediaThumbnailUtilsTest {
     private static final int TEST_THUMBNAIL_HEIGHT = 100;
     private static final int TEST_VIDEO_SECONDS = 1;
 
+    @TempDir
+    private Path tempDir;
+
     @ParameterizedTest
     @ValueSource(strings = {"test_image.jpeg", "test_image.jpg", "test_image.png", "test_image.webp"})
     void testGetImageThumbnail(String fixtureFileName) throws IOException {
-        File imageFile = getFixturePath(fixtureFileName).toFile();
+        File imageFile = getFixturePath(fixtureFileName, tempDir).toFile();
         byte[] thumbnailBytes = MediaThumbnailUtils.getImageThumbnail(imageFile,
                 TEST_THUMBNAIL_WIDTH, TEST_THUMBNAIL_HEIGHT);
 
@@ -50,7 +55,7 @@ class MediaThumbnailUtilsTest {
 
     @Test
     void testGetVideoThumbnail() throws IOException {
-        File videoFile = getFixturePath("test_video.mp4").toFile();
+        File videoFile = getFixturePath("test_video.mp4", tempDir).toFile();
         byte[] thumbnailBytes = MediaThumbnailUtils.getVideoThumbnail(videoFile, TEST_THUMBNAIL_WIDTH,
                 TEST_THUMBNAIL_HEIGHT, TEST_VIDEO_SECONDS);
 

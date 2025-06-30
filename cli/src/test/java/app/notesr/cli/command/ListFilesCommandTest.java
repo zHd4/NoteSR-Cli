@@ -7,6 +7,7 @@ import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import picocli.CommandLine;
 
 import java.io.ByteArrayOutputStream;
@@ -37,6 +38,9 @@ class ListFilesCommandTest {
     private CommandLine cmd;
     private ByteArrayOutputStream outputStream;
 
+    @TempDir
+    private Path tempDir;
+
     @BeforeEach
     void setUp() {
         ListFilesCommand listFilesCommand = new ListFilesCommand();
@@ -49,7 +53,7 @@ class ListFilesCommandTest {
 
     @Test
     void testCommand() {
-        Path dbPath = getFixturePath("backup.db");
+        Path dbPath = getFixturePath("backup.db", tempDir);
         AbstractMap.SimpleEntry<Note, Set<FileInfo>> noteAttachmentsEntry = getRandomNoteWithAttachments(dbPath);
 
         Note testNote = noteAttachmentsEntry.getKey();
@@ -72,7 +76,7 @@ class ListFilesCommandTest {
 
     @Test
     void testCommandWithEmptyDb() {
-        Path dbPath = getFixturePath("empty-backup.db");
+        Path dbPath = getFixturePath("empty-backup.db", tempDir);
 
         int exitCode = cmd.execute(dbPath.toString(), BLANK_UUID);
         assertEquals(DB_ERROR, exitCode, "Expected code " + DB_ERROR);

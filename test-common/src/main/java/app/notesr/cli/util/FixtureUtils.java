@@ -8,31 +8,25 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
-import static java.util.UUID.randomUUID;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FixtureUtils {
-    public static String readFixture(String path) throws IOException {
-        return Files.readString(getFixturePath(path));
+    public static String readFixture(String pathPart, Path tempDirPath) throws IOException {
+        return Files.readString(getFixturePath(pathPart, tempDirPath));
     }
 
-    public static Path getFixturePath(String pathPart) {
+    public static Path getFixturePath(String pathPart, Path tempDirPath) {
+        ClassLoader classLoader = FixtureUtils.class.getClassLoader();
         String fixturePath = "fixtures/" + pathPart;
 
-        try (InputStream in = Objects.requireNonNull(
-                FixtureUtils.class.getClassLoader().getResourceAsStream(fixturePath),
-                "Resource not found: " + fixturePath
-        )) {
-
-            Path tempFile = Files.createTempFile("fixture-" + randomUUID(),
-                    "-" + Paths.get(fixturePath).getFileName());
-            Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
-            tempFile.toFile().deleteOnExit();
-            return tempFile;
+        try (InputStream in = Objects.requireNonNull(classLoader.getResourceAsStream(fixturePath),
+                "Resource not found: " + fixturePath)) {
+            Path tempFilePath = tempDirPath.resolve(Path.of(fixturePath).getFileName());
+            Files.copy(in, tempFilePath, StandardCopyOption.REPLACE_EXISTING);
+            tempFilePath.toFile().deleteOnExit();
+            return tempFilePath;
 
         } catch (IOException e) {
             throw new UncheckedIOException("Failed to load test fixture: " + fixturePath, e);

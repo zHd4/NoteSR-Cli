@@ -2,6 +2,7 @@ package app.notesr.cli.service;
 
 import app.notesr.cli.crypto.FileDecryptionException;
 import app.notesr.cli.dto.CryptoKey;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -19,11 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class BackupDecryptionServiceTest {
     private final BackupDecryptionService backupDecryptionService = new BackupDecryptionService();
 
+    @TempDir
+    private Path tempDir;
+
     @ParameterizedTest
     @ValueSource(strings = {"encrypted-v1.notesr.bak", "encrypted-v2.notesr.bak"})
     void decryptWithValidFileAndKeyReturnsDecryptedFile(String encryptedFixtureName) throws Exception {
-        File encryptedBackupFile = getFixturePath(encryptedFixtureName).toFile();
-        Path keyPath = getFixturePath("crypto_key.txt");
+        File encryptedBackupFile = getFixturePath(encryptedFixtureName, tempDir).toFile();
+        Path keyPath = getFixturePath("crypto_key.txt", tempDir);
 
         CryptoKey key = hexToCryptoKey(Files.readString(keyPath), KEY_GENERATOR_ALGORITHM);
         File decryptedBackupFile = backupDecryptionService.decrypt(encryptedBackupFile, key);
@@ -35,7 +39,7 @@ class BackupDecryptionServiceTest {
     @ParameterizedTest
     @ValueSource(strings = {"encrypted-v1.notesr.bak", "encrypted-v2.notesr.bak"})
     void decryptWithInvalidKeyThrowsFileDecryptionException(String encryptedFixtureName) {
-        File encryptedBackupFile = getFixturePath(encryptedFixtureName).toFile();
+        File encryptedBackupFile = getFixturePath(encryptedFixtureName, tempDir).toFile();
         byte[] key = "invalid_key".getBytes();
         byte[] salt = "invalid_salt".getBytes();
 

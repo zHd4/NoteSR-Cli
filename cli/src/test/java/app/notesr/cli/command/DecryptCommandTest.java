@@ -64,8 +64,8 @@ class DecryptCommandTest {
         final String filesInfosTableName = "files_info";
         final String dataBlocksTableName = "data_blocks";
 
-        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", formatVersion));
-        Path keyPath = getFixturePath("crypto_key.txt");
+        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", formatVersion), tempDir);
+        Path keyPath = getFixturePath("crypto_key.txt", tempDir);
         Path outputPath = tempDir.resolve(getNameWithoutExtension(backupPath.toFile()) + ".db");
 
         int exitCode = cmd.execute(backupPath.toString(), keyPath.toString(), "-o", outputPath.toString());
@@ -113,7 +113,7 @@ class DecryptCommandTest {
         String invalidKey = "TEST_INVALID_KEY";
 
         Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
-        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2));
+        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2), tempDir);
 
         Files.writeString(invalidKeyPath, invalidKey);
         int exitCode = cmd.execute(backupPath.toString(), invalidKeyPath.toString());
@@ -127,7 +127,7 @@ class DecryptCommandTest {
         RANDOM.nextBytes(invalidKey);
 
         Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
-        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2));
+        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2), tempDir);
 
         Files.write(invalidKeyPath, invalidKey);
         int exitCode = cmd.execute(backupPath.toString(), invalidKeyPath.toString());
@@ -140,7 +140,7 @@ class DecryptCommandTest {
         String wrongKey = getRandomCryptoKeyHex();
 
         Path wrongKeyPath = tempDir.resolve("wrong_key.txt");
-        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2));
+        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2), tempDir);
 
         Files.writeString(wrongKeyPath, wrongKey);
         int exitCode = cmd.execute(backupPath.toString(), wrongKeyPath.toString());
@@ -148,10 +148,10 @@ class DecryptCommandTest {
         assertEquals(CRYPTO_ERROR, exitCode, "Expected code " + CRYPTO_ERROR);
     }
 
-    private static <T> List<T> getExpectedModels(JsonMapper<T> mapper, String fixtureName, String formatVersion)
+    private <T> List<T> getExpectedModels(JsonMapper<T> mapper, String fixtureName, String formatVersion)
             throws IOException {
         String fixturePath = Path.of("parser", formatVersion, fixtureName).toString();
-        String json = readFixture(fixturePath);
+        String json = readFixture(fixturePath, tempDir);
 
         return mapper.map(json);
     }

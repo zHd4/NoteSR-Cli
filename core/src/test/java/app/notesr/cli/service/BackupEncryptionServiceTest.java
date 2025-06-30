@@ -26,7 +26,7 @@ class BackupEncryptionServiceTest {
         File outputFile = tempDir.resolve("output.bak").toFile();
         Files.writeString(inputFile.toPath(), "test content");
 
-        CryptoKey key = hexToCryptoKey(readFixture("crypto_key.txt"), KEY_GENERATOR_ALGORITHM);
+        CryptoKey key = hexToCryptoKey(readFixture("crypto_key.txt", tempDir), KEY_GENERATOR_ALGORITHM);
         BackupEncryptionService service = new BackupEncryptionService();
 
         service.encrypt(inputFile, outputFile, key);

@@ -18,7 +18,7 @@ class BackupCompilationServiceTest {
 
     @Test
     void testCompile() throws Exception {
-        File dbFile = getFixturePath("backup.db").toFile();
+        File dbFile = getFixturePath("backup.db", tempDir).toFile();
         File outputFile = Files.createFile(tempDir.resolve("output.zip")).toFile();
 
         BackupCompilationService service = new BackupCompilationService();

@@ -43,7 +43,7 @@ class BackupCompileWorkflowTest {
 
     @Test
     void testRun() throws Exception {
-        File dbFile = getFixturePath("backup.db").toFile();
+        File dbFile = getFixturePath("backup.db", tempDir).toFile();
         File outputBackup = tempDir.resolve("output.bak").toFile();
         File tempArchive = tempDir.resolve("tmp-archive.zip").toFile();
 
@@ -77,6 +77,6 @@ class BackupCompileWorkflowTest {
     }
 
     private CryptoKey getTestCryptoKey() throws IOException {
-        return hexToCryptoKey(readFixture("crypto_key.txt"), KEY_GENERATOR_ALGORITHM);
+        return hexToCryptoKey(readFixture("crypto_key.txt", tempDir), KEY_GENERATOR_ALGORITHM);
     }
 }

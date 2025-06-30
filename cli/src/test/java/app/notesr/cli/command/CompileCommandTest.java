@@ -37,8 +37,8 @@ class CompileCommandTest {
     void testWithAllArgs() {
         final String noteSrVersion = "5.1";
 
-        Path dbPath = getFixturePath("backup.db");
-        Path keyPath = getFixturePath("crypto_key.txt");
+        Path dbPath = getFixturePath("backup.db", tempDir);
+        Path keyPath = getFixturePath("crypto_key.txt", tempDir);
 
         int exitCode = cmd.execute(dbPath.toString(), keyPath.toString(), "-o", tempDir.toString(),
                 "-n", noteSrVersion);
@@ -63,7 +63,7 @@ class CompileCommandTest {
         String invalidKey = "TEST_INVALID_KEY";
 
         Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
-        Path dbPath = getFixturePath("backup.db");
+        Path dbPath = getFixturePath("backup.db", tempDir);
 
         Files.writeString(invalidKeyPath, invalidKey);
         int exitCode = cmd.execute(dbPath.toString(), invalidKeyPath.toString(), "-o", tempDir.toString());
@@ -77,7 +77,7 @@ class CompileCommandTest {
         RANDOM.nextBytes(invalidKey);
 
         Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
-        Path dbPath = getFixturePath("backup.db");
+        Path dbPath = getFixturePath("backup.db", tempDir);
 
         Files.write(invalidKeyPath, invalidKey);
         int exitCode = cmd.execute(dbPath.toString(), invalidKeyPath.toString(), "-o", tempDir.toString());

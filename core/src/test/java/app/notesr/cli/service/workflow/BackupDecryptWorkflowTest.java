@@ -7,6 +7,7 @@ import app.notesr.cli.service.BackupDecryptionService;
 import app.notesr.cli.service.BackupParsingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +35,9 @@ class BackupDecryptWorkflowTest {
     private File output;
     private File decrypted;
 
+    @TempDir
+    private Path tempDir;
+
     @BeforeEach
     void setUp() throws Exception {
         backupDecryptionService = mock(BackupDecryptionService.class);
@@ -50,17 +54,17 @@ class BackupDecryptWorkflowTest {
 
     @Test
     void runWithValidInputsAddsTempFilesToList() throws Exception {
-        Path tempDir = Path.of("temp-dir");
+        Path parserTempDir = Path.of("temp-dir");
         List<File> tempFiles = new ArrayList<>();
 
         when(backupDecryptionService.decrypt(encrypted, cryptoKey)).thenReturn(decrypted);
-        when(parsingService.parse(decrypted, output)).thenReturn(tempDir);
+        when(parsingService.parse(decrypted, output)).thenReturn(parserTempDir);
 
         workflow.run(encrypted, cryptoKey, output, tempFiles);
 
         assertEquals(2, tempFiles.size(), "Temp files list should contain 2 files");
         assertTrue(tempFiles.contains(decrypted), "Temp files should contain decrypted file");
-        assertTrue(tempFiles.contains(tempDir.toFile()), "Temp files should contain temp dir file");
+        assertTrue(tempFiles.contains(parserTempDir.toFile()), "Temp files should contain temp dir file");
     }
 
     @Test
@@ -85,6 +89,7 @@ class BackupDecryptWorkflowTest {
     }
 
     private CryptoKey getTestKey() throws IOException {
-        return hexToCryptoKey(Files.readString(getFixturePath("crypto_key.txt")), KEY_GENERATOR_ALGORITHM);
+        return hexToCryptoKey(Files.readString(getFixturePath("crypto_key.txt", tempDir)),
+                KEY_GENERATOR_ALGORITHM);
     }
 }
