@@ -6,7 +6,10 @@ import app.notesr.cli.service.BackupCompilationService;
 import app.notesr.cli.service.BackupEncryptionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,25 +22,27 @@ import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class BackupCompileWorkflowTest {
     private static final String TEST_NOTESR_VERSION = "5.1";
 
+    @Mock
     private BackupCompilationService compilationService;
+
+    @Mock
     private BackupEncryptionService encryptionService;
-    private BackupCompileWorkflow workflow;
 
     @TempDir
     private Path tempDir;
 
+    private BackupCompileWorkflow workflow;
+
     @BeforeEach
     void setUp() {
-        compilationService = mock(BackupCompilationService.class);
-        encryptionService = mock(BackupEncryptionService.class);
         workflow = new BackupCompileWorkflow(compilationService, encryptionService);
     }
 

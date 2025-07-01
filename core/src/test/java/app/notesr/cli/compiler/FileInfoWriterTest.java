@@ -16,7 +16,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,9 +36,9 @@ import static app.notesr.cli.util.ModelGenerator.generateTestDataBlocks;
 import static app.notesr.cli.util.ModelGenerator.generateTestFilesInfos;
 import static app.notesr.cli.util.ModelGenerator.generateTestNote;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class FileInfoWriterTest {
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -44,28 +47,23 @@ class FileInfoWriterTest {
     private static final long MIN_FILE_SIZE = 1024;
     private static final long MAX_FILE_SIZE = 1024 * 10;
 
+    @Mock
+    private FileInfoEntityDao fileInfoEntityDao;
+
+    @Mock
+    private DataBlockEntityDao dataBlockEntityDao;
+
     @TempDir
     private Path tempDir;
 
     private JsonGenerator jsonGenerator;
     private File outputFile;
 
-    private FileInfoEntityDao fileInfoEntityDao;
-    private DataBlockEntityDao dataBlockEntityDao;
-
     private Set<FileInfo> testFilesInfos;
     private Set<DataBlock> testDataBlocks;
 
     @BeforeEach
     void setUp() throws IOException {
-        outputFile = tempDir.resolve("output.json").toFile();
-
-        JsonFactory jsonFactory = new JsonFactory();
-        jsonGenerator = jsonFactory.createGenerator(outputFile, JsonEncoding.UTF8);
-
-        fileInfoEntityDao = mock(FileInfoEntityDao.class);
-        dataBlockEntityDao = mock(DataBlockEntityDao.class);
-
         testFilesInfos = generateTestFilesInfos(generateTestNote(), TEST_FILES_COUNT, MIN_FILE_SIZE, MAX_FILE_SIZE);
         testDataBlocks = testFilesInfos.stream()
                 .flatMap(fileInfo -> generateTestDataBlocks(fileInfo, TEST_BLOCK_SIZE).stream())
@@ -74,6 +72,11 @@ class FileInfoWriterTest {
 
         when(fileInfoEntityDao.getAll()).thenReturn(testFilesInfos);
         when(dataBlockEntityDao.getAllDataBlocksWithoutData()).thenReturn(testDataBlocks);
+
+        outputFile = tempDir.resolve("output.json").toFile();
+
+        JsonFactory jsonFactory = new JsonFactory();
+        jsonGenerator = jsonFactory.createGenerator(outputFile, JsonEncoding.UTF8);
     }
 
     @Test

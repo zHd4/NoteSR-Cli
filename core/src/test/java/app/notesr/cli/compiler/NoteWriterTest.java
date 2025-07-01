@@ -14,7 +14,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,19 +29,22 @@ import java.util.Set;
 
 import static app.notesr.cli.util.ModelGenerator.generateTestNotes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class NoteWriterTest {
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final int TEST_NOTES_COUNT = 5;
+
+    @Mock
+    private NoteEntityDao noteEntityDao;
 
     @TempDir
     private Path tempDir;
 
     private JsonGenerator jsonGenerator;
     private File outputFile;
-    private NoteEntityDao noteEntityDao;
+
     private Set<Note> testNotes;
 
     @BeforeEach
@@ -48,7 +54,6 @@ class NoteWriterTest {
         JsonFactory jsonFactory = new JsonFactory();
         jsonGenerator = jsonFactory.createGenerator(outputFile, JsonEncoding.UTF8);
 
-        noteEntityDao = mock(NoteEntityDao.class);
         testNotes = generateTestNotes(TEST_NOTES_COUNT);
 
         when(noteEntityDao.getAll()).thenReturn(testNotes);

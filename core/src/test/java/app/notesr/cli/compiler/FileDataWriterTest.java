@@ -3,9 +3,11 @@ package app.notesr.cli.compiler;
 import app.notesr.cli.db.dao.DataBlockEntityDao;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +32,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class FileDataWriterTest {
     private static final long MIN_FILE_SIZE = 1024;
     private static final long MAX_FILE_SIZE = 1024 * 10;
@@ -37,15 +40,11 @@ class FileDataWriterTest {
 
     private static final Random RANDOM = new Random();
 
-    @TempDir
-    private Path tempDir;
-
+    @Mock
     private DataBlockEntityDao dataBlockEntityDao;
 
-    @BeforeEach
-    void setUp() {
-        dataBlockEntityDao = mock(DataBlockEntityDao.class);
-    }
+    @TempDir
+    private Path tempDir;
 
     @Test
     void testWrite() throws IOException {

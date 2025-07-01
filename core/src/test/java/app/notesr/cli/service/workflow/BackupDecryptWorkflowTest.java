@@ -7,7 +7,10 @@ import app.notesr.cli.service.BackupDecryptionService;
 import app.notesr.cli.service.BackupParsingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,13 +25,16 @@ import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
+@ExtendWith(MockitoExtension.class)
 class BackupDecryptWorkflowTest {
+    @Mock
     private BackupDecryptionService backupDecryptionService;
+
+    @Mock
     private BackupParsingService parsingService;
+
     private BackupDecryptWorkflow workflow;
     private File encrypted;
     private CryptoKey cryptoKey;
@@ -40,9 +46,6 @@ class BackupDecryptWorkflowTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        backupDecryptionService = mock(BackupDecryptionService.class);
-        parsingService = mock(BackupParsingService.class);
-
         workflow = new BackupDecryptWorkflow(backupDecryptionService, parsingService);
 
         encrypted = new File("file.notesr.bak");
