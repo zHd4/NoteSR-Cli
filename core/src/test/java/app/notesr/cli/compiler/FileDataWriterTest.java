@@ -92,10 +92,9 @@ class FileDataWriterTest {
         when(outputDir.exists()).thenReturn(true);
         when(outputDir.isDirectory()).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            FileDataWriter fileDataWriter = new FileDataWriter(outputDir, dataBlockEntityDao);
-            fileDataWriter.write();
-        }, "An exception was expected but wasn't thrown");
+        FileDataWriter fileDataWriter = new FileDataWriter(outputDir, dataBlockEntityDao);
+        assertThrows(IllegalArgumentException.class, fileDataWriter::write,
+                "An exception was expected but wasn't thrown");
     }
 
     private static Map<String, byte[]> readFilesAsBytes(Path dirPath) throws IOException {
