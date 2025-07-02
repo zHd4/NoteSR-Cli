@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,7 +28,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FilesListingServiceTest {
-    private static final String TEST_NOTE_ID = "note-123";
 
     @Mock
     private DbConnection db;
@@ -54,28 +54,32 @@ class FilesListingServiceTest {
 
     @Test
     void testListFilesReturnsFileListForExistingNote() throws Exception {
-        FilesTableRowDto dto = new FilesTableRowDto("file-1", "name.txt", 1024L, LocalDateTime.now());
+        String noteId = randomUUID().toString();
+        String fileId = randomUUID().toString();
 
-        when(noteEntityDao.getById(TEST_NOTE_ID)).thenReturn(new Note());
-        when(fileInfoDtoDao.getFilesTableRowsByNoteId(TEST_NOTE_ID)).thenReturn(new LinkedHashSet<>(Set.of(dto)));
+        FilesTableRowDto dto = new FilesTableRowDto(fileId, "name.txt", 1024L, LocalDateTime.now());
 
-        Set<FilesTableRowDto> result = service.listFiles(TEST_NOTE_ID);
+        when(noteEntityDao.getById(noteId)).thenReturn(new Note());
+        when(fileInfoDtoDao.getFilesTableRowsByNoteId(noteId)).thenReturn(new LinkedHashSet<>(Set.of(dto)));
+
+        Set<FilesTableRowDto> result = service.listFiles(noteId);
 
         assertEquals(1, result.size(), "Expected exactly one file to be returned");
         assertTrue(result.contains(dto), "Returned set should contain the expected file DTO");
 
-        verify(noteEntityDao).getById(TEST_NOTE_ID);
-        verify(fileInfoDtoDao).getFilesTableRowsByNoteId(TEST_NOTE_ID);
+        verify(noteEntityDao).getById(noteId);
+        verify(fileInfoDtoDao).getFilesTableRowsByNoteId(noteId);
     }
 
     @Test
     void testListFilesThrowsExceptionIfNoteDoesNotExist() {
-        when(noteEntityDao.getById(TEST_NOTE_ID)).thenReturn(null);
+        String noteId = randomUUID().toString();
+        when(noteEntityDao.getById(noteId)).thenReturn(null);
 
-        assertThrows(NoteNotFoundException.class, () -> service.listFiles(TEST_NOTE_ID),
+        assertThrows(NoteNotFoundException.class, () -> service.listFiles(noteId),
                 "Should throw NoteNotFoundException when the note does not exist");
 
-        verify(noteEntityDao).getById(TEST_NOTE_ID);
+        verify(noteEntityDao).getById(noteId);
         verify(fileInfoDtoDao, never()).getFilesTableRowsByNoteId(any());
     }
 }
