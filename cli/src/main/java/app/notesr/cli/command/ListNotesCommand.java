@@ -2,8 +2,8 @@ package app.notesr.cli.command;
 
 import app.notesr.cli.db.ConnectionException;
 import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.db.dao.NoteFileInfoDtoDao;
 import app.notesr.cli.dto.NotesTableRowDto;
+import app.notesr.cli.service.NotesListingService;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -64,10 +64,10 @@ public final class ListNotesCommand extends Command {
 
     private Set<NotesTableRowDto> getTableRows(File dbFile) throws CommandHandlingException {
         DbConnection db = new DbConnection(dbFile.getAbsolutePath());
-        NoteFileInfoDtoDao noteFileInfoDtoDao = db.getConnection().onDemand(NoteFileInfoDtoDao.class);
+        NotesListingService notesListingService = new NotesListingService(db);
 
         try {
-            return noteFileInfoDtoDao.getNotesTable();
+            return notesListingService.listNotes();
         } catch (MappingException | UnableToProduceResultException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
             throw new CommandHandlingException(DB_ERROR);
