@@ -2,13 +2,15 @@ package app.notesr.cli.command;
 
 import app.notesr.cli.db.ConnectionException;
 import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.db.dao.FileInfoEntityDao;
-import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.dto.NoteOutputDto;
+import app.notesr.cli.exception.NoteNotFoundException;
 import app.notesr.cli.model.Note;
+import app.notesr.cli.service.NoteReadingService;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jdbi.v3.core.mapper.MappingException;
+import org.jdbi.v3.core.result.UnableToProduceResultException;
 import picocli.CommandLine;
 
 import java.io.File;
@@ -46,8 +48,7 @@ public final class ReadNoteCommand extends Command {
 
         try {
             File dbFile = getFile(dbPath);
-            DbConnection db = new DbConnection(dbFile.getAbsolutePath());
-            NoteOutputDto noteOutputDto = getNoteOutputDto(db);
+            NoteOutputDto noteOutputDto = getNoteOutputDto(dbFile);
 
             renderNote(noteOutputDto);
             exitCode = SUCCESS;
@@ -90,21 +91,20 @@ public final class ReadNoteCommand extends Command {
         out.printf("Files attached: %s%n", attachmentsCount);
     }
 
-    private NoteOutputDto getNoteOutputDto(DbConnection db) throws CommandHandlingException {
-        NoteEntityDao noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
-        FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
+    private NoteOutputDto getNoteOutputDto(File dbFile) throws CommandHandlingException {
+        DbConnection db = new DbConnection(dbFile.getAbsolutePath());
+        NoteReadingService noteReadingService = new NoteReadingService(db);
 
-        Note note = noteEntityDao.getById(noteId);
-        Long attachmentsCount = fileInfoEntityDao.getCountByNoteId(noteId);
-
-        if (note == null) {
+        try {
+            return noteReadingService.readNote(noteId);
+        } catch (NoteNotFoundException e) {
             log.error("{}: note with id '{}' not found", dbPath, noteId);
             throw new CommandHandlingException(DB_ERROR);
+        } catch (MappingException | UnableToProduceResultException e) {
+            log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
+            throw new CommandHandlingException(DB_ERROR);
         }
-
-        return new NoteOutputDto(note, attachmentsCount);
     }
-
 
     static List<String> wrapText(String text) {
         List<String> lines = new ArrayList<>();
