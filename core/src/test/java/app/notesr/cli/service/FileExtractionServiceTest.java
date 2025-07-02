@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.LinkedHashSet;
 
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,6 +31,8 @@ class FileExtractionServiceTest {
     @TempDir
     private File tempDir;
 
+    private String fileId;
+
     @BeforeEach
     void setUp() {
         Jdbi jdbi = mock(Jdbi.class);
@@ -43,11 +46,11 @@ class FileExtractionServiceTest {
         when(jdbi.onDemand(DataBlockEntityDao.class)).thenReturn(dataBlockEntityDao);
 
         service = new FileExtractionService(db);
+        fileId = randomUUID().toString();
     }
 
     @Test
     void getFileInfoReturnsCorrectFileInfo() {
-        String fileId = "f1";
 
         FileInfo mockFileInfo = FileInfo.builder()
                 .id(fileId)
@@ -70,7 +73,6 @@ class FileExtractionServiceTest {
 
     @Test
     void extractFileWritesAllDataBlocks() throws IOException {
-        String fileId = "file-1";
         File outputFile = new File(tempDir, "output.txt");
 
         LinkedHashSet<String> blockIds = new LinkedHashSet<>();
@@ -89,7 +91,6 @@ class FileExtractionServiceTest {
 
     @Test
     void extractFileThrowsIfDataBlockIsNull() {
-        String fileId = "file-2";
         File outputFile = new File(tempDir, "corrupted.txt");
 
         LinkedHashSet<String> blockIds = new LinkedHashSet<>();
@@ -106,7 +107,6 @@ class FileExtractionServiceTest {
 
     @Test
     void extractFileThrowsIfDataIsNull() {
-        String fileId = "file-3";
         File outputFile = new File(tempDir, "corrupted2.txt");
 
         LinkedHashSet<String> blockIds = new LinkedHashSet<>();
@@ -123,7 +123,6 @@ class FileExtractionServiceTest {
 
     @Test
     void extractFileCreatesEmptyFileIfNoBlocks() throws IOException {
-        String fileId = "file-empty";
         File outputFile = new File(tempDir, "empty.txt");
 
         LinkedHashSet<String> blockIds = new LinkedHashSet<>();
