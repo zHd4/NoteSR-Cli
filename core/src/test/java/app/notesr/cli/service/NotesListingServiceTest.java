@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,7 +39,7 @@ class NotesListingServiceTest {
     @Test
     void testListNotesReturnsExpectedNotes() {
         NotesTableRowDto note1 = NotesTableRowDto.builder()
-                .noteId("note-1")
+                .noteId(randomUUID().toString())
                 .noteShortName("First")
                 .noteShortText("Short text 1")
                 .noteUpdatedAt(LocalDateTime.now())
@@ -46,7 +47,7 @@ class NotesListingServiceTest {
                 .build();
 
         NotesTableRowDto note2 = NotesTableRowDto.builder()
-                .noteId("note-2")
+                .noteId(randomUUID().toString())
                 .noteShortName("Second")
                 .noteShortText("Short text 2")
                 .noteUpdatedAt(LocalDateTime.now().minusDays(1))
