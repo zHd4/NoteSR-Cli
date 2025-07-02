@@ -33,7 +33,7 @@ class FilesListingServiceTest {
     private DbConnection db;
 
     @Mock
-    private Jdbi handle;
+    private Jdbi jdbi;
 
     @Mock
     private NoteEntityDao noteEntityDao;
@@ -45,9 +45,9 @@ class FilesListingServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(db.getConnection()).thenReturn(handle);
-        when(handle.onDemand(NoteEntityDao.class)).thenReturn(noteEntityDao);
-        when(handle.onDemand(FileInfoDtoDao.class)).thenReturn(fileInfoDtoDao);
+        when(db.getConnection()).thenReturn(jdbi);
+        when(jdbi.onDemand(NoteEntityDao.class)).thenReturn(noteEntityDao);
+        when(jdbi.onDemand(FileInfoDtoDao.class)).thenReturn(fileInfoDtoDao);
 
         service = new FilesListingService(db);
     }
