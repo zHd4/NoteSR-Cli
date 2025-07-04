@@ -1,7 +1,7 @@
 package app.notesr.cli.crypto;
 
 import app.notesr.cli.dto.CryptoKey;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -16,13 +16,13 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public final class FileCryptor {
     public static final String KEY_GENERATOR_ALGORITHM = "AES";
     private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
     private static final int CHUNK_SIZE = 100000;
 
-    private CryptoKey cryptoKey;
+    private final CryptoKey cryptoKey;
 
     public void encrypt(FileInputStream inputStream, FileOutputStream outputStream) throws FileEncryptionException {
         try {
