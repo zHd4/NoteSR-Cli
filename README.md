@@ -52,7 +52,7 @@ Decrypts a NoteSR `.notesr.bak` file into a readable SQLite database.
 
 * `file_path` — path to the encrypted `.notesr.bak` file
 * `key_path` — path to the AES key file (text format)
-* `-o` — optional output path (defaults to `bak_file_name.db`)
+* `-o` — optional output path (defaults to `bak_file_name.notesr.db`)
 
 ---
 
