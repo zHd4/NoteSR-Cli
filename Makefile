@@ -13,7 +13,7 @@ run:
 	./gradlew run
 
 run-dist:
-	./build/install/notesr-cli/bin/notesr-cli $(ARGS)
+	./build/notesr-cli/bin/notesr-cli $(ARGS)
 
 checkstyle:
 	./gradlew checkstyleMain
