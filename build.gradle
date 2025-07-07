@@ -4,12 +4,14 @@ plugins {
     id 'jacoco'
 }
 
-group = 'app.notesr.cli'
+
 
 ext.appVersion = '1.0'
 ext.defaultNoteSrVersion = '5.1'
 
+group = 'app.notesr.cli'
 version = ext.appVersion
+archivesBaseName = 'notesr-cli'
 
 allprojects {
     repositories {
