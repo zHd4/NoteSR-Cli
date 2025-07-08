@@ -3,6 +3,7 @@ package app.notesr.cli.db;
 import app.notesr.cli.db.mapper.LocalDateTimeMapper;
 import lombok.Getter;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.statement.UnableToCreateStatementException;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
 import java.io.BufferedReader;
@@ -42,6 +43,12 @@ public class DbConnection {
                     }
                 }
             });
+        } catch (UnableToCreateStatementException e) {
+            if (e.getMessage().contains("SQLITE_NOTADB")) {
+                throw new InvalidDbException(subname + ": invalid database", e);
+            }
+
+            throw new ConnectionException(e);
         } catch (IOException | RuntimeException e) {
             throw new ConnectionException(e);
         }
