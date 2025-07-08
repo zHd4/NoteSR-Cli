@@ -6,6 +6,7 @@ import app.notesr.cli.db.dao.FileInfoEntityDao;
 import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.exception.NoteNotFoundException;
 import app.notesr.cli.model.FileInfo;
+import app.notesr.cli.model.Note;
 import app.notesr.cli.util.ChunkedFileUploader;
 import app.notesr.cli.util.MediaThumbnailUtils;
 import lombok.RequiredArgsConstructor;
@@ -25,25 +26,32 @@ public final class FileAttachService {
     private final DbConnection db;
 
     public void attachFile(File file, String noteId) throws IOException, NoteNotFoundException {
-        if (!isNoteExists(noteId)) {
+        Note note = getNote(noteId);
+
+        if (note == null) {
             throw new NoteNotFoundException(noteId);
         }
 
         FileInfo fileInfo = buildFileInfo(file, noteId);
 
         db.getConnection().useTransaction(handle -> {
+            NoteEntityDao noteEntityDao = handle.attach(NoteEntityDao.class);
             FileInfoEntityDao fileInfoEntityDao = handle.attach(FileInfoEntityDao.class);
+
             fileInfoEntityDao.add(fileInfo);
 
             DataBlockEntityDao dataBlockDao = handle.attach(DataBlockEntityDao.class);
             ChunkedFileUploader fileUploader = new ChunkedFileUploader(dataBlockDao);
             fileUploader.upload(fileInfo.getId(), file);
+
+            note.setUpdatedAt(LocalDateTime.now());
+            noteEntityDao.update(note);
         });
     }
 
-    private boolean isNoteExists(String fullNoteId) {
+    private Note getNote(String noteId) {
         NoteEntityDao dao = db.getConnection().onDemand(NoteEntityDao.class);
-        return dao.getById(fullNoteId) != null;
+        return dao.getById(noteId);
     }
 
     private FileInfo buildFileInfo(File file, String noteId) throws IOException {
