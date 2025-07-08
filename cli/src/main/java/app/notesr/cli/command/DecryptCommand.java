@@ -20,10 +20,11 @@ import java.util.List;
 
 @Slf4j
 @CommandLine.Command(name = "decrypt",
-        description = "Decrypts exported NoteSR .bak file and converts it to a SQLite database.")
+        description = "Decrypts exported NoteSR .notesr.bak file and converts it to a SQLite database.")
 public final class DecryptCommand extends Command {
 
-    @CommandLine.Parameters(index = "0", paramLabel = "file_path", description = "path to encrypted NoteSR .bak file")
+    @CommandLine.Parameters(index = "0", paramLabel = "file_path",
+            description = "path to encrypted NoteSR .notesr.bak file")
     private String encryptedBackupPath;
 
     @CommandLine.Parameters(index = "1", paramLabel = "key_path", description = "path to exported key (text file)")
