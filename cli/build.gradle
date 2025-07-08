@@ -1,4 +1,7 @@
 apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+version = project.appVersion
 
 dependencies {
     implementation project(':core')
@@ -22,9 +25,18 @@ application {
     applicationName = 'notesr-cli'
 }
 
-jar {
-    archiveBaseName.set('NoteSR-Cli')
+shadowJar {
+    archiveBaseName.set('notesr-cli')
     archiveVersion.set(project.version.toString())
+    archiveClassifier.set('')
+
+    manifest.attributes(
+            'Main-Class': 'app.notesr.cli.App'
+    )
+}
+
+tasks.named('jar') {
+    enabled = false
 }
 
 tasks.register('copySharedResources', Copy) {

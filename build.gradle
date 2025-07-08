@@ -2,14 +2,13 @@ plugins {
     id 'java'
     id 'checkstyle'
     id 'jacoco'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'app.notesr.cli'
 
-ext.appVersion = '1.0'
+ext.appVersion = '1.0.0'
 ext.defaultNoteSrVersion = '5.1'
-
-version = ext.appVersion
 
 allprojects {
     repositories {
@@ -104,6 +103,10 @@ tasks.named('build') {
     dependsOn tasks.named('jacocoRootReport')
 }
 
+tasks.named('jar') {
+    enabled = false
+}
+
 tasks.register('copyCliBinaryToRoot', Copy) {
     dependsOn ':cli:installDist'
 
@@ -113,6 +116,17 @@ tasks.register('copyCliBinaryToRoot', Copy) {
     includeEmptyDirs = false
 }
 
+tasks.register('copyCliJarToRoot', Copy) {
+    dependsOn ':cli:shadowJar'
+
+    from('cli/build/libs') {
+        include 'notesr-cli-*.jar'
+    }
+
+    into(layout.buildDirectory.dir("libs").get())
+}
+
 tasks.named('build') {
     dependsOn tasks.named('copyCliBinaryToRoot')
+    dependsOn tasks.named('copyCliJarToRoot')
 }
