@@ -21,7 +21,7 @@ import static java.util.Objects.requireNonNullElseGet;
 
 @Slf4j
 @CommandLine.Command(name = "compile",
-        description = "Compiles NoteSR Backup Database into NoteSR .bak file.")
+        description = "Compiles NoteSR Backup Database into NoteSR .notesr.bak file.")
 public final class CompileCommand extends Command {
 
     @CommandLine.Parameters(index = "0", paramLabel = "db_path",
