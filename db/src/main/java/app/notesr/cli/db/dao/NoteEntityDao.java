@@ -14,6 +14,9 @@ public interface NoteEntityDao {
     @SqlUpdate("INSERT INTO notes (id, name, text, updated_at) VALUES (:id, :name, :text, :updatedAt)")
     void add(@BindBean Note note);
 
+    @SqlUpdate("UPDATE notes SET name = :name, text = :text, updated_at = :updatedAt WHERE id = :id")
+    void update(@BindBean Note note);
+
     @SqlQuery("SELECT * FROM notes")
     Set<Note> getAll();
 
