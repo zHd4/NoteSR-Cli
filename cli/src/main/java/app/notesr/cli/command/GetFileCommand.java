@@ -12,6 +12,7 @@ import picocli.CommandLine;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Slf4j
@@ -75,8 +76,12 @@ public final class GetFileCommand extends Command {
     private File resolveOutputFile(File dbFile, String originalName) throws CommandHandlingException {
         try {
             Path path = outputFilePath == null
-                    ? dbFile.getParentFile().toPath().resolve(originalName)
+                    ? getParentDirPath(dbFile.toPath()).resolve(originalName)
                     : Path.of(outputFilePath);
+
+            if (Files.isDirectory(path)) {
+                path = path.resolve(originalName);
+            }
 
             File outFile = path.toFile();
 
@@ -92,5 +97,12 @@ public final class GetFileCommand extends Command {
             log.error("Unexpected error during path resolution: {}", e.getMessage());
             throw new CommandHandlingException(UNKNOWN_ERROR);
         }
+    }
+
+    private Path getParentDirPath(Path filePath) {
+        Path absolutePath = filePath.toAbsolutePath();
+        Path parent = absolutePath.getParent();
+
+        return parent != null ? parent : absolutePath.getRoot();
     }
 }
