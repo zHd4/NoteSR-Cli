@@ -62,7 +62,7 @@ Decrypts a NoteSR `.notesr.bak` file into a readable SQLite database.
 Compiles a SQLite NoteSR backup into an encrypted `.notesr.bak` file.
 
 ```bash
-./notesr-cli compile notes.notesr.db crypto_key.txt -o backup.notesr.bak -n 1.1.0
+./notesr-cli compile notes.notesr.db crypto_key.txt -o backup.notesr.bak -n 5.1
 ```
 
 * `db_path` — SQLite database file
