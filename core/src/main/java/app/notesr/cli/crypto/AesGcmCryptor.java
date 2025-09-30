@@ -13,7 +13,7 @@ import java.security.SecureRandom;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class AesGcmCryptor implements AesCryptor {
+public final class AesGcmCryptor implements AesCryptor {
     private static final int CHUNK_SIZE = 100_000;
     private static final int IV_SIZE = 12;
     private static final int TAG_LENGTH_BIT = 128;
