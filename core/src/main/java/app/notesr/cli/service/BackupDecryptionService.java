@@ -4,6 +4,7 @@ import app.notesr.cli.crypto.AesCbcCryptor;
 import app.notesr.cli.crypto.AesGcmCryptor;
 import app.notesr.cli.crypto.FileDecryptionException;
 import app.notesr.cli.dto.CryptoSecrets;
+import app.notesr.cli.exception.BackupIOException;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
@@ -11,8 +12,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 
@@ -73,7 +74,7 @@ public final class BackupDecryptionService {
 
                 throw new FileDecryptionException("Decrypted file is not a valid backup");
             }
-        } catch (UncheckedIOException e) {
+        } catch (BackupIOException e) {
             throw e.getCause();
         }
     }
