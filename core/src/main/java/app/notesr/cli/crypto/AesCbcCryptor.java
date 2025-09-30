@@ -19,7 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class AesCbcCryptor implements AesCryptor {
+public final class AesCbcCryptor implements AesCryptor {
     private static final int CHUNK_SIZE = 100_000;
     private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
 
