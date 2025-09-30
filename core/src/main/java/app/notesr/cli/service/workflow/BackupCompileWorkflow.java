@@ -1,7 +1,8 @@
 package app.notesr.cli.service.workflow;
 
 import app.notesr.cli.crypto.FileEncryptionException;
-import app.notesr.cli.dto.CryptoKey;
+
+import app.notesr.cli.dto.CryptoSecrets;
 import app.notesr.cli.exception.BackupDbException;
 import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.service.BackupCompilationService;
@@ -19,11 +20,11 @@ public final class BackupCompileWorkflow {
     private final BackupCompilationService compilationService;
     private final BackupEncryptionService encryptionService;
 
-    public Path run(File dbFile, File tempArchive, File outputFile, CryptoKey key, String noteSrVersion)
+    public Path run(File dbFile, File tempArchive, File outputFile, CryptoSecrets secrets, String noteSrVersion)
             throws BackupIOException, BackupDbException, IOException, FileEncryptionException {
 
         Path tempDir = compilationService.compile(dbFile, tempArchive, noteSrVersion);
-        encryptionService.encrypt(tempArchive, outputFile, key);
+        encryptionService.encrypt(tempArchive, outputFile, secrets);
         return tempDir;
     }
 }

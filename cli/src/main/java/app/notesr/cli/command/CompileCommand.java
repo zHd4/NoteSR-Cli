@@ -2,7 +2,8 @@ package app.notesr.cli.command;
 
 import app.notesr.cli.VersionProvider;
 import app.notesr.cli.crypto.FileEncryptionException;
-import app.notesr.cli.dto.CryptoKey;
+
+import app.notesr.cli.dto.CryptoSecrets;
 import app.notesr.cli.exception.BackupDbException;
 import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.service.BackupCompilationService;
@@ -31,10 +32,10 @@ public final class CompileCommand extends Command {
     @CommandLine.Parameters(index = "1", paramLabel = "key_path", description = "path to exported key (text file)")
     private String keyPath;
 
-    @CommandLine.Option(names = { "-o", "--output" }, description = "output file path")
+    @CommandLine.Option(names = {"-o", "--output"}, description = "output file path")
     private String outputFilePath;
 
-    @CommandLine.Option(names = { "-n", "--notesr-version" }, description = "target NoteSR version "
+    @CommandLine.Option(names = {"-n", "--notesr-version"}, description = "target NoteSR version "
             + "(see --version to check default version)")
     private String noteSrVersion;
 
@@ -51,12 +52,12 @@ public final class CompileCommand extends Command {
         try {
             File dbFile = getFile(dbPath);
             File keyFile = getFile(keyPath);
-            CryptoKey key = getCryptoKey(keyFile);
+            CryptoSecrets secrets = getCryptoSecrets(keyFile);
 
             outputFile = getOutputFile(dbFile, outputFilePath != null ? Path.of(outputFilePath) : null,
                     ".notesr.bak");
 
-            compile(dbFile, key, outputFile, tempFiles);
+            compile(dbFile, secrets, outputFile, tempFiles);
             exitCode = SUCCESS;
         } catch (CommandHandlingException e) {
             exitCode = e.getExitCode();
@@ -70,7 +71,7 @@ public final class CompileCommand extends Command {
         return exitCode;
     }
 
-    private void compile(File dbFile, CryptoKey key, File outputFile, List<File> tempFiles)
+    private void compile(File dbFile, CryptoSecrets secrets, File outputFile, List<File> tempFiles)
             throws CommandHandlingException {
         try {
             BackupEncryptionService encryptionService = new BackupEncryptionService();
@@ -81,7 +82,7 @@ public final class CompileCommand extends Command {
             File tempArchive = getOutputFile(dbFile, null, ".zip");
             tempFiles.add(tempArchive);
 
-            Path tempDir = workflow.run(dbFile, tempArchive, outputFile, key, getNoteSrVersion());
+            Path tempDir = workflow.run(dbFile, tempArchive, outputFile, secrets, getNoteSrVersion());
             tempFiles.add(tempDir.toFile());
         } catch (BackupIOException e) {
             log.error("{}: failed to compile, details:\n{}", dbPath, e.getMessage());

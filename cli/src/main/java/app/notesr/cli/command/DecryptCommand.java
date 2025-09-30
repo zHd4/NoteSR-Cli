@@ -1,7 +1,7 @@
 package app.notesr.cli.command;
 
 import app.notesr.cli.crypto.FileDecryptionException;
-import app.notesr.cli.dto.CryptoKey;
+import app.notesr.cli.dto.CryptoSecrets;
 import app.notesr.cli.exception.BackupDbException;
 import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.parser.BackupParserException;
@@ -66,13 +66,13 @@ public final class DecryptCommand extends Command {
     private void decrypt(File encryptedBackupFile, File keyFile, File outputDbFile, List<File> tempFiles)
             throws CommandHandlingException {
         try {
-            CryptoKey cryptoKey = getCryptoKey(keyFile);
+            CryptoSecrets secrets = getCryptoSecrets(keyFile);
 
             BackupDecryptionService backupDecryptionService = new BackupDecryptionService();
             BackupParsingService backupParsingService = new BackupParsingService();
 
             BackupDecryptWorkflow workflow = new BackupDecryptWorkflow(backupDecryptionService, backupParsingService);
-            workflow.run(encryptedBackupFile, cryptoKey, outputDbFile, tempFiles);
+            workflow.run(encryptedBackupFile, secrets, outputDbFile, tempFiles);
         } catch (FileDecryptionException e) {
             log.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
             throw new CommandHandlingException(CRYPTO_ERROR);

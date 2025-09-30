@@ -1,7 +1,7 @@
 package app.notesr.cli.service.workflow;
 
 import app.notesr.cli.crypto.FileDecryptionException;
-import app.notesr.cli.dto.CryptoKey;
+import app.notesr.cli.dto.CryptoSecrets;
 import app.notesr.cli.service.BackupDecryptionService;
 import app.notesr.cli.service.BackupParsingService;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +18,10 @@ public final class BackupDecryptWorkflow {
     private final BackupDecryptionService backupDecryptionService;
     private final BackupParsingService parsingService;
 
-    public void run(File encryptedBackup, CryptoKey cryptoKey, File outputFile, List<File> tempFiles)
+    public void run(File encryptedBackup, CryptoSecrets secrets, File outputFile, List<File> tempFiles)
             throws IOException, FileDecryptionException {
         log.info("Decrypting {}", encryptedBackup.getAbsolutePath());
-        File decrypted = backupDecryptionService.decrypt(encryptedBackup, cryptoKey);
+        File decrypted = backupDecryptionService.decrypt(encryptedBackup, secrets);
         tempFiles.add(decrypted);
         log.info("Decryption finished successfully");
 

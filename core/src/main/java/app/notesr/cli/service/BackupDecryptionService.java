@@ -1,36 +1,80 @@
 package app.notesr.cli.service;
 
-import app.notesr.cli.crypto.BackupCryptor;
+import app.notesr.cli.crypto.AesCbcCryptor;
+import app.notesr.cli.crypto.AesGcmCryptor;
 import app.notesr.cli.crypto.FileDecryptionException;
-import app.notesr.cli.dto.CryptoKey;
+import app.notesr.cli.dto.CryptoSecrets;
+import lombok.extern.slf4j.Slf4j;
 
+import javax.crypto.SecretKey;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.security.GeneralSecurityException;
 
+import static app.notesr.cli.util.KeyUtils.getIvFromSecrets;
+import static app.notesr.cli.util.KeyUtils.getSecretKeyFromSecrets;
 import static app.notesr.cli.validation.BackupValidator.isValid;
 
+@Slf4j
 public final class BackupDecryptionService {
-    public File decrypt(File encryptedBackup, CryptoKey cryptoKey) throws FileDecryptionException, IOException {
+    public File decrypt(File encryptedBackup, CryptoSecrets secrets) throws FileDecryptionException, IOException {
         File decryptedBackup = new File(encryptedBackup.getAbsolutePath() + "_decrypted");
 
         try (FileInputStream inputStream = new FileInputStream(encryptedBackup);
              FileOutputStream outputStream = new FileOutputStream(decryptedBackup)) {
 
-            BackupCryptor backupCryptor = new BackupCryptor(cryptoKey);
-            backupCryptor.decrypt(inputStream, outputStream);
-        }
-
-        if (!isValid(decryptedBackup.getAbsolutePath())) {
-            if (decryptedBackup.exists()) {
-                Files.delete(decryptedBackup.toPath());
+            try {
+                tryGcmDecryption(inputStream, outputStream, secrets);
+                deleteAndThrowIfInvalid(decryptedBackup);
+                return decryptedBackup;
+            } catch (GeneralSecurityException e) {
+                log.error("GCM decryption failed", e);
             }
 
-            throw new FileDecryptionException();
+            try {
+                tryCbcDecryption(inputStream, outputStream, secrets);
+                deleteAndThrowIfInvalid(decryptedBackup);
+            } catch (GeneralSecurityException e) {
+                log.error("CBC decryption failed", e);
+                throw new FileDecryptionException(e);
+            }
         }
 
         return decryptedBackup;
+    }
+
+    private void tryGcmDecryption(InputStream sourceStream, FileOutputStream outputStream, CryptoSecrets secrets)
+            throws GeneralSecurityException, IOException {
+        SecretKey key = getSecretKeyFromSecrets(secrets);
+        AesGcmCryptor cryptor = new AesGcmCryptor(key);
+        cryptor.decrypt(sourceStream, outputStream);
+    }
+
+    private void tryCbcDecryption(InputStream sourceStream, FileOutputStream outputStream, CryptoSecrets secrets)
+            throws GeneralSecurityException, IOException {
+        SecretKey key = getSecretKeyFromSecrets(secrets);
+        byte[] iv = getIvFromSecrets(secrets);
+
+        AesCbcCryptor cryptor = new AesCbcCryptor(key, iv);
+        cryptor.decrypt(sourceStream, outputStream);
+    }
+
+    private void deleteAndThrowIfInvalid(File backupFile) throws FileDecryptionException, IOException {
+        try {
+            if (!isValid(backupFile.getAbsolutePath())) {
+                if (backupFile.exists()) {
+                    Files.delete(backupFile.toPath());
+                }
+
+                throw new FileDecryptionException("Decrypted file is not a valid backup");
+            }
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
+        }
     }
 }

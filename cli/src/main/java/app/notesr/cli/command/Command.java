@@ -1,7 +1,6 @@
 package app.notesr.cli.command;
 
-import app.notesr.cli.dto.CryptoKey;
-import app.notesr.cli.util.CryptoKeyUtils;
+import app.notesr.cli.dto.CryptoSecrets;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -14,8 +13,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static app.notesr.cli.crypto.BackupCryptor.KEY_GENERATOR_ALGORITHM;
 import static app.notesr.cli.util.FileUtils.getNameWithoutExtension;
+import static app.notesr.cli.util.KeyUtils.getSecretsFromHex;
 import static app.notesr.cli.util.Wiper.wipeDir;
 import static app.notesr.cli.util.Wiper.wipeFile;
 
@@ -29,10 +28,11 @@ abstract class Command implements Callable<Integer> {
 
     private final Logger log;
 
-    protected final CryptoKey getCryptoKey(File keyFile) throws CommandHandlingException, NumberFormatException {
+    protected final CryptoSecrets getCryptoSecrets(File keyFile)
+            throws CommandHandlingException, NumberFormatException {
         try {
             String hexKey = Files.readString(keyFile.toPath());
-            return CryptoKeyUtils.hexToCryptoKey(hexKey, KEY_GENERATOR_ALGORITHM);
+            return getSecretsFromHex(hexKey);
         } catch (NumberFormatException e) {
             log.error("{}: invalid key", keyFile.getAbsolutePath());
             throw new CommandHandlingException(FILE_RW_ERROR);
