@@ -7,4 +7,8 @@ public class FileDecryptionException extends Exception {
     public FileDecryptionException(Exception e) {
         super(e);
     }
+
+    public FileDecryptionException(String message) {
+        super(message);
+    }
 }
