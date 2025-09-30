@@ -10,4 +10,9 @@ public class BackupIOException extends RuntimeException {
     public BackupIOException(IOException cause) {
         super(cause);
     }
+
+    @Override
+    public synchronized IOException getCause() {
+        return (IOException) super.getCause();
+    }
 }
