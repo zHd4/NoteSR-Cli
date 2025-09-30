@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.crypto.SecretKey;
 
+@Deprecated(forRemoval = true)
 @AllArgsConstructor
 @Data
 @Builder
