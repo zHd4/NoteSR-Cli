@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+@Deprecated(forRemoval = true)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CryptoKeyUtils {
     private static final int KEY_SIZE = 256;
