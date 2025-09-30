@@ -12,13 +12,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 
-import static app.notesr.cli.crypto.FileCryptor.KEY_GENERATOR_ALGORITHM;
+import static app.notesr.cli.crypto.BackupCryptor.KEY_GENERATOR_ALGORITHM;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
 import static app.notesr.cli.util.HashUtils.computeSha512;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FileCryptorTest {
+class BackupCryptorTest {
     @TempDir
     private Path tempDir;
 
@@ -32,7 +32,7 @@ class FileCryptorTest {
         Path tempBackupPath = tempDir.resolve("encrypted-test-file");
         FileOutputStream outputStream = new FileOutputStream(tempBackupPath.toString());
 
-        FileCryptor decryptor = new FileCryptor(getCryptoKey());
+        BackupCryptor decryptor = new BackupCryptor(getCryptoKey());
         decryptor.encrypt(inputStream, outputStream);
 
         String expectedHash = computeSha512(getFixturePath(String.format("encrypted-%s.notesr.bak",
@@ -52,7 +52,7 @@ class FileCryptorTest {
         Path tempBackupPath = tempDir.resolve("decrypted-test-file");
         FileOutputStream outputStream = new FileOutputStream(tempBackupPath.toString());
 
-        FileCryptor decryptor = new FileCryptor(getCryptoKey());
+        BackupCryptor decryptor = new BackupCryptor(getCryptoKey());
         decryptor.decrypt(inputStream, outputStream);
 
         String expectedHash = computeSha512(getFixturePath(backupFormatVersion

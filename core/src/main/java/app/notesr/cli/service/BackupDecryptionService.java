@@ -1,6 +1,6 @@
 package app.notesr.cli.service;
 
-import app.notesr.cli.crypto.FileCryptor;
+import app.notesr.cli.crypto.BackupCryptor;
 import app.notesr.cli.crypto.FileDecryptionException;
 import app.notesr.cli.dto.CryptoKey;
 
@@ -19,8 +19,8 @@ public final class BackupDecryptionService {
         try (FileInputStream inputStream = new FileInputStream(encryptedBackup);
              FileOutputStream outputStream = new FileOutputStream(decryptedBackup)) {
 
-            FileCryptor fileCryptor = new FileCryptor(cryptoKey);
-            fileCryptor.decrypt(inputStream, outputStream);
+            BackupCryptor backupCryptor = new BackupCryptor(cryptoKey);
+            backupCryptor.decrypt(inputStream, outputStream);
         }
 
         if (!isValid(decryptedBackup.getAbsolutePath())) {

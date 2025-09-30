@@ -1,6 +1,6 @@
 package app.notesr.cli.service;
 
-import app.notesr.cli.crypto.FileCryptor;
+import app.notesr.cli.crypto.BackupCryptor;
 import app.notesr.cli.crypto.FileEncryptionException;
 import app.notesr.cli.dto.CryptoKey;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +20,8 @@ public final class BackupEncryptionService {
 
             log.info("Encrypting {}", inputFile.getAbsolutePath());
 
-            FileCryptor fileCryptor = new FileCryptor(key);
-            fileCryptor.encrypt(input, output);
+            BackupCryptor backupCryptor = new BackupCryptor(key);
+            backupCryptor.encrypt(input, output);
 
             log.info("Encryption finished successfully");
         }

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static app.notesr.cli.crypto.FileCryptor.KEY_GENERATOR_ALGORITHM;
+import static app.notesr.cli.crypto.BackupCryptor.KEY_GENERATOR_ALGORITHM;
 import static app.notesr.cli.util.CryptoKeyUtils.hexToCryptoKey;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
 import static org.junit.jupiter.api.Assertions.assertThrows;

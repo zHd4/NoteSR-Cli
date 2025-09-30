@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static app.notesr.cli.crypto.FileCryptor.KEY_GENERATOR_ALGORITHM;
+import static app.notesr.cli.crypto.BackupCryptor.KEY_GENERATOR_ALGORITHM;
 import static app.notesr.cli.util.FileUtils.getNameWithoutExtension;
 import static app.notesr.cli.util.Wiper.wipeDir;
 import static app.notesr.cli.util.Wiper.wipeFile;

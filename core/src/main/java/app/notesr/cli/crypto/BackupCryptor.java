@@ -17,7 +17,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 @RequiredArgsConstructor
-public final class FileCryptor {
+public final class BackupCryptor {
     public static final String KEY_GENERATOR_ALGORITHM = "AES";
     private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
     private static final int CHUNK_SIZE = 100000;

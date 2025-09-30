@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static app.notesr.cli.crypto.FileCryptor.KEY_GENERATOR_ALGORITHM;
+import static app.notesr.cli.crypto.BackupCryptor.KEY_GENERATOR_ALGORITHM;
 import static app.notesr.cli.util.CryptoKeyUtils.hexToCryptoKey;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
