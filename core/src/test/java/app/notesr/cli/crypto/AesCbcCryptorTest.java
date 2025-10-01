@@ -36,6 +36,14 @@ class AesCbcCryptorTest {
     }
 
     @Test
+    void testEncryptAndDecryptBytesReturnsOriginalData() throws Exception {
+        byte[] encrypted = cryptor.encrypt(DATA);
+        byte[] decrypted = cryptor.decrypt(encrypted);
+
+        assertArrayEquals(DATA, decrypted, "Decrypted bytes must match original");
+    }
+
+    @Test
     void testEncryptAndDecryptStreamsReturnsOriginalData() throws Exception {
         ByteArrayInputStream in = new ByteArrayInputStream(DATA);
         ByteArrayOutputStream encryptedOut = new ByteArrayOutputStream();

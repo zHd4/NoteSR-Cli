@@ -37,6 +37,14 @@ class AesGcmCryptorTest {
     }
 
     @Test
+    void testEncryptAndDecryptBytesReturnsOriginalData() throws Exception {
+        byte[] encrypted = cryptor.encrypt(DATA);
+        byte[] decrypted = cryptor.decrypt(encrypted);
+
+        assertArrayEquals(DATA, decrypted, "Decrypted data must match original");
+    }
+
+    @Test
     void testEncryptAndDecryptStreamsReturnsOriginalData() throws Exception {
         ByteArrayOutputStream encryptedOut = new ByteArrayOutputStream();
         ByteArrayInputStream dataIn = new ByteArrayInputStream(DATA);

@@ -3,7 +3,6 @@ package app.notesr.cli.crypto;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -12,9 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +21,16 @@ public final class AesCbcCryptor implements AesCryptor {
 
     private final SecretKey key;
     private final byte[] iv;
+
+    @Override
+    public byte[] encrypt(byte[] plainData) throws GeneralSecurityException {
+        return createCipher(key, iv, Cipher.ENCRYPT_MODE).doFinal(plainData);
+    }
+
+    @Override
+    public byte[] decrypt(byte[] encryptedData) throws GeneralSecurityException {
+        return createCipher(key, iv, Cipher.DECRYPT_MODE).doFinal(encryptedData);
+    }
 
     @Override
     public void encrypt(InputStream in, OutputStream out)
@@ -81,10 +87,7 @@ public final class AesCbcCryptor implements AesCryptor {
         }
     }
 
-    private static Cipher createCipher(SecretKey key, byte[] iv, int mode)
-            throws NoSuchPaddingException, NoSuchAlgorithmException,
-            InvalidAlgorithmParameterException, InvalidKeyException {
-
+    private static Cipher createCipher(SecretKey key, byte[] iv, int mode) throws GeneralSecurityException {
         Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         cipher.init(mode, new SecretKeySpec(key.getEncoded(), "AES"),
                 new IvParameterSpec(iv));

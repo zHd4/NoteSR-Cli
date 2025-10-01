@@ -7,6 +7,10 @@ import java.security.GeneralSecurityException;
 
 public interface AesCryptor {
 
+    byte[] encrypt(byte[] plainData) throws GeneralSecurityException;
+
+    byte[] decrypt(byte[] encryptedData) throws GeneralSecurityException;
+
     void encrypt(InputStream in, OutputStream out)
             throws GeneralSecurityException, IOException;
 

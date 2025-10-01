@@ -4,11 +4,14 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +24,42 @@ public final class AesGcmCryptor implements AesCryptor {
     private static final String CIPHER_ALGORITHM = "AES/GCM/NoPadding";
 
     private final SecretKey key;
+
+    @Override
+    public byte[] encrypt(byte[] plainData) throws GeneralSecurityException {
+        byte[] iv = new byte[IV_SIZE];
+        SecureRandom.getInstanceStrong().nextBytes(iv);
+
+        Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
+        cipher.init(Cipher.ENCRYPT_MODE, key, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
+
+        byte[] encrypted = cipher.doFinal(plainData);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        try {
+            out.write(iv);
+            out.write(encrypted);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        return out.toByteArray();
+    }
+
+    @Override
+    public byte[] decrypt(byte[] encryptedData) throws GeneralSecurityException {
+        if (encryptedData.length < IV_SIZE) {
+            throw new IllegalArgumentException("Data too short for GCM");
+        }
+
+        byte[] iv = Arrays.copyOfRange(encryptedData, 0, IV_SIZE);
+        byte[] ciphertext = Arrays.copyOfRange(encryptedData, IV_SIZE, encryptedData.length);
+
+        Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
+        cipher.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(TAG_LENGTH_BIT, iv));
+
+        return cipher.doFinal(ciphertext);
+    }
 
     @Override
     public void encrypt(InputStream in, OutputStream out)
