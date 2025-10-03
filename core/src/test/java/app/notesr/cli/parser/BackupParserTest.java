@@ -1,6 +1,7 @@
 package app.notesr.cli.parser;
 
 import app.notesr.cli.db.DbConnection;
+import app.notesr.cli.dto.CryptoSecrets;
 import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import app.notesr.cli.model.Note;
@@ -13,12 +14,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
 import static app.notesr.cli.util.DbUtils.serializeTableAsJson;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
+import static app.notesr.cli.util.KeyUtils.getKeyBytesFromHex;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BackupParserTest {
@@ -44,7 +47,7 @@ class BackupParserTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"v1.json", "v2.zip"})
+    @ValueSource(strings = {"v1.json", "v2.zip", "v3.zip"})
     void testParser(String format) throws IOException {
         String[] parsedFormat = format.split("\\.");
 
@@ -53,7 +56,9 @@ class BackupParserTest {
 
         Path backupPath = getFixturePath(String.format(BACKUP_FIXTURE_PATH_FORMAT, formatVersion, backupExtension),
                 tempDir);
-        BackupParser parser = new BackupParser(backupPath, dbPath);
+        CryptoSecrets secrets = getTestSecrets();
+
+        BackupParser parser = new BackupParser(backupPath, dbPath, secrets);
 
         parser.setTempDirPath(parserTempDirPath);
         parser.run();
@@ -82,5 +87,10 @@ class BackupParserTest {
         assertEquals(expectedNotes, actualNotes, "Notes are different");
         assertEquals(expectedFilesInfos, actualFilesInfos, "Files infos are different");
         assertEquals(expectedDataBlocks, actualDataBlocks, "Data blocks are different");
+    }
+
+    private CryptoSecrets getTestSecrets() throws IOException {
+        String keyHex = Files.readString(getFixturePath("crypto_key.txt", tempDir));
+        return new CryptoSecrets(getKeyBytesFromHex(keyHex));
     }
 }
