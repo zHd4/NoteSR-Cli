@@ -28,22 +28,20 @@ public final class BackupDecryptionService {
 
         try (FileInputStream inputStream = new FileInputStream(encryptedBackup);
              FileOutputStream outputStream = new FileOutputStream(decryptedBackup)) {
+            tryGcmDecryption(inputStream, outputStream, secrets);
+            deleteAndThrowIfInvalid(decryptedBackup);
+            return decryptedBackup;
+        } catch (GeneralSecurityException e) {
+            log.error("GCM decryption failed", e);
+        }
 
-            try {
-                tryGcmDecryption(inputStream, outputStream, secrets);
-                deleteAndThrowIfInvalid(decryptedBackup);
-                return decryptedBackup;
-            } catch (GeneralSecurityException e) {
-                log.error("GCM decryption failed", e);
-            }
-
-            try {
-                tryCbcDecryption(inputStream, outputStream, secrets);
-                deleteAndThrowIfInvalid(decryptedBackup);
-            } catch (GeneralSecurityException e) {
-                log.error("CBC decryption failed", e);
-                throw new FileDecryptionException(e);
-            }
+        try (FileInputStream inputStream = new FileInputStream(encryptedBackup);
+             FileOutputStream outputStream = new FileOutputStream(decryptedBackup)) {
+            tryCbcDecryption(inputStream, outputStream, secrets);
+            deleteAndThrowIfInvalid(decryptedBackup);
+        } catch (GeneralSecurityException e) {
+            log.error("CBC decryption failed", e);
+            throw new FileDecryptionException(e);
         }
 
         return decryptedBackup;
