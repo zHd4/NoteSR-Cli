@@ -137,7 +137,7 @@ class DecryptCommandTest {
 
     @Test
     void testWithWrongKey() throws IOException {
-        String wrongKey = getRandomCryptoKeyHex();
+        String wrongKey = getRandomKeyHex();
 
         Path wrongKeyPath = tempDir.resolve("wrong_key.txt");
         Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2), tempDir);
@@ -156,7 +156,7 @@ class DecryptCommandTest {
         return mapper.map(json);
     }
 
-    private static String getRandomCryptoKeyHex() {
+    private static String getRandomKeyHex() {
         final int rows = 12;
         final int columns = 4;
 
