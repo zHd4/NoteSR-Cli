@@ -33,7 +33,7 @@ abstract class Command implements Callable<Integer> {
         try {
             String hexKey = Files.readString(keyFile.toPath());
             return getSecretsFromHex(hexKey);
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             log.error("{}: invalid key", keyFile.getAbsolutePath());
             throw new CommandHandlingException(FILE_RW_ERROR);
         } catch (IOException e) {
