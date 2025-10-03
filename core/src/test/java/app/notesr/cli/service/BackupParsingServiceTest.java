@@ -26,7 +26,7 @@ class BackupParsingServiceTest {
         File decryptedBackupFile = getFixturePath("v2.notesr.bak.decrypted", tempDir).toFile();
         File outputDbFile = tempDir.resolve("output.db").toFile();
 
-        Path parserTempDir = service.parse(decryptedBackupFile, outputDbFile);
+        Path parserTempDir = service.parse(decryptedBackupFile, outputDbFile, null);
 
         assertNotNull(parserTempDir, "Temp directory path should not be null");
         assertTrue(parserTempDir.toFile().exists(), "Temp directory should exist");
@@ -37,7 +37,7 @@ class BackupParsingServiceTest {
         File decryptedBackupFile = getFixturePath("v1.notesr.bak.decrypted", tempDir).toFile();
         File outputDbFile = tempDir.resolve("output.db").toFile();
 
-        Path parserTempDir = service.parse(decryptedBackupFile, outputDbFile);
+        Path parserTempDir = service.parse(decryptedBackupFile, outputDbFile, null);
 
         assertNotNull(parserTempDir, "Temp directory path should not be null");
         assertFalse(parserTempDir.toFile().exists(), "Temp directory should not exist");
@@ -51,7 +51,7 @@ class BackupParsingServiceTest {
         Files.writeString(corruptedBackupFile.toPath(), "corrupted_file");
 
         assertThrows(BackupIOException.class, () ->
-                service.parse(corruptedBackupFile, outputDbFile),
+                service.parse(corruptedBackupFile, outputDbFile, null),
                 "Corrupted backup file should throw BackupIOException");
     }
 }
