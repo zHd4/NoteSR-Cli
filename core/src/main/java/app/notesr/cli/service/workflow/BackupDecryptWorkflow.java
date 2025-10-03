@@ -26,7 +26,7 @@ public final class BackupDecryptWorkflow {
         log.info("Decryption finished successfully");
 
         log.info("Generating database");
-        Path tempDir = parsingService.parse(decrypted, outputFile);
+        Path tempDir = parsingService.parse(decrypted, outputFile, secrets);
         tempFiles.add(tempDir.toFile());
         log.info("Successfully generated");
     }
