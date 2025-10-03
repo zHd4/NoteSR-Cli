@@ -84,6 +84,12 @@ public final class AesCbcCryptor implements AesCryptor {
                 chunk = new byte[CHUNK_SIZE];
                 bytesRead = cis.read(chunk);
             }
+        } catch (IOException e) {
+            if (e.getCause() instanceof GeneralSecurityException generalSecurityException) {
+                throw generalSecurityException;
+            } else {
+                throw e;
+            }
         }
     }
 
