@@ -1,7 +1,7 @@
 package app.notesr.cli.service.workflow;
 
-import app.notesr.cli.dto.CryptoKey;
 import app.notesr.cli.crypto.FileDecryptionException;
+import app.notesr.cli.dto.CryptoSecrets;
 import app.notesr.cli.parser.BackupParserException;
 import app.notesr.cli.service.BackupDecryptionService;
 import app.notesr.cli.service.BackupParsingService;
@@ -19,9 +19,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static app.notesr.cli.crypto.BackupCryptor.KEY_GENERATOR_ALGORITHM;
-import static app.notesr.cli.util.CryptoKeyUtils.hexToCryptoKey;
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
+import static app.notesr.cli.util.KeyUtils.getKeyBytesFromHex;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,7 +36,7 @@ class BackupDecryptWorkflowTest {
 
     private BackupDecryptWorkflow workflow;
     private File encrypted;
-    private CryptoKey cryptoKey;
+    private CryptoSecrets secrets;
     private File output;
     private File decrypted;
 
@@ -52,7 +51,7 @@ class BackupDecryptWorkflowTest {
         output = new File("output.db");
         decrypted = new File("file.notesr.bak_decrypted");
 
-        cryptoKey = getTestKey();
+        secrets = getTestSecrets();
     }
 
     @Test
@@ -60,10 +59,10 @@ class BackupDecryptWorkflowTest {
         Path parserTempDir = Path.of("temp-dir");
         List<File> tempFiles = new ArrayList<>();
 
-        when(backupDecryptionService.decrypt(encrypted, cryptoKey)).thenReturn(decrypted);
-        when(parsingService.parse(decrypted, output)).thenReturn(parserTempDir);
+        when(backupDecryptionService.decrypt(encrypted, secrets)).thenReturn(decrypted);
+        when(parsingService.parse(decrypted, output, secrets)).thenReturn(parserTempDir);
 
-        workflow.run(encrypted, cryptoKey, output, tempFiles);
+        workflow.run(encrypted, secrets, output, tempFiles);
 
         assertEquals(2, tempFiles.size(), "Temp files list should contain 2 files");
         assertTrue(tempFiles.contains(decrypted), "Temp files should contain decrypted file");
@@ -73,9 +72,9 @@ class BackupDecryptWorkflowTest {
     @Test
     void runWithDecryptionFailureThrowsFileDecryptionException() throws Exception {
         List<File> tempFiles = new ArrayList<>();
-        when(backupDecryptionService.decrypt(encrypted, cryptoKey)).thenThrow(new FileDecryptionException());
+        when(backupDecryptionService.decrypt(encrypted, secrets)).thenThrow(new FileDecryptionException());
         assertThrows(FileDecryptionException.class, () ->
-                        workflow.run(encrypted, cryptoKey, output, tempFiles),
+                        workflow.run(encrypted, secrets, output, tempFiles),
                 "Decryption failure should throw FileDecryptionException");
     }
 
@@ -83,16 +82,16 @@ class BackupDecryptWorkflowTest {
     void runWithParsingFailureThrowsBackupParserException() throws Exception {
         List<File> tempFiles = new ArrayList<>();
 
-        when(backupDecryptionService.decrypt(encrypted, cryptoKey)).thenReturn(decrypted);
-        when(parsingService.parse(decrypted, output)).thenThrow(new BackupParserException("Invalid format"));
+        when(backupDecryptionService.decrypt(encrypted, secrets)).thenReturn(decrypted);
+        when(parsingService.parse(decrypted, output, secrets)).thenThrow(new BackupParserException("Invalid format"));
 
         assertThrows(BackupParserException.class, () ->
-                        workflow.run(encrypted, cryptoKey, output, tempFiles),
+                        workflow.run(encrypted, secrets, output, tempFiles),
                 "Parsing failure should throw BackupParserException");
     }
 
-    private CryptoKey getTestKey() throws IOException {
-        return hexToCryptoKey(Files.readString(getFixturePath("crypto_key.txt", tempDir)),
-                KEY_GENERATOR_ALGORITHM);
+    private CryptoSecrets getTestSecrets() throws IOException {
+        String keyHex = Files.readString(getFixturePath("crypto_key.txt", tempDir));
+        return new CryptoSecrets(getKeyBytesFromHex(keyHex));
     }
 }
