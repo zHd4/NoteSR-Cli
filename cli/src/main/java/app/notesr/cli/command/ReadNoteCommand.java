@@ -87,6 +87,8 @@ public final class ReadNoteCommand extends Command {
 
         out.println(horizontalBorder);
         out.printf("%nID: %s%n", note.getId());
+        // TODO: print it depending on NoteSR version
+        out.printf("Created at: %s%n", dateTimeToString(note.getUpdatedAt()));
         out.printf("Updated at: %s%n", dateTimeToString(note.getUpdatedAt()));
         out.printf("Files attached: %s%n", attachmentsCount);
     }
