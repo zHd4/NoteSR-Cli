@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.SecureRandom;
 
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.KeyUtils.getKeyBytesFromHex;
@@ -16,6 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BackupDecryptionServiceTest {
+
+    private static final int KEY_SIZE = 48;
+
     private final BackupDecryptionService backupDecryptionService = new BackupDecryptionService();
 
     @TempDir
@@ -36,10 +40,12 @@ class BackupDecryptionServiceTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"encrypted-v1.notesr.bak", "encrypted-v2.notesr.bak", "encrypted-v3.notesr.bak"})
-    void decryptWithInvalidKeyThrowsFileDecryptionException(String encryptedFixtureName) {
+    void decryptWithInvalidKeyThrowsFileDecryptionException(String encryptedFixtureName) throws Exception {
         File encryptedBackupFile = getFixturePath(encryptedFixtureName, tempDir).toFile();
 
-        byte[] invalidKeyBytes = "invalid_key".getBytes();
+        byte[] invalidKeyBytes = new byte[KEY_SIZE];
+        SecureRandom.getInstanceStrong().nextBytes(invalidKeyBytes);
+
         CryptoSecrets secrets = new CryptoSecrets(invalidKeyBytes);
 
         assertThrows(FileDecryptionException.class, () ->
