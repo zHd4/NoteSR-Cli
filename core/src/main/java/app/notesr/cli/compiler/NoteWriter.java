@@ -39,6 +39,10 @@ class NoteWriter implements Writer {
         jsonGenerator.writeStringField("name", note.getName());
         jsonGenerator.writeStringField("text", note.getText());
 
+        // TODO: write it depending on NoteSR version
+        String createdAt = note.getCreatedAt().format(dateTimeFormatter);
+        jsonGenerator.writeStringField("created_at", createdAt);
+
         String updatedAt = note.getUpdatedAt().format(dateTimeFormatter);
         jsonGenerator.writeStringField("updated_at", updatedAt);
 
