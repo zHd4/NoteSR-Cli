@@ -11,10 +11,12 @@ import java.util.Set;
 
 @RegisterBeanMapper(Note.class)
 public interface NoteEntityDao {
-    @SqlUpdate("INSERT INTO notes (id, name, text, updated_at) VALUES (:id, :name, :text, :updatedAt)")
+    @SqlUpdate("INSERT INTO notes (id, name, text, created_at, updated_at)"
+            + " VALUES (:id, :name, :text, :createdAt, :updatedAt)")
     void add(@BindBean Note note);
 
-    @SqlUpdate("UPDATE notes SET name = :name, text = :text, updated_at = :updatedAt WHERE id = :id")
+    @SqlUpdate("UPDATE notes SET name = :name, text = :text, created_at = :createdAt, updated_at = :updatedAt"
+            + " WHERE id = :id")
     void update(@BindBean Note note);
 
     @SqlQuery("SELECT * FROM notes")
