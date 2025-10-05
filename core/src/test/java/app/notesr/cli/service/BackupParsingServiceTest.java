@@ -1,6 +1,6 @@
 package app.notesr.cli.service;
 
-import app.notesr.cli.exception.BackupIOException;
+import app.notesr.cli.parser.BackupParserException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BackupParsingServiceTest {
+
     private final BackupParsingService service = new BackupParsingService();
 
     @TempDir
@@ -50,7 +51,7 @@ class BackupParsingServiceTest {
 
         Files.writeString(corruptedBackupFile.toPath(), "corrupted_file");
 
-        assertThrows(BackupIOException.class, () ->
+        assertThrows(BackupParserException.class, () ->
                 service.parse(corruptedBackupFile, outputDbFile, null),
                 "Corrupted backup file should throw BackupIOException");
     }
