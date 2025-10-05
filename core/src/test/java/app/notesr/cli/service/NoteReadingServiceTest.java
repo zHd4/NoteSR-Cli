@@ -52,7 +52,7 @@ class NoteReadingServiceTest {
     @Test
     void testReadNote() throws Exception {
         String noteId = randomUUID().toString();
-        Note note = new Note(noteId, "Test note", "Body", LocalDateTime.now());
+        Note note = new Note(noteId, "Test note", "Body", LocalDateTime.now(), LocalDateTime.now());
         Long attachmentsCount = 5L;
 
         when(noteEntityDao.getById(noteId)).thenReturn(note);
