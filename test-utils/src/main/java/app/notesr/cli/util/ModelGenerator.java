@@ -25,6 +25,7 @@ public class ModelGenerator {
                 .id(randomUUID().toString())
                 .name(FAKER.text().text(5, 15))
                 .text(FAKER.text().text())
+                .createdAt(truncateDateTime(LocalDateTime.now()))
                 .updatedAt(truncateDateTime(LocalDateTime.now()))
                 .build();
     }
