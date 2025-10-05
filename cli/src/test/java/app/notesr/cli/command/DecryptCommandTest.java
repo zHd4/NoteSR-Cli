@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class DecryptCommandTest {
     private static final String FORMAT_V1 = "v1";
     private static final String FORMAT_V2 = "v2";
+    private static final String FORMAT_V3 = "v3";
 
     private static final Random RANDOM = new Random();
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
@@ -58,7 +59,7 @@ class DecryptCommandTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {FORMAT_V1, FORMAT_V2})
+    @ValueSource(strings = {FORMAT_V1, FORMAT_V2, FORMAT_V3})
     void testWithAllArgs(String formatVersion) throws IOException {
         final String notesTableName = "notes";
         final String filesInfosTableName = "files_info";
