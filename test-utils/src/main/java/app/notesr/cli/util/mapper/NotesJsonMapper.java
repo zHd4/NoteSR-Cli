@@ -15,6 +15,11 @@ public final class NotesJsonMapper extends JsonMapper<Note> {
                         .id((String) line.get("id"))
                         .name((String) line.get("name"))
                         .text((String) line.get("text"))
+                        .createdAt(
+                                line.get("created_at") != null
+                                        ? parseDateTime((String) line.get("created_at"))
+                                        : null
+                        )
                         .updatedAt(parseDateTime((String) line.get("updated_at")))
                         .build())
                 .toList();
