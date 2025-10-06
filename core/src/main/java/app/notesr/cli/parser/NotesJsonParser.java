@@ -75,7 +75,7 @@ public final class NotesJsonParser extends BaseJsonParser {
 
                 LocalDateTime updatedAt = LocalDateTime.parse(
                         parser.getValueAsString(),
-                        timestampFormatter
+                        getTimestampFormatter()
                 );
 
                 note.setUpdatedAt(updatedAt);

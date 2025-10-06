@@ -26,7 +26,7 @@ final class FilesJsonParserV1 extends FilesJsonParser {
                     parseDataBlockObject(dataBlock);
 
                     if (dataBlock.getId() != null) {
-                        dataBlockEntityDao.add(dataBlock);
+                        getDataBlockEntityDao().add(dataBlock);
                     }
                 } while (parser.nextToken() != JsonToken.END_ARRAY);
             }

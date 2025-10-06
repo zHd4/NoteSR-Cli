@@ -7,18 +7,21 @@ import app.notesr.cli.model.DataBlock;
 import app.notesr.cli.model.FileInfo;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import lombok.AccessLevel;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Getter(AccessLevel.PROTECTED)
 public abstract class FilesJsonParser extends BaseJsonParser {
     private static final String ROOT_NAME = "files_info";
 
-    protected final FileInfoEntityDao fileInfoEntityDao;
-    protected final DataBlockEntityDao dataBlockEntityDao;
+    private final FileInfoEntityDao fileInfoEntityDao;
+    private final DataBlockEntityDao dataBlockEntityDao;
 
-    public FilesJsonParser(DbConnection db, JsonParser parser, DateTimeFormatter timestampFormatter) {
+    protected FilesJsonParser(DbConnection db, JsonParser parser, DateTimeFormatter timestampFormatter) {
         super(parser, timestampFormatter);
         this.fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
         this.dataBlockEntityDao = db.getConnection().onDemand(DataBlockEntityDao.class);
@@ -116,7 +119,7 @@ public abstract class FilesJsonParser extends BaseJsonParser {
                         }
 
                         fileInfo.setCreatedAt(
-                                LocalDateTime.parse(parser.getValueAsString(), timestampFormatter)
+                                LocalDateTime.parse(parser.getValueAsString(), getTimestampFormatter())
                         );
                     }
 
@@ -126,7 +129,7 @@ public abstract class FilesJsonParser extends BaseJsonParser {
                         }
 
                         fileInfo.setUpdatedAt(
-                                LocalDateTime.parse(parser.getValueAsString(), timestampFormatter)
+                                LocalDateTime.parse(parser.getValueAsString(), getTimestampFormatter())
                         );
                     }
 
