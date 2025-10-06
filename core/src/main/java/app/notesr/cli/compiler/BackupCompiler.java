@@ -79,7 +79,7 @@ public final class BackupCompiler implements Runnable {
         JsonGenerator noteJsonGenerator = getJsonGenerator(dir, NOTES_JSON_FILE_NAME);
         JsonGenerator fileInfoJsonGenerator = getJsonGenerator(dir, FILES_INFO_JSON_FILE_NAME);
 
-        NoteWriter noteWriter = new NoteWriter(noteJsonGenerator, noteEntityDao, DATETIME_FORMATTER);
+        NoteWriter noteWriter = new NoteWriter(noteJsonGenerator, noteEntityDao, noteSrVersion, DATETIME_FORMATTER);
         noteWriter.write();
 
         FileInfoWriter fileInfoWriter = new FileInfoWriter(fileInfoJsonGenerator, fileInfoEntityDao,
