@@ -27,12 +27,12 @@ public final class ParserV2 extends Parser {
     @Override
     public void run() {
         try {
-            ZipUtils.unzip(backupPath.toString(), tempDirPath.toString());
+            ZipUtils.unzip(getBackupPath().toString(), tempDirPath.toString());
 
             File notesJsonFile = new File(tempDirPath.toString(), NOTES_JSON_FILE_NAME);
             File filesInfosJsonFile = new File(tempDirPath.toString(), FILES_INFO_JSON_FILE_NAME);
 
-            DbConnection db = new DbConnection(outputDbPath.toString());
+            DbConnection db = new DbConnection(getOutputDbPath().toString());
 
             NotesJsonParser notesJsonParser =
                     new NotesJsonParser(db, getJsonParser(notesJsonFile), DATETIME_FORMATTER);

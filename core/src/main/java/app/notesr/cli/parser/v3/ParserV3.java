@@ -29,7 +29,7 @@ import java.util.zip.ZipFile;
 
 import static app.notesr.cli.util.KeyUtils.getSecretKeyFromSecrets;
 
-public class ParserV3 extends Parser {
+public final class ParserV3 extends Parser {
     private static final String NOTES_DIR = "notes/";
     private static final String FILES_INFO_DIR = "finfo/";
     private static final String FILES_BLOBS_INFO_DIR = "binfo/";
@@ -47,13 +47,13 @@ public class ParserV3 extends Parser {
         ObjectMapper objectMapper = getObjectMapper();
 
         AesCryptor cryptor = new AesGcmCryptor(getSecretKeyFromSecrets(secrets));
-        DbConnection db = new DbConnection(outputDbPath.toString());
+        DbConnection db = new DbConnection(getOutputDbPath().toString());
 
         NoteEntityDao noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
         FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
         DataBlockEntityDao dataBlockEntityDao = db.getConnection().onDemand(DataBlockEntityDao.class);
 
-        try (ZipFile zipFile = new ZipFile(backupPath.toFile())) {
+        try (ZipFile zipFile = new ZipFile(getBackupPath().toFile())) {
             transferNotes(noteEntityDao, objectMapper, cryptor, zipFile);
             transferFilesInfo(fileInfoEntityDao, objectMapper, cryptor, zipFile);
             transferFilesData(dataBlockEntityDao, objectMapper, cryptor, zipFile);

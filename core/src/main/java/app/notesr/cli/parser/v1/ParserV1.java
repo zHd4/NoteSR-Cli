@@ -25,7 +25,7 @@ public final class ParserV1 extends Parser {
     @Override
     public void run() {
         try {
-            File backupFile = backupPath.toFile();
+            File backupFile = getBackupPath().toFile();
             JsonParser jsonParser = getJsonParser(backupFile);
 
             NotesJsonParser notesJsonParser = new NotesJsonParser(db, jsonParser, DATETIME_FORMATTER);
