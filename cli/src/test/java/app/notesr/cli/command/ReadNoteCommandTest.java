@@ -1,6 +1,7 @@
 package app.notesr.cli.command;
 
 import app.notesr.cli.db.DbConnection;
+import app.notesr.cli.db.dao.FileInfoEntityDao;
 import app.notesr.cli.db.dao.NoteEntityDao;
 import app.notesr.cli.model.Note;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,14 +48,17 @@ class ReadNoteCommandTest {
     @Test
     void testCommand() {
         Path dbPath = getFixturePath("backup.db", tempDir);
-        Note testNote = getTestNote(dbPath);
+        DbConnection db = new DbConnection(dbPath.toString());
+
+        Note testNote = getTestNote(db);
+        Long attachmentsCount = getCountOfNoteAttachments(db, testNote.getId());
 
         int exitCode = cmd.execute(dbPath.toString(), testNote.getId());
         String output = outputStream.toString();
 
         assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
 
-        assertTrue(output.contains(testNote.getId()),
+        assertTrue(output.contains("ID: " + testNote.getId()),
                 "Note id not found (ID: " + testNote.getId() + ")");
 
         assertTrue(output.contains(wrapText(testNote.getName())),
@@ -63,8 +67,14 @@ class ReadNoteCommandTest {
         assertTrue(output.contains(wrapText(testNote.getText())),
                 "Note text note found (ID: " + testNote.getId() + ")");
 
-        assertTrue(output.contains(dateTimeToString(testNote.getUpdatedAt())),
+        assertTrue(output.contains("Created at: " + dateTimeToString(testNote.getCreatedAt())),
+                "Creation time of note not found (ID: " + testNote.getId() + ")");
+
+        assertTrue(output.contains("Updated at: " + dateTimeToString(testNote.getUpdatedAt())),
                 "Last update time of note not found (ID: " + testNote.getId() + ")");
+
+        assertTrue(output.contains("Files attached: " + attachmentsCount),
+                "Attachments count of note not found (ID: " + testNote.getId() + ")");
     }
 
     @Test
@@ -87,11 +97,15 @@ class ReadNoteCommandTest {
         return String.join("\n", ReadNoteCommand.wrapText(text));
     }
 
-    private Note getTestNote(Path dbPath) {
-        DbConnection db = new DbConnection(dbPath.toString());
+    private Note getTestNote(DbConnection db) {
         NoteEntityDao noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
 
         List<Note> notes = new ArrayList<>(noteEntityDao.getAll());
         return notes.get(RANDOM.nextInt(notes.size()));
+    }
+
+    private Long getCountOfNoteAttachments(DbConnection db, String noteId) {
+        FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
+        return fileInfoEntityDao.getCountByNoteId(noteId);
     }
 }
