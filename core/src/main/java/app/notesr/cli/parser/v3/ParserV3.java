@@ -14,6 +14,7 @@ import app.notesr.cli.parser.BackupParserException;
 import app.notesr.cli.parser.Parser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.ByteArrayOutputStream;
@@ -44,8 +45,6 @@ public final class ParserV3 extends Parser {
 
     @Override
     public void run() {
-        ObjectMapper objectMapper = getObjectMapper();
-
         AesCryptor cryptor = new AesGcmCryptor(getSecretKeyFromSecrets(secrets));
         DbConnection db = new DbConnection(getOutputDbPath().toString());
 
@@ -54,19 +53,21 @@ public final class ParserV3 extends Parser {
         DataBlockEntityDao dataBlockEntityDao = db.getConnection().onDemand(DataBlockEntityDao.class);
 
         try (ZipFile zipFile = new ZipFile(getBackupPath().toFile())) {
-            transferNotes(noteEntityDao, objectMapper, cryptor, zipFile);
-            transferFilesInfo(fileInfoEntityDao, objectMapper, cryptor, zipFile);
-            transferFilesData(dataBlockEntityDao, objectMapper, cryptor, zipFile);
+            transferNotes(noteEntityDao, cryptor, zipFile);
+            transferFilesInfo(fileInfoEntityDao, cryptor, zipFile);
+            transferFilesData(dataBlockEntityDao, cryptor, zipFile);
         } catch (IOException e) {
             throw new BackupParserException("Cannot read file, it's probably corrupted", e);
         }
     }
 
-    private void transferNotes(NoteEntityDao dao, ObjectMapper mapper, AesCryptor cryptor, ZipFile zipFile) {
+    private void transferNotes(NoteEntityDao dao, AesCryptor cryptor, ZipFile zipFile) {
         walk(zipFile, NOTES_DIR, entry -> {
             try {
+                ObjectMapper objectMapper = getObjectMapper();
+
                 String noteJson = decryptJson(cryptor, readAllBytes(zipFile, entry));
-                Note note = mapper.readValue(noteJson, Note.class);
+                Note note = objectMapper.readValue(noteJson, Note.class);
 
                 dao.add(note);
             } catch (GeneralSecurityException e) {
@@ -77,11 +78,16 @@ public final class ParserV3 extends Parser {
         });
     }
 
-    private void transferFilesInfo(FileInfoEntityDao dao, ObjectMapper mapper, AesCryptor cryptor, ZipFile zipFile) {
+    private void transferFilesInfo(FileInfoEntityDao dao, AesCryptor cryptor, ZipFile zipFile) {
         walk(zipFile, FILES_INFO_DIR, entry -> {
             try {
+                ObjectMapper objectMapper = getObjectMapper();
+
                 String fileInfoJson = decryptJson(cryptor, readAllBytes(zipFile, entry));
-                FileInfo fileInfo = mapper.readValue(fileInfoJson, FileInfo.class);
+                ObjectNode fileInfoNode = (ObjectNode) objectMapper.readTree(fileInfoJson);
+                fileInfoNode.remove("decimalId");
+
+                FileInfo fileInfo = objectMapper.treeToValue(fileInfoNode, FileInfo.class);
 
                 dao.add(fileInfo);
             } catch (GeneralSecurityException e) {
@@ -92,11 +98,13 @@ public final class ParserV3 extends Parser {
         });
     }
 
-    private void transferFilesData(DataBlockEntityDao dao, ObjectMapper mapper, AesCryptor cryptor, ZipFile zipFile) {
+    private void transferFilesData(DataBlockEntityDao dao, AesCryptor cryptor, ZipFile zipFile) {
         walk(zipFile, FILES_BLOBS_INFO_DIR, entry -> {
             try {
+                ObjectMapper objectMapper = getObjectMapper();
+
                 String blobInfoJson = decryptJson(cryptor, readAllBytes(zipFile, entry));
-                DataBlock dataBlock = mapper.readValue(blobInfoJson, DataBlock.class);
+                DataBlock dataBlock = objectMapper.readValue(blobInfoJson, DataBlock.class);
 
                 ZipEntry blobDataEntry = zipFile.getEntry(FILES_BLOBS_DATA_DIR + dataBlock.getId());
 
