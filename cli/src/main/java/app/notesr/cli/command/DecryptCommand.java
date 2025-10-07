@@ -75,15 +75,19 @@ public final class DecryptCommand extends Command {
             workflow.run(encryptedBackupFile, secrets, outputDbFile, tempFiles);
         } catch (FileDecryptionException e) {
             log.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
+            log.debug("E: ", e);
             throw new CommandHandlingException(CRYPTO_ERROR);
         } catch (BackupIOException | BackupParserException | UnexpectedFieldException e) {
             log.error("{}: failed to parse, details:\n{}", encryptedBackupPath, e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
         } catch (BackupDbException e) {
             log.error("Failed to write data to database, details:\n{}", e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(DB_ERROR);
         } catch (IOException e) {
             log.error(e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
         }
     }
