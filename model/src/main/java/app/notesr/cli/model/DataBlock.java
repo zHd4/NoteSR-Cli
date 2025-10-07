@@ -17,6 +17,7 @@ public class DataBlock {
     private String id;
 
     @JsonProperty("file_id")
+    @JsonAlias("fileId")
     private String fileId;
 
     @JsonAlias({"order"})
