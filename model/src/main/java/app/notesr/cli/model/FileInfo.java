@@ -1,5 +1,6 @@
 package app.notesr.cli.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ public class FileInfo {
     private String id;
 
     @JsonProperty("note_id")
+    @JsonAlias({"noteId"})
     private String noteId;
 
     @JsonProperty("size")
