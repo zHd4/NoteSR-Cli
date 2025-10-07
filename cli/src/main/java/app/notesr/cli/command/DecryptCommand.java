@@ -41,7 +41,7 @@ public final class DecryptCommand extends Command {
     public Integer call() {
         int exitCode;
 
-        File outputFile;
+        File outputFile = null;
         List<File> tempFiles = new ArrayList<>();
 
         try {
@@ -55,6 +55,10 @@ public final class DecryptCommand extends Command {
 
             log.info("Saved to: {}", outputFile.getAbsolutePath());
         } catch (CommandHandlingException e) {
+            if (outputFile != null && outputFile.exists()) {
+                tempFiles.add(outputFile);
+            }
+
             exitCode = e.getExitCode();
         } finally {
             cleanTempFiles(tempFiles);
