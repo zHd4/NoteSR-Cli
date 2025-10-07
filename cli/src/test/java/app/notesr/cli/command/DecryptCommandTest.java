@@ -15,6 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import picocli.CommandLine;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,6 +32,7 @@ import static app.notesr.cli.util.FixtureUtils.getFixturePath;
 import static app.notesr.cli.util.FixtureUtils.readFixture;
 import static app.notesr.cli.util.FileUtils.getNameWithoutExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DecryptCommandTest {
@@ -104,9 +106,11 @@ class DecryptCommandTest {
     void testWithInvalidFilesPaths(String path) {
         String backupPath = path + ".notesr.bak";
         String keyPath = path + ".txt";
+        String outputPath = tempDir.resolve(getNameWithoutExtension(new File(backupPath)) + ".db").toString();
 
-        int exitCode = cmd.execute(backupPath, keyPath);
+        int exitCode = cmd.execute(backupPath, keyPath, "-o", outputPath);
         assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
+        assertFalse(Files.exists(Path.of(outputPath)), "Output file " + outputPath + "shouldn't been created");
     }
 
     @Test
@@ -115,11 +119,13 @@ class DecryptCommandTest {
 
         Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
         Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2), tempDir);
+        Path outputPath = tempDir.resolve(getNameWithoutExtension(backupPath.toFile()) + ".db");
 
         Files.writeString(invalidKeyPath, invalidKey);
         int exitCode = cmd.execute(backupPath.toString(), invalidKeyPath.toString());
 
         assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
+        assertFalse(Files.exists(outputPath), "Output file " + outputPath + "shouldn't been created");
     }
 
     @Test
@@ -129,11 +135,13 @@ class DecryptCommandTest {
 
         Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
         Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2), tempDir);
+        Path outputPath = tempDir.resolve(getNameWithoutExtension(backupPath.toFile()) + ".db");
 
         Files.write(invalidKeyPath, invalidKey);
         int exitCode = cmd.execute(backupPath.toString(), invalidKeyPath.toString());
 
         assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
+        assertFalse(Files.exists(outputPath), "Output file " + outputPath + "shouldn't been created");
     }
 
     @Test
@@ -142,11 +150,13 @@ class DecryptCommandTest {
 
         Path wrongKeyPath = tempDir.resolve("wrong_key.txt");
         Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2), tempDir);
+        Path outputPath = tempDir.resolve(getNameWithoutExtension(backupPath.toFile()) + ".db");
 
         Files.writeString(wrongKeyPath, wrongKey);
         int exitCode = cmd.execute(backupPath.toString(), wrongKeyPath.toString());
 
         assertEquals(CRYPTO_ERROR, exitCode, "Expected code " + CRYPTO_ERROR);
+        assertFalse(Files.exists(outputPath), "Output file " + outputPath + "shouldn't been created");
     }
 
     private <T> List<T> getExpectedModels(JsonMapper<T> mapper, String fixtureName, String formatVersion)
