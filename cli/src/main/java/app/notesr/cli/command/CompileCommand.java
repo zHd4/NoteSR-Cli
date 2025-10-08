@@ -91,22 +91,27 @@ public final class CompileCommand extends Command {
             tempFiles.add(tempDir.toFile());
         } catch (BackupIOException e) {
             log.error("{}: failed to compile, details:\n{}", dbPath, e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
 
         } catch (BackupDbException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(DB_ERROR);
 
         } catch (FileEncryptionException e) {
             log.error("{}: failed to encrypt, key may be invalid", dbPath);
+            log.debug("E: ", e);
             throw new CommandHandlingException(CRYPTO_ERROR);
 
         } catch (IOException e) {
             log.error("I/O error: {}", e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
 
         } catch (Exception e) {
             log.error("Unexpected error", e);
+            log.debug("E: ", e);
             throw new CommandHandlingException(UNKNOWN_ERROR);
         }
     }
