@@ -56,6 +56,7 @@ public final class ReadNoteCommand extends Command {
             exitCode = e.getExitCode();
         } catch (ConnectionException e) {
             log.error(e.getMessage());
+            log.debug("E: ", e);
             exitCode = DB_ERROR;
         }
 
@@ -100,9 +101,11 @@ public final class ReadNoteCommand extends Command {
             return noteReadingService.readNote(noteId);
         } catch (NoteNotFoundException e) {
             log.error("{}: note with id '{}' not found", dbPath, noteId);
+            log.debug("E: ", e);
             throw new CommandHandlingException(DB_ERROR);
         } catch (MappingException | UnableToProduceResultException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(DB_ERROR);
         }
     }
