@@ -45,6 +45,7 @@ public final class PutFileCommand extends Command {
             exitCode = e.getExitCode();
         } catch (ConnectionException e) {
             log.error(e.getMessage());
+            log.debug("E: ", e);
             exitCode = DB_ERROR;
         }
 
@@ -59,15 +60,19 @@ public final class PutFileCommand extends Command {
             service.attachFile(fileToPut, noteId);
         } catch (NoteNotFoundException e) {
             log.error("{}: note with id {} not found", dbPath, noteId);
+            log.debug("E: ", e);
             throw new CommandHandlingException(DB_ERROR);
         } catch (IOException e) {
             log.error("{}: failed to read file, details:\n{}", fileToPut.getAbsolutePath(), e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
         } catch (ThumbnailExtractionException e) {
             log.error("{}: failed to extract thumbnail, details:\n{}", fileToPut.getAbsolutePath(), e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
         } catch (UnableToExecuteStatementException e) {
             log.error("{}: failed to access database, details:\n{}", dbPath, e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(DB_ERROR);
         }
     }
