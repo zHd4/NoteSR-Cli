@@ -35,9 +35,11 @@ abstract class Command implements Callable<Integer> {
             return getSecretsFromHex(hexKey);
         } catch (IllegalArgumentException e) {
             log.error("{}: invalid key", keyFile.getAbsolutePath());
+            log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
         } catch (IOException e) {
-            log.error("{}: an error occurred while reading", keyFile.getAbsolutePath());
+            log.error("{}: an error occurred while reading key", keyFile.getAbsolutePath());
+            log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
         }
     }
@@ -75,6 +77,7 @@ abstract class Command implements Callable<Integer> {
             }
         } catch (FileAlreadyExistsException e) {
             log.error("{}: file already exists", outputFile != null ? outputFile.getAbsolutePath() : outputFilePath);
+            log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
         }
 
@@ -102,6 +105,7 @@ abstract class Command implements Callable<Integer> {
             log.info("Cleaning finished successfully");
         } catch (IOException e) {
             log.error("Unknown error, details:\n{}", e.getMessage());
+            log.debug("E: ", e);
         }
     }
 
