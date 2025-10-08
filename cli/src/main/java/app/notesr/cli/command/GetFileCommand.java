@@ -43,6 +43,7 @@ public final class GetFileCommand extends Command {
             return e.getExitCode();
         } catch (ConnectionException e) {
             log.error(e.getMessage());
+            log.debug("E: ", e);
             return DB_ERROR;
         }
     }
@@ -66,9 +67,11 @@ public final class GetFileCommand extends Command {
             log.info("Saved successfully to: {}", outputFile.getAbsolutePath());
         } catch (MappingException | UnableToProduceResultException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(DB_ERROR);
         } catch (IOException e) {
             log.error("I/O error while saving: {}", e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
         }
     }
@@ -92,9 +95,11 @@ public final class GetFileCommand extends Command {
             return outFile;
         } catch (FileAlreadyExistsException e) {
             log.error("{}: file already exists", e.getFile());
+            log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
         } catch (Exception e) {
             log.error("Unexpected error during path resolution: {}", e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(UNKNOWN_ERROR);
         }
     }
