@@ -60,6 +60,7 @@ public final class ListFilesCommand extends Command {
             exitCode = e.getExitCode();
         } catch (ConnectionException e) {
             log.error(e.getMessage());
+            log.debug("E: ", e);
             exitCode = DB_ERROR;
         }
 
@@ -74,9 +75,11 @@ public final class ListFilesCommand extends Command {
             return filesListingService.listFiles(noteId);
         } catch (MappingException | UnableToProduceResultException e) {
             log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(DB_ERROR);
         } catch (NoteNotFoundException e) {
             log.error(e.getMessage());
+            log.debug("E: ", e);
             throw new CommandHandlingException(DB_ERROR);
         }
     }
