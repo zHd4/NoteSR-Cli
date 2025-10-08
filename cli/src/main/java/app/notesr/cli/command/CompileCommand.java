@@ -60,10 +60,15 @@ public final class CompileCommand extends Command {
             compile(dbFile, secrets, outputFile, tempFiles);
             exitCode = SUCCESS;
         } catch (CommandHandlingException e) {
+            if (outputFile != null && outputFile.exists()) {
+                tempFiles.add(outputFile);
+            }
+
             exitCode = e.getExitCode();
         } finally {
             cleanTempFiles(tempFiles);
-            if (outputFile != null && exitCode == SUCCESS) {
+
+            if (outputFile != null && outputFile.exists() && exitCode == SUCCESS) {
                 log.info("Saved to: {}", outputFile.getAbsolutePath());
             }
         }
