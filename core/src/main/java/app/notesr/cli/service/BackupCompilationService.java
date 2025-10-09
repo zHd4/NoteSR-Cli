@@ -1,23 +1,22 @@
 package app.notesr.cli.service;
 
 import app.notesr.cli.compiler.BackupCompiler;
-import app.notesr.cli.exception.BackupDbException;
+import app.notesr.cli.dto.CryptoSecrets;
+import app.notesr.cli.exception.BackupEncryptionException;
 import app.notesr.cli.exception.BackupIOException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.nio.file.Path;
 
 @Slf4j
 public final class BackupCompilationService {
-    public Path compile(File dbFile, File outputFile, String noteSrVersion)
-            throws BackupIOException, BackupDbException {
+    public void compile(File dbFile, File outputFile, CryptoSecrets secrets, String noteSrVersion)
+            throws BackupIOException, BackupEncryptionException {
 
         log.info("Compiling {}", dbFile.getAbsolutePath());
-        BackupCompiler compiler = new BackupCompiler(dbFile.toPath(), outputFile.toPath(), noteSrVersion);
+        BackupCompiler compiler = new BackupCompiler(dbFile.toPath(), outputFile.toPath(), secrets, noteSrVersion);
         compiler.run();
 
         log.info("Compiling finished successfully");
-        return compiler.getTempDirPath();
     }
 }

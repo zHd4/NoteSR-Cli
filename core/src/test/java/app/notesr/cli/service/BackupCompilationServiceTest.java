@@ -1,31 +1,41 @@
 package app.notesr.cli.service;
 
 
+import app.notesr.cli.dto.CryptoSecrets;
+import app.notesr.cli.util.ZipUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.SecureRandom;
 
 import static app.notesr.cli.util.FixtureUtils.getFixturePath;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BackupCompilationServiceTest {
+
+    private static final int KEY_SIZE = 48;
+
     @TempDir
     private Path tempDir;
 
     @Test
     void testCompile() throws Exception {
         File dbFile = getFixturePath("backup.db", tempDir).toFile();
-        File outputFile = Files.createFile(tempDir.resolve("output.zip")).toFile();
+        File outputFile = tempDir.resolve("output.zip").toFile();
 
+        byte[] keyBytes = new byte[KEY_SIZE];
+        SecureRandom.getInstanceStrong().nextBytes(keyBytes);
+
+        CryptoSecrets secrets = new CryptoSecrets(keyBytes);
         BackupCompilationService service = new BackupCompilationService();
-        Path actualPath = service.compile(dbFile, outputFile, "5.1");
 
-        assertNotNull(actualPath, "Actual path is null");
-        assertTrue(Files.exists(actualPath), "Actual path not found");
-        assertTrue(Files.isDirectory(actualPath), "Actual path must be a file");
+        service.compile(dbFile, outputFile, secrets, "5.1");
+
+        assertTrue(outputFile.exists(), "The output file was not created");
+        assertTrue(outputFile.isFile(), "The output file must be a regular file");
+        assertTrue(ZipUtils.isZipArchive(outputFile.getAbsolutePath()),
+                "The output file is not a valid zip archive");
     }
 }

@@ -1,47 +1,39 @@
 package app.notesr.cli.compiler;
 
+import app.notesr.cli.crypto.AesCryptor;
+import app.notesr.cli.crypto.AesGcmCryptor;
 import app.notesr.cli.db.DbConnection;
 import app.notesr.cli.db.dao.DataBlockEntityDao;
 import app.notesr.cli.db.dao.FileInfoEntityDao;
 import app.notesr.cli.db.dao.NoteEntityDao;
-import app.notesr.cli.exception.BackupDbException;
+import app.notesr.cli.dto.CryptoSecrets;
+import app.notesr.cli.exception.BackupEncryptionException;
 import app.notesr.cli.exception.BackupIOException;
-import app.notesr.cli.util.ZipUtils;
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import lombok.Getter;
-import lombok.Setter;
-import org.jdbi.v3.core.mapper.MappingException;
-import org.jdbi.v3.core.result.UnableToProduceResultException;
+import app.notesr.cli.model.DataBlock;
+import app.notesr.cli.model.FileInfo;
+import app.notesr.cli.model.Note;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.RequiredArgsConstructor;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.format.DateTimeFormatter;
+import java.security.GeneralSecurityException;
 
-@Getter
+import static app.notesr.cli.util.KeyUtils.getSecretKeyFromSecrets;
+
+@RequiredArgsConstructor
 public final class BackupCompiler implements Runnable {
-    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final String VERSION_FILE_NAME = "version";
-    private static final String NOTES_JSON_FILE_NAME = "notes.json";
-    private static final String FILES_INFO_JSON_FILE_NAME = "files_info.json";
-    private static final String DATA_BLOCKS_DIR_NAME = "data_blocks";
 
     private final Path dbPath;
-    private final Path outputPath;
+    private final Path tempArchivePath;
+    private final CryptoSecrets secrets;
     private final String noteSrVersion;
-
-    @Setter
-    private Path tempDirPath;
-
-    public BackupCompiler(Path dbPath, Path outputPath, String noteSrVersion) {
-        this.dbPath = dbPath;
-        this.outputPath = outputPath;
-        this.noteSrVersion = noteSrVersion;
-        this.tempDirPath = Path.of(dbPath.toString() + "_temp");
-    }
 
     @Override
     public void run() {
@@ -49,51 +41,74 @@ public final class BackupCompiler implements Runnable {
             throw new BackupIOException("Database " + dbPath + " not found");
         }
 
-        try {
-            Files.createDirectory(tempDirPath);
-            File tempDir = tempDirPath.toFile();
+        File tempArchiveFile = tempArchivePath.toFile();
 
-            writeVersion(tempDir);
-            writeData(tempDir);
+        DbConnection db = new DbConnection(dbPath.toString());
+        AesCryptor cryptor = new AesGcmCryptor(getSecretKeyFromSecrets(secrets));
 
-            ZipUtils.zipDirectory(tempDirPath.toString(), outputPath.toString());
+        try (BackupZipper zipper = new BackupZipper(tempArchiveFile)) {
+            writeVersion(zipper);
+            writeNotes(zipper, cryptor, db.getConnection().onDemand(NoteEntityDao.class));
+            writeFilesInfo(zipper, cryptor, db.getConnection().onDemand(FileInfoEntityDao.class));
+            writeFilesData(zipper, cryptor, db.getConnection().onDemand(DataBlockEntityDao.class));
         } catch (IOException e) {
             throw new BackupIOException(e);
-        } catch (MappingException | UnableToProduceResultException e) {
-            throw new BackupDbException(e);
+        } catch (GeneralSecurityException e) {
+            throw new BackupEncryptionException(e);
         }
     }
 
-    private void writeVersion(File dir) throws IOException {
-        Path versionFilePath = Path.of(dir.getAbsolutePath(), VERSION_FILE_NAME);
-        Files.writeString(versionFilePath, noteSrVersion);
+    private void writeVersion(BackupZipper zipper) throws IOException {
+        zipper.addVersionFile(noteSrVersion);
     }
 
-    private void writeData(File dir) throws IOException {
-        DbConnection db = new DbConnection(dbPath.toString());
+    private void writeNotes(BackupZipper zipper, AesCryptor cryptor, NoteEntityDao noteEntityDao)
+            throws IOException, GeneralSecurityException {
 
-        NoteEntityDao noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
-        FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
-        DataBlockEntityDao dataBlockEntityDao = db.getConnection().onDemand(DataBlockEntityDao.class);
+        for (Note note : noteEntityDao.getAll()) {
+            String json = getObjectMapper().writeValueAsString(note);
+            byte[] encryptedJson = cryptor.encrypt(json.getBytes(StandardCharsets.UTF_8));
 
-        JsonGenerator noteJsonGenerator = getJsonGenerator(dir, NOTES_JSON_FILE_NAME);
-        JsonGenerator fileInfoJsonGenerator = getJsonGenerator(dir, FILES_INFO_JSON_FILE_NAME);
-
-        NoteWriter noteWriter = new NoteWriter(noteJsonGenerator, noteEntityDao, noteSrVersion, DATETIME_FORMATTER);
-        noteWriter.write();
-
-        FileInfoWriter fileInfoWriter = new FileInfoWriter(fileInfoJsonGenerator, fileInfoEntityDao,
-                dataBlockEntityDao, DATETIME_FORMATTER);
-        fileInfoWriter.write();
-
-        File dataBlocksDir = new File(dir, DATA_BLOCKS_DIR_NAME);
-        FileDataWriter fileDataWriter = new FileDataWriter(dataBlocksDir, dataBlockEntityDao);
-        fileDataWriter.write();
+            zipper.addNote(note.getId(), encryptedJson);
+        }
     }
 
-    private JsonGenerator getJsonGenerator(File dir, String filename) throws IOException {
-        File file = new File(dir, filename);
-        JsonFactory jsonFactory = new JsonFactory();
-        return jsonFactory.createGenerator(file, JsonEncoding.UTF8);
+    private void writeFilesInfo(BackupZipper zipper, AesCryptor cryptor, FileInfoEntityDao fileInfoEntityDao)
+            throws IOException, GeneralSecurityException {
+
+        for (FileInfo fileInfo : fileInfoEntityDao.getAll()) {
+            String json = getObjectMapper().writeValueAsString(fileInfo);
+            byte[] encryptedJson = cryptor.encrypt(json.getBytes(StandardCharsets.UTF_8));
+
+            zipper.addFileInfo(fileInfo.getId(), encryptedJson);
+        }
+    }
+
+    private void writeFilesData(BackupZipper zipper, AesCryptor cryptor, DataBlockEntityDao dataBlockEntityDao)
+            throws IOException, GeneralSecurityException {
+
+        for (DataBlock dataBlock : dataBlockEntityDao.getAllDataBlocksWithoutData()) {
+            ObjectMapper objectMapper = getObjectMapper();
+
+            ObjectNode blobInfoNode = objectMapper.valueToTree(dataBlock);
+            blobInfoNode.remove("data");
+
+            String blobInfoJson = getObjectMapper().writeValueAsString(dataBlock);
+            byte[] blobData = dataBlockEntityDao.getById(dataBlock.getId()).getData();
+
+            byte[] encryptedBlobInfo = cryptor.encrypt(blobInfoJson.getBytes(StandardCharsets.UTF_8));
+            byte[] encryptedBlobData = cryptor.encrypt(blobData);
+
+            zipper.addBlob(dataBlock.getId(), encryptedBlobInfo, encryptedBlobData);
+        }
+    }
+
+    private ObjectMapper getObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        return mapper;
     }
 }

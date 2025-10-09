@@ -4,7 +4,7 @@ import app.notesr.cli.VersionProvider;
 import app.notesr.cli.crypto.FileEncryptionException;
 
 import app.notesr.cli.dto.CryptoSecrets;
-import app.notesr.cli.exception.BackupDbException;
+import app.notesr.cli.exception.BackupEncryptionException;
 import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.service.BackupCompilationService;
 import app.notesr.cli.service.BackupEncryptionService;
@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,30 +86,17 @@ public final class CompileCommand extends Command {
             File tempArchive = getOutputFile(dbFile, null, ".zip");
             tempFiles.add(tempArchive);
 
-            Path tempDir = workflow.run(dbFile, tempArchive, outputFile, secrets, getNoteSrVersion());
-            tempFiles.add(tempDir.toFile());
+            workflow.run(dbFile, tempArchive, outputFile, secrets, getNoteSrVersion());
         } catch (BackupIOException e) {
             log.error("{}: failed to compile, details:\n{}", dbPath, e.getMessage());
             log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
-
-        } catch (BackupDbException e) {
-            log.error("{}: failed to fetch data from database, details:\n{}", dbPath, e.getMessage());
-            log.debug("E: ", e);
-            throw new CommandHandlingException(DB_ERROR);
-
-        } catch (FileEncryptionException e) {
+        } catch (BackupEncryptionException | FileEncryptionException e) {
             log.error("{}: failed to encrypt, key may be invalid", dbPath);
             log.debug("E: ", e);
             throw new CommandHandlingException(CRYPTO_ERROR);
-
-        } catch (IOException e) {
-            log.error("I/O error: {}", e.getMessage());
-            log.debug("E: ", e);
-            throw new CommandHandlingException(FILE_RW_ERROR);
-
         } catch (Exception e) {
-            log.error("Unexpected error", e);
+            log.error("Unexpected error: {}", e.getMessage());
             log.debug("E: ", e);
             throw new CommandHandlingException(UNKNOWN_ERROR);
         }

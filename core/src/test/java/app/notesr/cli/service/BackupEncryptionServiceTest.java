@@ -1,11 +1,11 @@
 package app.notesr.cli.service;
 
 import app.notesr.cli.dto.CryptoSecrets;
+import app.notesr.cli.exception.BackupIOException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -41,8 +41,8 @@ class BackupEncryptionServiceTest {
         CryptoSecrets badSecrets = mock(CryptoSecrets.class);
 
         BackupEncryptionService service = new BackupEncryptionService();
-        assertThrows(IOException.class, () ->
+        assertThrows(BackupIOException.class, () ->
                         service.encrypt(inputFile, outputFile, badSecrets),
-                "encrypt(...) should throw IOException for non-existent input file");
+                "encrypt(...) should throw BackupIOException for non-existent input file");
     }
 }
