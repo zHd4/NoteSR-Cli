@@ -113,10 +113,8 @@ class BackupZipperTest {
     }
 
     @Test
-    void testThrowsIOExceptionOnInvalidFile() throws Exception {
+    void testThrowsIOExceptionOnInvalidFile() {
         File invalidFile = new File("/invalid/path/backup.zip");
-        BackupZipper zipper = new BackupZipper(invalidFile);
-
-        assertThrows(IOException.class, zipper::close);
+        assertThrows(IOException.class, () -> new BackupZipper(invalidFile).close());
     }
 }
