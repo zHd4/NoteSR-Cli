@@ -2,8 +2,8 @@ package app.notesr.cli.service;
 
 import app.notesr.cli.crypto.AesCryptor;
 import app.notesr.cli.crypto.AesGcmCryptor;
-import app.notesr.cli.crypto.FileEncryptionException;
 import app.notesr.cli.dto.CryptoSecrets;
+import app.notesr.cli.exception.BackupEncryptionException;
 import app.notesr.cli.exception.BackupIOException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +17,7 @@ import static app.notesr.cli.util.KeyUtils.getSecretKeyFromSecrets;
 
 @Slf4j
 public final class BackupEncryptionService {
-    public void encrypt(File inputFile, File outputFile, CryptoSecrets secrets) throws FileEncryptionException {
+    public void encrypt(File inputFile, File outputFile, CryptoSecrets secrets) throws BackupEncryptionException {
 
         try (FileInputStream inputStream = new FileInputStream(inputFile);
              FileOutputStream outputStream = new FileOutputStream(outputFile)) {
@@ -29,7 +29,7 @@ public final class BackupEncryptionService {
 
             log.info("Encryption finished successfully");
         } catch (GeneralSecurityException e) {
-            throw new FileEncryptionException(e);
+            throw new BackupEncryptionException(e);
         } catch (IOException e) {
             throw new BackupIOException(e);
         }

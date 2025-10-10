@@ -1,7 +1,6 @@
 package app.notesr.cli.command;
 
 import app.notesr.cli.VersionProvider;
-import app.notesr.cli.crypto.FileEncryptionException;
 
 import app.notesr.cli.dto.CryptoSecrets;
 import app.notesr.cli.exception.BackupEncryptionException;
@@ -91,7 +90,7 @@ public final class CompileCommand extends Command {
             log.error("{}: failed to compile, details:\n{}", dbPath, e.getMessage());
             log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
-        } catch (BackupEncryptionException | FileEncryptionException e) {
+        } catch (BackupEncryptionException e) {
             log.error("{}: failed to encrypt, key may be invalid", dbPath);
             log.debug("E: ", e);
             throw new CommandHandlingException(CRYPTO_ERROR);
