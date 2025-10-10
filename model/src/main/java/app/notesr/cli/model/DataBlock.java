@@ -20,7 +20,7 @@ public class DataBlock {
     @JsonAlias("fileId")
     private String fileId;
 
-    @JsonAlias({"order"})
+    @JsonProperty("order")
     private Long blockOrder;
 
     @JsonProperty("data")
