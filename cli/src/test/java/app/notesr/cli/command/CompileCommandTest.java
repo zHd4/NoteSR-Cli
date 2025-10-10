@@ -35,13 +35,10 @@ class CompileCommandTest {
 
     @Test
     void testWithAllArgs() {
-        final String noteSrVersion = "5.2.3";
-
         Path dbPath = getFixturePath("backup.db", tempDir);
         Path keyPath = getFixturePath("crypto_key.txt", tempDir);
 
-        int exitCode = cmd.execute(dbPath.toString(), keyPath.toString(), "-o", tempDir.toString(),
-                "-n", noteSrVersion);
+        int exitCode = cmd.execute(dbPath.toString(), keyPath.toString(), "-o", tempDir.toString());
         assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
 
         Path outputPath = tempDir.resolve(getNameWithoutExtension(dbPath.toFile()) + ".notesr.bak");

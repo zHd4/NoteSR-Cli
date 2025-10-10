@@ -10,8 +10,8 @@ public final class VersionProvider implements CommandLine.IVersionProvider {
     @Override
     public String[] getVersion() {
         return new String[]{
-            "Version: " + getUtilityVersion(),
-            "Default NoteSR version: " + getDefaultNoteSrVersion()
+            "Utility version: " + getUtilityVersion(),
+            "NoteSR version: " + getNoteSrVersion()
         };
     }
 
@@ -20,8 +20,8 @@ public final class VersionProvider implements CommandLine.IVersionProvider {
         return version != null ? version : "unknown";
     }
 
-    public String getDefaultNoteSrVersion() {
-        String version = getProperties().getProperty("noteSr.defaultVersion");
+    public String getNoteSrVersion() {
+        String version = getProperties().getProperty("noteSr.version");
         return version != null ? version : "unknown";
     }
 

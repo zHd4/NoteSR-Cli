@@ -53,7 +53,7 @@ tasks.register("generateVersionProperties") {
         file.parentFile.mkdirs()
         file.text = """
             utility.version=${project.appVersion}
-            noteSr.defaultVersion=${project.defaultNoteSrVersion}
+            noteSr.version=${project.noteSrVersion}
         """.stripIndent().trim()
     }
 }

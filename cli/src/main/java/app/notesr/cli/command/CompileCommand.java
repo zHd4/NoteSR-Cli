@@ -16,8 +16,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Objects.requireNonNullElseGet;
-
 @Slf4j
 @CommandLine.Command(name = "compile",
         description = "Compiles NoteSR Backup Database into NoteSR .notesr.bak file.")
@@ -32,10 +30,6 @@ public final class CompileCommand extends Command {
 
     @CommandLine.Option(names = {"-o", "--output"}, description = "output file path")
     private String outputFilePath;
-
-    @CommandLine.Option(names = {"-n", "--notesr-version"}, description = "target NoteSR version "
-            + "(see --version to check default version)")
-    private String noteSrVersion;
 
     public CompileCommand() {
         super(log);
@@ -102,9 +96,7 @@ public final class CompileCommand extends Command {
     }
 
     private String getNoteSrVersion() {
-        return requireNonNullElseGet(noteSrVersion, () -> {
-            VersionProvider versionProvider = new VersionProvider();
-            return versionProvider.getDefaultNoteSrVersion();
-        });
+        VersionProvider versionProvider = new VersionProvider();
+        return versionProvider.getNoteSrVersion();
     }
 }
