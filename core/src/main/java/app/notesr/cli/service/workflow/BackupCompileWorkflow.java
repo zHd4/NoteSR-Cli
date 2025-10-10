@@ -17,7 +17,7 @@ public final class BackupCompileWorkflow {
     private final BackupEncryptionService encryptionService;
 
     public void run(File dbFile, File tempArchive, File outputFile, CryptoSecrets secrets, String noteSrVersion)
-            throws BackupIOException, BackupEncryptionException, BackupEncryptionException {
+            throws BackupIOException, BackupEncryptionException {
 
         compilationService.compile(dbFile, tempArchive, secrets, noteSrVersion);
         encryptionService.encrypt(tempArchive, outputFile, secrets);
