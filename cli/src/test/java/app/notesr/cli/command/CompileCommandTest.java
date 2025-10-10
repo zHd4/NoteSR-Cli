@@ -35,7 +35,7 @@ class CompileCommandTest {
 
     @Test
     void testWithAllArgs() {
-        final String noteSrVersion = "5.1";
+        final String noteSrVersion = "5.2.3";
 
         Path dbPath = getFixturePath("backup.db", tempDir);
         Path keyPath = getFixturePath("crypto_key.txt", tempDir);
