@@ -1,6 +1,6 @@
 package app.notesr.cli.service.workflow;
 
-import app.notesr.cli.exception.FileDecryptionException;
+import app.notesr.cli.exception.BackupDecryptionException;
 import app.notesr.cli.dto.CryptoSecrets;
 import app.notesr.cli.parser.BackupParserException;
 import app.notesr.cli.service.BackupDecryptionService;
@@ -72,10 +72,10 @@ class BackupDecryptWorkflowTest {
     @Test
     void runWithDecryptionFailureThrowsFileDecryptionException() throws Exception {
         List<File> tempFiles = new ArrayList<>();
-        when(backupDecryptionService.decrypt(encrypted, secrets)).thenThrow(new FileDecryptionException());
-        assertThrows(FileDecryptionException.class, () ->
+        when(backupDecryptionService.decrypt(encrypted, secrets)).thenThrow(new BackupDecryptionException());
+        assertThrows(BackupDecryptionException.class, () ->
                         workflow.run(encrypted, secrets, output, tempFiles),
-                "Decryption failure should throw FileDecryptionException");
+                "Decryption failure should throw BackupDecryptionException");
     }
 
     @Test

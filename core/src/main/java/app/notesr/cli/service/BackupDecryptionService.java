@@ -2,7 +2,7 @@ package app.notesr.cli.service;
 
 import app.notesr.cli.crypto.AesCbcCryptor;
 import app.notesr.cli.crypto.AesGcmCryptor;
-import app.notesr.cli.exception.FileDecryptionException;
+import app.notesr.cli.exception.BackupDecryptionException;
 import app.notesr.cli.dto.CryptoSecrets;
 import app.notesr.cli.exception.BackupIOException;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import static app.notesr.cli.validation.BackupValidator.isValid;
 
 @Slf4j
 public final class BackupDecryptionService {
-    public File decrypt(File encryptedBackup, CryptoSecrets secrets) throws FileDecryptionException, IOException {
+    public File decrypt(File encryptedBackup, CryptoSecrets secrets) throws BackupDecryptionException, IOException {
         File decryptedBackup = new File(encryptedBackup.getAbsolutePath() + "_decrypted");
 
         try (FileInputStream inputStream = new FileInputStream(encryptedBackup);
@@ -41,7 +41,7 @@ public final class BackupDecryptionService {
             deleteAndThrowIfInvalid(decryptedBackup);
         } catch (GeneralSecurityException e) {
             log.debug("CBC decryption failed", e);
-            throw new FileDecryptionException(e);
+            throw new BackupDecryptionException(e);
         }
 
         return decryptedBackup;
@@ -63,14 +63,14 @@ public final class BackupDecryptionService {
         cryptor.decrypt(sourceStream, outputStream);
     }
 
-    private void deleteAndThrowIfInvalid(File backupFile) throws FileDecryptionException, IOException {
+    private void deleteAndThrowIfInvalid(File backupFile) throws BackupDecryptionException, IOException {
         try {
             if (!isValid(backupFile.getAbsolutePath())) {
                 if (backupFile.exists()) {
                     Files.delete(backupFile.toPath());
                 }
 
-                throw new FileDecryptionException("Decrypted file is not a valid backup");
+                throw new BackupDecryptionException("Decrypted file is not a valid backup");
             }
         } catch (BackupIOException e) {
             throw e.getCause();

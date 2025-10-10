@@ -1,6 +1,6 @@
 package app.notesr.cli.service;
 
-import app.notesr.cli.exception.FileDecryptionException;
+import app.notesr.cli.exception.BackupDecryptionException;
 import app.notesr.cli.dto.CryptoSecrets;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -48,8 +48,8 @@ class BackupDecryptionServiceTest {
 
         CryptoSecrets secrets = new CryptoSecrets(invalidKeyBytes);
 
-        assertThrows(FileDecryptionException.class, () ->
+        assertThrows(BackupDecryptionException.class, () ->
                 backupDecryptionService.decrypt(encryptedBackupFile, secrets),
-                "Decrypting with an invalid key should throw FileDecryptionException");
+                "Decrypting with an invalid key should throw BackupDecryptionException");
     }
 }

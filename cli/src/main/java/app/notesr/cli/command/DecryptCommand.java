@@ -1,6 +1,6 @@
 package app.notesr.cli.command;
 
-import app.notesr.cli.exception.FileDecryptionException;
+import app.notesr.cli.exception.BackupDecryptionException;
 import app.notesr.cli.dto.CryptoSecrets;
 import app.notesr.cli.exception.BackupDbException;
 import app.notesr.cli.exception.BackupIOException;
@@ -77,7 +77,7 @@ public final class DecryptCommand extends Command {
 
             BackupDecryptWorkflow workflow = new BackupDecryptWorkflow(backupDecryptionService, backupParsingService);
             workflow.run(encryptedBackupFile, secrets, outputDbFile, tempFiles);
-        } catch (FileDecryptionException e) {
+        } catch (BackupDecryptionException e) {
             log.error("{}: failed to decrypt, invalid key or file corrupted", encryptedBackupPath);
             log.debug("E: ", e);
             throw new CommandHandlingException(CRYPTO_ERROR);

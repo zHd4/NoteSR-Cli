@@ -1,6 +1,6 @@
 package app.notesr.cli.service.workflow;
 
-import app.notesr.cli.exception.FileDecryptionException;
+import app.notesr.cli.exception.BackupDecryptionException;
 import app.notesr.cli.dto.CryptoSecrets;
 import app.notesr.cli.service.BackupDecryptionService;
 import app.notesr.cli.service.BackupParsingService;
@@ -19,7 +19,7 @@ public final class BackupDecryptWorkflow {
     private final BackupParsingService parsingService;
 
     public void run(File encryptedBackup, CryptoSecrets secrets, File outputFile, List<File> tempFiles)
-            throws IOException, FileDecryptionException {
+            throws IOException, BackupDecryptionException {
         log.info("Decrypting {}", encryptedBackup.getAbsolutePath());
         File decrypted = backupDecryptionService.decrypt(encryptedBackup, secrets);
         tempFiles.add(decrypted);
