@@ -93,7 +93,7 @@ public final class BackupCompiler implements Runnable {
             ObjectNode blobInfoNode = objectMapper.valueToTree(dataBlock);
             blobInfoNode.remove("data");
 
-            String blobInfoJson = getObjectMapper().writeValueAsString(dataBlock);
+            String blobInfoJson = getObjectMapper().writeValueAsString(blobInfoNode);
             byte[] blobData = dataBlockEntityDao.getById(dataBlock.getId()).getData();
 
             byte[] encryptedBlobInfo = cryptor.encrypt(blobInfoJson.getBytes(StandardCharsets.UTF_8));
