@@ -1,6 +1,6 @@
 package app.notesr.cli.service.workflow;
 
-import app.notesr.cli.crypto.FileDecryptionException;
+import app.notesr.cli.exception.FileDecryptionException;
 import app.notesr.cli.dto.CryptoSecrets;
 import app.notesr.cli.service.BackupDecryptionService;
 import app.notesr.cli.service.BackupParsingService;

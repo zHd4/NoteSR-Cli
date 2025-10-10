@@ -2,7 +2,7 @@ package app.notesr.cli.service;
 
 import app.notesr.cli.crypto.AesCbcCryptor;
 import app.notesr.cli.crypto.AesGcmCryptor;
-import app.notesr.cli.crypto.FileDecryptionException;
+import app.notesr.cli.exception.FileDecryptionException;
 import app.notesr.cli.dto.CryptoSecrets;
 import app.notesr.cli.exception.BackupIOException;
 import lombok.extern.slf4j.Slf4j;

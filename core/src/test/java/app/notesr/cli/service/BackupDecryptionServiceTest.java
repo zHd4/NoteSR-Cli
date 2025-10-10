@@ -1,6 +1,6 @@
 package app.notesr.cli.service;
 
-import app.notesr.cli.crypto.FileDecryptionException;
+import app.notesr.cli.exception.FileDecryptionException;
 import app.notesr.cli.dto.CryptoSecrets;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
