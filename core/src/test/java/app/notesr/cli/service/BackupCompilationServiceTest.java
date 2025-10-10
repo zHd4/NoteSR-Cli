@@ -31,7 +31,7 @@ class BackupCompilationServiceTest {
         CryptoSecrets secrets = new CryptoSecrets(keyBytes);
         BackupCompilationService service = new BackupCompilationService();
 
-        service.compile(dbFile, outputFile, secrets, "5.1");
+        service.compile(dbFile, outputFile, secrets, "5.2.3");
 
         assertTrue(outputFile.exists(), "The output file was not created");
         assertTrue(outputFile.isFile(), "The output file must be a regular file");
