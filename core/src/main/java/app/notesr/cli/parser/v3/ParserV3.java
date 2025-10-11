@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.RequiredArgsConstructor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,29 +31,28 @@ import java.util.zip.ZipFile;
 
 import static app.notesr.cli.util.KeyUtils.getSecretKeyFromSecrets;
 
-public final class ParserV3 extends Parser {
+@RequiredArgsConstructor
+public final class ParserV3 implements Parser {
+
     private static final String NOTES_DIR = "notes/";
     private static final String FILES_INFO_DIR = "finfo/";
     private static final String FILES_BLOBS_INFO_DIR = "binfo/";
     private static final String FILES_BLOBS_DATA_DIR = "fblobs/";
 
+    private final Path backupPath;
+    private final Path outputDbPath;
     private final CryptoSecrets secrets;
 
-    public ParserV3(Path backupPath, Path outputDbPath, CryptoSecrets secrets) {
-        super(backupPath, outputDbPath);
-        this.secrets = secrets;
-    }
-
     @Override
-    public void run() {
+    public void parse() {
         AesCryptor cryptor = new AesGcmCryptor(getSecretKeyFromSecrets(secrets));
-        DbConnection db = new DbConnection(getOutputDbPath().toString());
+        DbConnection db = new DbConnection(outputDbPath.toString());
 
         NoteEntityDao noteEntityDao = db.getConnection().onDemand(NoteEntityDao.class);
         FileInfoEntityDao fileInfoEntityDao = db.getConnection().onDemand(FileInfoEntityDao.class);
         DataBlockEntityDao dataBlockEntityDao = db.getConnection().onDemand(DataBlockEntityDao.class);
 
-        try (ZipFile zipFile = new ZipFile(getBackupPath().toFile())) {
+        try (ZipFile zipFile = new ZipFile(backupPath.toFile())) {
             transferNotes(noteEntityDao, cryptor, zipFile);
             transferFilesInfo(fileInfoEntityDao, cryptor, zipFile);
             transferFilesData(dataBlockEntityDao, cryptor, zipFile);

@@ -7,32 +7,36 @@ import app.notesr.cli.parser.FilesJsonParser;
 import app.notesr.cli.parser.NotesJsonParser;
 import app.notesr.cli.parser.Parser;
 import app.notesr.cli.util.ZipUtils;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import lombok.RequiredArgsConstructor;
 import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.format.DateTimeFormatter;
 
-public final class ParserV2 extends Parser {
+@RequiredArgsConstructor
+public final class ParserV2 implements Parser {
+
+    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final String NOTES_JSON_FILE_NAME = "notes.json";
     private static final String FILES_INFO_JSON_FILE_NAME = "files_info.json";
 
+    private final Path backupPath;
     private final Path tempDirPath;
-
-    public ParserV2(Path backupPath, Path tempDirPath, Path outputDbPath) {
-        super(backupPath, outputDbPath);
-        this.tempDirPath = tempDirPath;
-    }
+    private final Path outputDbPath;
 
     @Override
-    public void run() {
+    public void parse() {
         try {
-            ZipUtils.unzip(getBackupPath().toString(), tempDirPath.toString());
+            ZipUtils.unzip(backupPath.toString(), tempDirPath.toString());
 
             File notesJsonFile = new File(tempDirPath.toString(), NOTES_JSON_FILE_NAME);
             File filesInfosJsonFile = new File(tempDirPath.toString(), FILES_INFO_JSON_FILE_NAME);
 
-            DbConnection db = new DbConnection(getOutputDbPath().toString());
+            DbConnection db = new DbConnection(outputDbPath.toString());
 
             NotesJsonParser notesJsonParser =
                     new NotesJsonParser(db, getJsonParser(notesJsonFile), DATETIME_FORMATTER);
@@ -47,5 +51,10 @@ public final class ParserV2 extends Parser {
         } catch (UnableToExecuteStatementException e) {
             throw new BackupDbException(e);
         }
+    }
+
+    private JsonParser getJsonParser(File jsonFile) throws IOException {
+        JsonFactory factory = new JsonFactory();
+        return factory.createParser(jsonFile);
     }
 }

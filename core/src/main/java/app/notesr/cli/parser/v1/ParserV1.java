@@ -6,27 +6,30 @@ import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.parser.FilesJsonParser;
 import app.notesr.cli.parser.NotesJsonParser;
 import app.notesr.cli.parser.Parser;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
+import lombok.RequiredArgsConstructor;
 import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.format.DateTimeFormatter;
 
+@RequiredArgsConstructor
+public final class ParserV1 implements Parser {
 
-public final class ParserV1 extends Parser {
-    private final DbConnection db;
+    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public ParserV1(Path backupPath, Path outputDbPath) {
-        super(backupPath, outputDbPath);
-        this.db = new DbConnection(outputDbPath.toString());
-    }
+    private final Path backupPath;
+    private final Path outputDbPath;
 
     @Override
-    public void run() {
+    public void parse() {
         try {
-            File backupFile = getBackupPath().toFile();
-            JsonParser jsonParser = getJsonParser(backupFile);
+            JsonFactory jsonFactory = new JsonFactory();
+            JsonParser jsonParser = jsonFactory.createParser(backupPath.toFile());
+
+            DbConnection db = new DbConnection(outputDbPath.toString());
 
             NotesJsonParser notesJsonParser = new NotesJsonParser(db, jsonParser, DATETIME_FORMATTER);
             FilesJsonParser filesJsonParser = new FilesJsonParserV1(db, jsonParser, DATETIME_FORMATTER);

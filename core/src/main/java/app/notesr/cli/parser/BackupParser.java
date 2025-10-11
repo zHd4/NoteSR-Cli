@@ -41,7 +41,7 @@ public final class BackupParser implements Runnable {
                 () -> isV3Format(backupPathStr) ? new ParserV3(backupPath, outputDbPath, secrets) : null
         );
 
-        getTargetParser(parserSuppliers).run();
+        getTargetParser(parserSuppliers).parse();
     }
 
     private Parser getTargetParser(List<Supplier<Parser>> parserSuppliers) {
