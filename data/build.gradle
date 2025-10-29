@@ -1,6 +1,5 @@
 dependencies {
     implementation project(':model')
-    implementation project(':util')
     implementation project(':test-utils')
     implementation project(':shared-resources')
 
