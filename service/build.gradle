@@ -1,6 +1,6 @@
 dependencies {
     implementation project(':core')
-    implementation project(':db')
+    implementation project(':data')
     testImplementation project(':test-common')
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0'

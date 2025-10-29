@@ -8,7 +8,7 @@ dependencies {
     implementation project(':model')
     implementation project(':test-utils')
     implementation project(':util')
-    implementation project(':db')
+    implementation project(':data')
     implementation project(':shared-resources')
     testImplementation project(':test-common')
 

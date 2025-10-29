@@ -2,7 +2,7 @@ dependencies {
     implementation project(':model')
     implementation project(':util')
     implementation project(':test-utils')
-    implementation project(':db')
+    implementation project(':data')
     implementation project(':shared-resources')
     testImplementation project(':test-common')
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
