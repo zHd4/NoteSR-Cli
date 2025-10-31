@@ -53,7 +53,7 @@ class ListFilesCommandTest {
 
     @Test
     void testCommand() {
-        Path dbPath = getFixturePath("backup.db", tempDir);
+        Path dbPath = getFixturePath("shared/backup.db", tempDir);
         AbstractMap.SimpleEntry<Note, Set<FileInfo>> noteAttachmentsEntry = getRandomNoteWithAttachments(dbPath);
 
         Note testNote = noteAttachmentsEntry.getKey();
