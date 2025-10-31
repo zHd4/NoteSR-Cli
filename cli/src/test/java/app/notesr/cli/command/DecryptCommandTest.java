@@ -40,6 +40,8 @@ class DecryptCommandTest {
     private static final String FORMAT_V2 = "v2";
     private static final String FORMAT_V3 = "v3";
 
+    private static final String BACKUP_PATH_PATTERN = "shared/encrypted-%s.notesr.bak";
+
     private static final Random RANDOM = new Random();
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
@@ -67,14 +69,18 @@ class DecryptCommandTest {
         final String filesInfosTableName = "files_info";
         final String dataBlocksTableName = "data_blocks";
 
-        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", formatVersion), tempDir);
-        Path keyPath = getFixturePath("crypto_key.txt", tempDir);
+        Path backupPath = getFixturePath(String.format(BACKUP_PATH_PATTERN,
+            formatVersion), tempDir);
+
+        Path keyPath = getFixturePath("shared/crypto_key.txt", tempDir);
         Path outputPath = tempDir.resolve(getNameWithoutExtension(backupPath.toFile()) + ".db");
 
-        int exitCode = cmd.execute(backupPath.toString(), keyPath.toString(), "-o", outputPath.toString());
+        int exitCode = cmd.execute(backupPath.toString(), keyPath.toString(), "-o",
+            outputPath.toString());
 
         assertEquals(SUCCESS, exitCode, "Expected code " + SUCCESS);
-        assertTrue(outputPath.toFile().exists(), "Output file " + outputPath + " not found");
+        assertTrue(outputPath.toFile().exists(),
+            "Output file " + outputPath + " not found");
 
         DbConnection db = new DbConnection(outputPath.toString());
 
@@ -82,17 +88,21 @@ class DecryptCommandTest {
         FilesInfosJsonMapper filesInfosMapper = new FilesInfosJsonMapper();
         DataBlocksJsonMapper dataBlocksMapper = new DataBlocksJsonMapper();
 
-        List<Note> expectedNotes = getExpectedModels(notesMapper, "expected-notes.json", formatVersion);
-        List<Note> actualNotes = notesMapper.map(serializeTableAsJson(db.getConnection(), notesTableName));
+        List<Note> expectedNotes = getExpectedModels(notesMapper, "expected-notes.json",
+            formatVersion);
 
-        List<FileInfo> expectedFilesInfos =
-                getExpectedModels(filesInfosMapper, "expected-files-infos.json", formatVersion);
+        List<Note> actualNotes = notesMapper.map(serializeTableAsJson(db.getConnection(),
+            notesTableName));
+
+        List<FileInfo> expectedFilesInfos = getExpectedModels(filesInfosMapper,
+            "expected-files-infos.json", formatVersion);
+
         List<FileInfo> actualFilesInfos =
                 filesInfosMapper.map(serializeTableAsJson(db.getConnection(), filesInfosTableName));
 
+        List<DataBlock> expectedDataBlocks = getExpectedModels(dataBlocksMapper,
+            "expected-data-blocks.json", formatVersion);
 
-        List<DataBlock> expectedDataBlocks =
-                getExpectedModels(dataBlocksMapper, "expected-data-blocks.json", formatVersion);
         List<DataBlock> actualDataBlocks =
                 dataBlocksMapper.map(serializeTableAsJson(db.getConnection(), dataBlocksTableName));
 
@@ -106,11 +116,15 @@ class DecryptCommandTest {
     void testWithInvalidFilesPaths(String path) {
         String backupPath = path + ".notesr.bak";
         String keyPath = path + ".txt";
-        String outputPath = tempDir.resolve(getNameWithoutExtension(new File(backupPath)) + ".db").toString();
+
+        File backupFile = new File(backupPath);
+        String outputPath = tempDir.resolve(getNameWithoutExtension(backupFile) + ".db")
+            .toString();
 
         int exitCode = cmd.execute(backupPath, keyPath, "-o", outputPath);
         assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
-        assertFalse(Files.exists(Path.of(outputPath)), "Output file " + outputPath + "shouldn't been created");
+        assertFalse(Files.exists(Path.of(outputPath)),
+            "Output file " + outputPath + "shouldn't been created");
     }
 
     @Test
@@ -118,14 +132,17 @@ class DecryptCommandTest {
         String invalidKey = "TEST_INVALID_KEY";
 
         Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
-        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2), tempDir);
-        Path outputPath = tempDir.resolve(getNameWithoutExtension(backupPath.toFile()) + ".db");
+        Path backupPath = getFixturePath(String.format(BACKUP_PATH_PATTERN, FORMAT_V2), tempDir);
+
+        File backupFile = backupPath.toFile();
+        Path outputPath =  tempDir.resolve(getNameWithoutExtension(backupFile) + ".db");
 
         Files.writeString(invalidKeyPath, invalidKey);
         int exitCode = cmd.execute(backupPath.toString(), invalidKeyPath.toString());
 
         assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
-        assertFalse(Files.exists(outputPath), "Output file " + outputPath + "shouldn't been created");
+        assertFalse(Files.exists(outputPath),
+            "Output file " + outputPath + "shouldn't been created");
     }
 
     @Test
@@ -134,14 +151,17 @@ class DecryptCommandTest {
         RANDOM.nextBytes(invalidKey);
 
         Path invalidKeyPath = tempDir.resolve("invalid_key.txt");
-        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2), tempDir);
-        Path outputPath = tempDir.resolve(getNameWithoutExtension(backupPath.toFile()) + ".db");
+        Path backupPath = getFixturePath(String.format(BACKUP_PATH_PATTERN, FORMAT_V2), tempDir);
+
+        File backupFile = backupPath.toFile();
+        Path outputPath = tempDir.resolve(getNameWithoutExtension(backupFile) + ".db");
 
         Files.write(invalidKeyPath, invalidKey);
         int exitCode = cmd.execute(backupPath.toString(), invalidKeyPath.toString());
 
         assertEquals(FILE_RW_ERROR, exitCode, "Expected code " + FILE_RW_ERROR);
-        assertFalse(Files.exists(outputPath), "Output file " + outputPath + "shouldn't been created");
+        assertFalse(Files.exists(outputPath),
+            "Output file " + outputPath + "shouldn't been created");
     }
 
     @Test
@@ -149,19 +169,27 @@ class DecryptCommandTest {
         String wrongKey = getRandomKeyHex();
 
         Path wrongKeyPath = tempDir.resolve("wrong_key.txt");
-        Path backupPath = getFixturePath(String.format("encrypted-%s.notesr.bak", FORMAT_V2), tempDir);
-        Path outputPath = tempDir.resolve(getNameWithoutExtension(backupPath.toFile()) + ".db");
+        Path backupPath = getFixturePath(String.format(BACKUP_PATH_PATTERN, FORMAT_V2), tempDir);
+
+        File backupFile = backupPath.toFile();
+        Path outputPath = tempDir.resolve(getNameWithoutExtension(backupFile) + ".db");
 
         Files.writeString(wrongKeyPath, wrongKey);
         int exitCode = cmd.execute(backupPath.toString(), wrongKeyPath.toString());
 
         assertEquals(CRYPTO_ERROR, exitCode, "Expected code " + CRYPTO_ERROR);
-        assertFalse(Files.exists(outputPath), "Output file " + outputPath + "shouldn't been created");
+        assertFalse(Files.exists(outputPath),
+            "Output file " + outputPath + "shouldn't been created");
     }
 
-    private <T> List<T> getExpectedModels(JsonMapper<T> mapper, String fixtureName, String formatVersion)
-            throws IOException {
-        String fixturePath = Path.of("parser", formatVersion, fixtureName).toString();
+    private <T> List<T> getExpectedModels(
+        JsonMapper<T> mapper,
+        String fixtureName,
+        String formatVersion) throws IOException {
+
+        String fixturePath = Path.of("shared", "parser", formatVersion, fixtureName)
+            .toString();
+
         String json = readFixture(fixturePath, tempDir);
 
         return mapper.map(json);
