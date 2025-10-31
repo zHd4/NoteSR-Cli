@@ -26,22 +26,36 @@ class BackupDecryptionServiceTest {
     private Path tempDir;
 
     @ParameterizedTest
-    @ValueSource(strings = {"encrypted-v1.notesr.bak", "encrypted-v2.notesr.bak", "encrypted-v3.notesr.bak"})
-    void decryptWithValidFileAndKeyReturnsDecryptedFile(String encryptedFixtureName) throws Exception {
-        File encryptedBackupFile = getFixturePath(encryptedFixtureName, tempDir).toFile();
-        Path keyPath = getFixturePath("crypto_key.txt", tempDir);
+    @ValueSource(strings = {
+        "encrypted-v1.notesr.bak",
+        "encrypted-v2.notesr.bak",
+        "encrypted-v3.notesr.bak"})
+    void decryptWithValidFileAndKeyReturnsDecryptedFile(String encryptedFixtureName)
+        throws Exception {
+
+        String encryptedBackupPathPart = Path.of("shared", encryptedFixtureName).toString();
+        File encryptedBackupFile = getFixturePath(encryptedBackupPathPart, tempDir).toFile();
+
+        Path keyPath = getFixturePath("shared/crypto_key.txt", tempDir);
 
         CryptoSecrets secrets = new CryptoSecrets(getKeyBytesFromHex(Files.readString(keyPath)));
         File decryptedBackupFile = backupDecryptionService.decrypt(encryptedBackupFile, secrets);
 
         assertTrue(decryptedBackupFile.exists(), "Decrypted file should exist");
-        assertTrue(decryptedBackupFile.length() > 0, "Decrypted file should not be empty");
+        assertTrue(decryptedBackupFile.length() > 0,
+            "Decrypted file should not be empty");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"encrypted-v1.notesr.bak", "encrypted-v2.notesr.bak", "encrypted-v3.notesr.bak"})
-    void decryptWithInvalidKeyThrowsFileDecryptionException(String encryptedFixtureName) throws Exception {
-        File encryptedBackupFile = getFixturePath(encryptedFixtureName, tempDir).toFile();
+    @ValueSource(strings = {
+        "encrypted-v1.notesr.bak",
+        "encrypted-v2.notesr.bak",
+        "encrypted-v3.notesr.bak"})
+    void decryptWithInvalidKeyThrowsFileDecryptionException(String encryptedFixtureName)
+        throws Exception {
+
+        String encryptedBackupPathPart = Path.of("shared", encryptedFixtureName).toString();
+        File encryptedBackupFile = getFixturePath(encryptedBackupPathPart, tempDir).toFile();
 
         byte[] invalidKeyBytes = new byte[KEY_SIZE];
         SecureRandom.getInstanceStrong().nextBytes(invalidKeyBytes);
