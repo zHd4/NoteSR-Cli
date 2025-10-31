@@ -29,10 +29,15 @@ class BackupParserTest {
     private static final String FILES_INFOS_TABLE_NAME = "files_info";
     private static final String DATA_BLOCKS_TABLE_NAME = "data_blocks";
 
-    private static final String NOTES_FIXTURE_PATH_FORMAT = "parser/%s/expected-notes.json";
-    private static final String FILES_INFOS_FIXTURE_PATH_FORMAT = "parser/%s/expected-files-infos.json";
-    private static final String DATA_BLOCKS_FIXTURE_PATH_FORMAT = "parser/%s/expected-data-blocks.json";
-    private static final String BACKUP_FIXTURE_PATH_FORMAT = "parser/%s/backup.%s";
+    private static final String NOTES_FIXTURE_PATH_FORMAT = "shared/parser/%s/expected-notes.json";
+
+    private static final String FILES_INFOS_FIXTURE_PATH_FORMAT =
+        "shared/parser/%s/expected-files-infos.json";
+
+    private static final String DATA_BLOCKS_FIXTURE_PATH_FORMAT =
+        "shared/parser/%s/expected-data-blocks.json";
+
+    private static final String BACKUP_FIXTURE_PATH_FORMAT = "shared/parser/%s/backup.%s";
 
     @TempDir
     private Path tempDir;
@@ -54,8 +59,9 @@ class BackupParserTest {
         String formatVersion = parsedFormat[0];
         String backupExtension = parsedFormat[1];
 
-        Path backupPath = getFixturePath(String.format(BACKUP_FIXTURE_PATH_FORMAT, formatVersion, backupExtension),
-                tempDir);
+        Path backupPath = getFixturePath(
+            String.format(BACKUP_FIXTURE_PATH_FORMAT, formatVersion, backupExtension), tempDir);
+
         CryptoSecrets secrets = getTestSecrets();
 
         BackupParser parser = new BackupParser(backupPath, dbPath, secrets);
@@ -77,12 +83,16 @@ class BackupParserTest {
         List<Note> actualNotes = notesMapper.map(
             DbUtils.serializeTableAsJson(db.getConnection(), NOTES_TABLE_NAME));
 
-        List<FileInfo> expectedFilesInfos = filesInfosMapper.map(readFixture(filesInfosPath, tempDir));
+        List<FileInfo> expectedFilesInfos =
+            filesInfosMapper.map(readFixture(filesInfosPath, tempDir));
+
         List<FileInfo> actualFilesInfos =
                 filesInfosMapper.map(
                     DbUtils.serializeTableAsJson(db.getConnection(), FILES_INFOS_TABLE_NAME));
 
-        List<DataBlock> expectedDataBlocks = dataBlocksMapper.map(readFixture(dataBlocksPath, tempDir));
+        List<DataBlock> expectedDataBlocks =
+            dataBlocksMapper.map(readFixture(dataBlocksPath, tempDir));
+
         List<DataBlock> actualDataBlocks =
                 dataBlocksMapper.map(
                     DbUtils.serializeTableAsJson(db.getConnection(), DATA_BLOCKS_TABLE_NAME));
@@ -93,7 +103,7 @@ class BackupParserTest {
     }
 
     private CryptoSecrets getTestSecrets() throws IOException {
-        String keyHex = Files.readString(getFixturePath("crypto_key.txt", tempDir));
+        String keyHex = Files.readString(getFixturePath("shared/crypto_key.txt", tempDir));
         return new CryptoSecrets(getKeyBytesFromHex(keyHex));
     }
 }
