@@ -28,7 +28,7 @@ class BackupCompilerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        dbPath = getFixturePath("backup.db", tempDir);
+        dbPath = getFixturePath("shared/backup.db", tempDir);
         outputPath = tempDir.resolve("output.zip");
 
         byte[] keyBytes = new byte[KEY_SIZE];
