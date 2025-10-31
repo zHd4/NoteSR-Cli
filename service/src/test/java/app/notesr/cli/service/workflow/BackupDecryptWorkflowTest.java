@@ -91,7 +91,7 @@ class BackupDecryptWorkflowTest {
     }
 
     private CryptoSecrets getTestSecrets() throws IOException {
-        String keyHex = Files.readString(getFixturePath("crypto_key.txt", tempDir));
+        String keyHex = Files.readString(getFixturePath("shared/crypto_key.txt", tempDir));
         return new CryptoSecrets(getKeyBytesFromHex(keyHex));
     }
 }
