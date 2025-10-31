@@ -47,7 +47,7 @@ class ReadNoteCommandTest {
 
     @Test
     void testCommand() {
-        Path dbPath = getFixturePath("backup.db", tempDir);
+        Path dbPath = getFixturePath("shared/backup.db", tempDir);
         DbConnection db = new DbConnection(dbPath.toString());
 
         Note testNote = getTestNote(db);
@@ -87,7 +87,7 @@ class ReadNoteCommandTest {
 
     @Test
     void testCommandWithInvalidNoteId() {
-        Path dbPath = getFixturePath("backup.db", tempDir);
+        Path dbPath = getFixturePath("shared/backup.db", tempDir);
 
         int exitCode = cmd.execute(dbPath.toString(), BLANK_UUID);
         assertEquals(DB_ERROR, exitCode, "Expected code " + DB_ERROR);
