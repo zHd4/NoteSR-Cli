@@ -39,7 +39,7 @@ class FileAttachServiceTest {
 
     @BeforeEach
     void setUp() {
-        Path dbPath = getFixturePath("backup.db", tempDir);
+        Path dbPath = getFixturePath("shared/backup.db", tempDir);
 
         db = new DbConnection(dbPath.toString());
         fileAttachService = new FileAttachService(db);
