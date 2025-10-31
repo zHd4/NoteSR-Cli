@@ -1,7 +1,6 @@
 dependencies {
     implementation project(':core')
     implementation project(':data')
-    testImplementation project(':test-common')
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0'
     implementation 'org.jdbi:jdbi3-core:3.49.5'
@@ -9,7 +8,7 @@ dependencies {
 }
 
 tasks.register('copySharedResources', Copy) {
-    from project(":shared-resources").file("src/test/resources")
+    from project(":core").file("src/test/resources")
     into layout.buildDirectory.dir("resources/test")
 }
 

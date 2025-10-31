@@ -1,9 +1,9 @@
 package app.notesr.cli.command;
 
-import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.db.dao.FileInfoEntityDao;
-import app.notesr.cli.db.dao.NoteEntityDao;
-import app.notesr.cli.model.Note;
+import app.notesr.cli.data.DbConnection;
+import app.notesr.cli.data.dao.FileInfoEntityDao;
+import app.notesr.cli.data.dao.NoteEntityDao;
+import app.notesr.cli.data.model.Note;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -21,7 +21,7 @@ import static app.notesr.cli.command.Command.DB_ERROR;
 import static app.notesr.cli.command.Command.FILE_RW_ERROR;
 import static app.notesr.cli.command.Command.SUCCESS;
 import static app.notesr.cli.util.DateTimeUtils.dateTimeToString;
-import static app.notesr.cli.util.FixtureUtils.getFixturePath;
+import static app.notesr.cli.util.test.FixtureUtils.getFixturePath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

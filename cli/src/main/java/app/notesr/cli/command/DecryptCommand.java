@@ -1,7 +1,7 @@
 package app.notesr.cli.command;
 
 import app.notesr.cli.exception.BackupDecryptionException;
-import app.notesr.cli.dto.CryptoSecrets;
+import app.notesr.cli.crypto.dto.CryptoSecrets;
 import app.notesr.cli.exception.BackupDbException;
 import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.parser.BackupParserException;

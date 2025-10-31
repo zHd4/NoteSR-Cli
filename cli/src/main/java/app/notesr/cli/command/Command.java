@@ -1,6 +1,6 @@
 package app.notesr.cli.command;
 
-import app.notesr.cli.dto.CryptoSecrets;
+import app.notesr.cli.crypto.dto.CryptoSecrets;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

@@ -1,10 +1,10 @@
 package app.notesr.cli.command;
 
-import app.notesr.cli.db.ConnectionException;
-import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.dto.NoteOutputDto;
+import app.notesr.cli.data.ConnectionException;
+import app.notesr.cli.data.DbConnection;
+import app.notesr.cli.data.dto.NoteOutputDto;
 import app.notesr.cli.exception.NoteNotFoundException;
-import app.notesr.cli.model.Note;
+import app.notesr.cli.data.model.Note;
 import app.notesr.cli.service.NoteReadingService;
 import lombok.AccessLevel;
 import lombok.Setter;

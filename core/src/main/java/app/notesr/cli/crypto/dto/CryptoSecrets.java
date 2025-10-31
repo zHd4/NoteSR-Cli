@@ -1,0 +1,18 @@
+package app.notesr.cli.crypto.dto;
+
+import java.io.Serializable;
+import java.util.Arrays;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@AllArgsConstructor
+@Data
+public class CryptoSecrets implements Serializable {
+
+    private byte[] key;
+
+    public static CryptoSecrets from(CryptoSecrets secrets) {
+        return new CryptoSecrets(Arrays.copyOf(secrets.key, secrets.key.length));
+    }
+}

@@ -1,8 +1,8 @@
 package app.notesr.cli.command;
 
-import app.notesr.cli.db.ConnectionException;
-import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.model.FileInfo;
+import app.notesr.cli.data.ConnectionException;
+import app.notesr.cli.data.DbConnection;
+import app.notesr.cli.data.model.FileInfo;
 import app.notesr.cli.service.FileExtractionService;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.mapper.MappingException;

@@ -1,8 +1,8 @@
 package app.notesr.cli.command;
 
-import app.notesr.cli.db.DbConnection;
-import app.notesr.cli.db.dao.NoteEntityDao;
-import app.notesr.cli.model.Note;
+import app.notesr.cli.data.DbConnection;
+import app.notesr.cli.data.dao.NoteEntityDao;
+import app.notesr.cli.data.model.Note;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -19,7 +19,7 @@ import static app.notesr.cli.command.Command.SUCCESS;
 import static app.notesr.cli.command.ListNotesCommand.MAX_NAME_LENGTH;
 import static app.notesr.cli.command.ListNotesCommand.truncateText;
 import static app.notesr.cli.util.DateTimeUtils.dateTimeToString;
-import static app.notesr.cli.util.FixtureUtils.getFixturePath;
+import static app.notesr.cli.util.test.FixtureUtils.getFixturePath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
