@@ -42,7 +42,7 @@ class ListNotesCommandTest {
 
     @Test
     void testCommand() {
-        Path dbPath = getFixturePath("backup.db", tempDir);
+        Path dbPath = getFixturePath("shared/backup.db", tempDir);
 
         int exitCode = cmd.execute(dbPath.toString());
         String output = outputStream.toString();
