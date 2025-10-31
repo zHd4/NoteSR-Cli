@@ -22,7 +22,7 @@ class BackupCompilationServiceTest {
 
     @Test
     void testCompile() throws Exception {
-        File dbFile = getFixturePath("backup.db", tempDir).toFile();
+        File dbFile = getFixturePath("shared/backup.db", tempDir).toFile();
         File outputFile = tempDir.resolve("output.zip").toFile();
 
         byte[] keyBytes = new byte[KEY_SIZE];
