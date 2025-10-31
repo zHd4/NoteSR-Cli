@@ -25,13 +25,15 @@ class BackupEncryptionServiceTest {
         File outputFile = tempDir.resolve("output.bak").toFile();
         Files.writeString(inputFile.toPath(), "test content");
 
-        CryptoSecrets secrets = new CryptoSecrets(getKeyBytesFromHex(readFixture("crypto_key.txt", tempDir)));
+        String keyHex = readFixture("shared/crypto_key.txt", tempDir);
+        CryptoSecrets secrets = new CryptoSecrets(getKeyBytesFromHex(keyHex));
         BackupEncryptionService service = new BackupEncryptionService();
 
         service.encrypt(inputFile, outputFile, secrets);
 
         assertTrue(outputFile.exists(), "Encrypted output file should be created");
-        assertTrue(outputFile.length() > 0, "Encrypted output file should not be empty");
+        assertTrue(outputFile.length() > 0,
+            "Encrypted output file should not be empty");
     }
 
     @Test
