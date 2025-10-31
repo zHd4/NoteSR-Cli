@@ -49,7 +49,7 @@ class PutFileCommandTest {
 
     @Test
     void testCommand() throws IOException, NoSuchAlgorithmException {
-        Path dbPath = getFixturePath("backup.db", tempDir);
+        Path dbPath = getFixturePath("shared/backup.db", tempDir);
         Path testFilePath = tempDir.resolve("test_file");
         Note testNote = getRandomNote(dbPath);
 
