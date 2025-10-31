@@ -45,7 +45,7 @@ class BackupCompileWorkflowTest {
 
     @Test
     void testRun() throws Exception {
-        File dbFile = getFixturePath("backup.db", tempDir).toFile();
+        File dbFile = getFixturePath("shared/backup.db", tempDir).toFile();
         File outputBackup = tempDir.resolve("output.bak").toFile();
         File tempArchive = tempDir.resolve("tmp-archive.zip").toFile();
         CryptoSecrets secrets = getTestCryptoSecrets();
