@@ -4,7 +4,7 @@ import app.notesr.cli.data.ConnectionException;
 import app.notesr.cli.data.DbConnection;
 import app.notesr.cli.data.dto.FilesTableRowDto;
 import app.notesr.cli.core.exception.NoteNotFoundException;
-import app.notesr.cli.service.FilesListingService;
+import app.notesr.cli.service.file.FilesListingService;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

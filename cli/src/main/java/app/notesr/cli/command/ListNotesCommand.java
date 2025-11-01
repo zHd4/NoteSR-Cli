@@ -3,7 +3,7 @@ package app.notesr.cli.command;
 import app.notesr.cli.data.ConnectionException;
 import app.notesr.cli.data.DbConnection;
 import app.notesr.cli.data.dto.NotesTableRowDto;
-import app.notesr.cli.service.NotesListingService;
+import app.notesr.cli.service.note.NotesListingService;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

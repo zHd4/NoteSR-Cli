@@ -4,7 +4,7 @@ import app.notesr.cli.data.ConnectionException;
 import app.notesr.cli.data.DbConnection;
 import app.notesr.cli.core.exception.NoteNotFoundException;
 import app.notesr.cli.core.exception.ThumbnailExtractionException;
-import app.notesr.cli.service.FileAttachService;
+import app.notesr.cli.service.file.FileAttachService;
 import lombok.extern.slf4j.Slf4j;
 import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 import picocli.CommandLine;

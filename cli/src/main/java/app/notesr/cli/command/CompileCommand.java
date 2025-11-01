@@ -5,9 +5,9 @@ import app.notesr.cli.VersionProvider;
 import app.notesr.cli.core.security.dto.CryptoSecrets;
 import app.notesr.cli.core.exception.BackupEncryptionException;
 import app.notesr.cli.core.exception.BackupIOException;
-import app.notesr.cli.service.BackupCompilationService;
-import app.notesr.cli.service.BackupEncryptionService;
-import app.notesr.cli.service.workflow.BackupCompileWorkflow;
+import app.notesr.cli.service.compiler.BackupCompilationService;
+import app.notesr.cli.service.compiler.BackupEncryptionService;
+import app.notesr.cli.service.compiler.BackupCompileWorkflow;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 

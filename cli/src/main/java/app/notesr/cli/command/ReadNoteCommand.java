@@ -5,7 +5,7 @@ import app.notesr.cli.data.DbConnection;
 import app.notesr.cli.data.dto.NoteOutputDto;
 import app.notesr.cli.core.exception.NoteNotFoundException;
 import app.notesr.cli.data.model.Note;
-import app.notesr.cli.service.NoteReadingService;
+import app.notesr.cli.service.note.NoteReadingService;
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
