@@ -2,7 +2,6 @@ package app.notesr.cli.security.crypto;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-import app.notesr.cli.security.crypto.AesCbcCryptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
