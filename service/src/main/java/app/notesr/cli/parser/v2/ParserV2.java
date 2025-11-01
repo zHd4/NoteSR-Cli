@@ -1,12 +1,12 @@
 package app.notesr.cli.parser.v2;
 
 import app.notesr.cli.data.DbConnection;
-import app.notesr.cli.exception.BackupDbException;
-import app.notesr.cli.exception.BackupIOException;
+import app.notesr.cli.core.exception.BackupDbException;
+import app.notesr.cli.core.exception.BackupIOException;
 import app.notesr.cli.parser.FilesJsonParser;
 import app.notesr.cli.parser.NotesJsonParser;
 import app.notesr.cli.parser.Parser;
-import app.notesr.cli.util.ZipUtils;
+import app.notesr.cli.core.util.ZipUtils;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import lombok.RequiredArgsConstructor;

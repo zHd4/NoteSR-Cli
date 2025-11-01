@@ -1,8 +1,8 @@
 package app.notesr.cli.service;
 
-import app.notesr.cli.security.crypto.dto.CryptoSecrets;
-import app.notesr.cli.exception.BackupDbException;
-import app.notesr.cli.exception.BackupIOException;
+import app.notesr.cli.core.security.dto.CryptoSecrets;
+import app.notesr.cli.core.exception.BackupDbException;
+import app.notesr.cli.core.exception.BackupIOException;
 import app.notesr.cli.parser.BackupParser;
 import app.notesr.cli.parser.BackupParserException;
 import app.notesr.cli.parser.UnexpectedFieldException;

@@ -4,7 +4,7 @@ package app.notesr.cli.service;
 import app.notesr.cli.data.DbConnection;
 import app.notesr.cli.data.dao.FileInfoEntityDao;
 import app.notesr.cli.data.dao.NoteEntityDao;
-import app.notesr.cli.exception.NoteNotFoundException;
+import app.notesr.cli.core.exception.NoteNotFoundException;
 import app.notesr.cli.data.model.FileInfo;
 import app.notesr.cli.data.model.Note;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.util.Random;
 import java.util.Set;
 
-import static app.notesr.cli.util.test.FixtureUtils.getFixturePath;
+import static app.notesr.cli.core.util.test.FixtureUtils.getFixturePath;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

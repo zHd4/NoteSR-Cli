@@ -1,10 +1,10 @@
 package app.notesr.cli.service;
 
-import app.notesr.cli.security.crypto.AesCryptor;
-import app.notesr.cli.security.crypto.AesGcmCryptor;
-import app.notesr.cli.security.crypto.dto.CryptoSecrets;
-import app.notesr.cli.exception.BackupEncryptionException;
-import app.notesr.cli.exception.BackupIOException;
+import app.notesr.cli.core.security.crypto.AesCryptor;
+import app.notesr.cli.core.security.crypto.AesGcmCryptor;
+import app.notesr.cli.core.security.dto.CryptoSecrets;
+import app.notesr.cli.core.exception.BackupEncryptionException;
+import app.notesr.cli.core.exception.BackupIOException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import static app.notesr.cli.util.KeyUtils.getSecretKeyFromSecrets;
+import static app.notesr.cli.core.util.KeyUtils.getSecretKeyFromSecrets;
 
 @Slf4j
 public final class BackupEncryptionService {

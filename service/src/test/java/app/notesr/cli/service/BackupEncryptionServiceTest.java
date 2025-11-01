@@ -1,7 +1,7 @@
 package app.notesr.cli.service;
 
-import app.notesr.cli.security.crypto.dto.CryptoSecrets;
-import app.notesr.cli.exception.BackupIOException;
+import app.notesr.cli.core.security.dto.CryptoSecrets;
+import app.notesr.cli.core.exception.BackupIOException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -9,8 +9,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static app.notesr.cli.util.test.FixtureUtils.readFixture;
-import static app.notesr.cli.util.KeyUtils.getKeyBytesFromHex;
+import static app.notesr.cli.core.util.test.FixtureUtils.readFixture;
+import static app.notesr.cli.core.util.KeyUtils.getKeyBytesFromHex;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;

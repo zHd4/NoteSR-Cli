@@ -1,6 +1,6 @@
 package app.notesr.cli.command;
 
-import app.notesr.cli.security.crypto.dto.CryptoSecrets;
+import app.notesr.cli.core.security.dto.CryptoSecrets;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -13,10 +13,10 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static app.notesr.cli.util.FileUtils.getNameWithoutExtension;
-import static app.notesr.cli.util.KeyUtils.getSecretsFromHex;
-import static app.notesr.cli.util.Wiper.wipeDir;
-import static app.notesr.cli.util.Wiper.wipeFile;
+import static app.notesr.cli.core.util.FileUtils.getNameWithoutExtension;
+import static app.notesr.cli.core.util.KeyUtils.getSecretsFromHex;
+import static app.notesr.cli.core.util.Wiper.wipeDir;
+import static app.notesr.cli.core.util.Wiper.wipeFile;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 abstract class Command implements Callable<Integer> {

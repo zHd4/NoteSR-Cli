@@ -1,14 +1,14 @@
 package app.notesr.cli.compiler;
 
-import app.notesr.cli.security.crypto.AesCryptor;
-import app.notesr.cli.security.crypto.AesGcmCryptor;
+import app.notesr.cli.core.security.crypto.AesCryptor;
+import app.notesr.cli.core.security.crypto.AesGcmCryptor;
 import app.notesr.cli.data.DbConnection;
 import app.notesr.cli.data.dao.DataBlockEntityDao;
 import app.notesr.cli.data.dao.FileInfoEntityDao;
 import app.notesr.cli.data.dao.NoteEntityDao;
-import app.notesr.cli.security.crypto.dto.CryptoSecrets;
-import app.notesr.cli.exception.BackupEncryptionException;
-import app.notesr.cli.exception.BackupIOException;
+import app.notesr.cli.core.security.dto.CryptoSecrets;
+import app.notesr.cli.core.exception.BackupEncryptionException;
+import app.notesr.cli.core.exception.BackupIOException;
 import app.notesr.cli.data.model.DataBlock;
 import app.notesr.cli.data.model.FileInfo;
 import app.notesr.cli.data.model.Note;
@@ -25,7 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
 
-import static app.notesr.cli.util.KeyUtils.getSecretKeyFromSecrets;
+import static app.notesr.cli.core.util.KeyUtils.getSecretKeyFromSecrets;
 
 @RequiredArgsConstructor
 public final class BackupCompiler implements Runnable {

@@ -4,11 +4,11 @@ import app.notesr.cli.data.DbConnection;
 import app.notesr.cli.data.dao.DataBlockEntityDao;
 import app.notesr.cli.data.dao.FileInfoEntityDao;
 import app.notesr.cli.data.dao.NoteEntityDao;
-import app.notesr.cli.exception.NoteNotFoundException;
+import app.notesr.cli.core.exception.NoteNotFoundException;
 import app.notesr.cli.data.model.FileInfo;
 import app.notesr.cli.data.model.Note;
 import app.notesr.cli.util.ChunkedFileUploader;
-import app.notesr.cli.util.MediaThumbnailUtils;
+import app.notesr.cli.core.util.MediaThumbnailUtils;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;

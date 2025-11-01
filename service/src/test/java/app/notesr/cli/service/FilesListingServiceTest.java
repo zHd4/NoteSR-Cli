@@ -4,7 +4,7 @@ import app.notesr.cli.data.DbConnection;
 import app.notesr.cli.data.dao.FileInfoDtoDao;
 import app.notesr.cli.data.dao.NoteEntityDao;
 import app.notesr.cli.data.dto.FilesTableRowDto;
-import app.notesr.cli.exception.NoteNotFoundException;
+import app.notesr.cli.core.exception.NoteNotFoundException;
 import app.notesr.cli.data.model.Note;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.BeforeEach;

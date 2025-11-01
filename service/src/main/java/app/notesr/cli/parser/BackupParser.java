@@ -1,6 +1,6 @@
 package app.notesr.cli.parser;
 
-import app.notesr.cli.security.crypto.dto.CryptoSecrets;
+import app.notesr.cli.core.security.dto.CryptoSecrets;
 import app.notesr.cli.parser.v1.ParserV1;
 import app.notesr.cli.parser.v2.ParserV2;
 import app.notesr.cli.parser.v3.ParserV3;
@@ -11,9 +11,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static app.notesr.cli.util.BackupValidator.isV1Format;
-import static app.notesr.cli.util.BackupValidator.isV2Format;
-import static app.notesr.cli.util.BackupValidator.isV3Format;
+import static app.notesr.cli.core.util.BackupValidator.isV1Format;
+import static app.notesr.cli.core.util.BackupValidator.isV2Format;
+import static app.notesr.cli.core.util.BackupValidator.isV3Format;
 
 @Getter
 public final class BackupParser implements Runnable {

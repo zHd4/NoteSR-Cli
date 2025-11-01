@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
 
-import static app.notesr.cli.util.DateTimeUtils.truncateDateTime;
+import static app.notesr.cli.core.util.DateTimeUtils.truncateDateTime;
 import static java.util.UUID.randomUUID;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

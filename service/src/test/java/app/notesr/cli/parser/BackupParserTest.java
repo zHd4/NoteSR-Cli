@@ -1,14 +1,14 @@
 package app.notesr.cli.parser;
 
 import app.notesr.cli.data.DbConnection;
-import app.notesr.cli.security.crypto.dto.CryptoSecrets;
+import app.notesr.cli.core.security.dto.CryptoSecrets;
 import app.notesr.cli.data.model.DataBlock;
 import app.notesr.cli.data.model.FileInfo;
 import app.notesr.cli.data.model.Note;
 import app.notesr.cli.data.mapper.DataBlocksJsonMapper;
 import app.notesr.cli.data.mapper.FilesInfosJsonMapper;
 import app.notesr.cli.data.mapper.NotesJsonMapper;
-import app.notesr.cli.util.test.DbUtils;
+import app.notesr.cli.core.util.test.DbUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,9 +19,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static app.notesr.cli.util.test.FixtureUtils.getFixturePath;
-import static app.notesr.cli.util.test.FixtureUtils.readFixture;
-import static app.notesr.cli.util.KeyUtils.getKeyBytesFromHex;
+import static app.notesr.cli.core.util.test.FixtureUtils.getFixturePath;
+import static app.notesr.cli.core.util.test.FixtureUtils.readFixture;
+import static app.notesr.cli.core.util.KeyUtils.getKeyBytesFromHex;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BackupParserTest {

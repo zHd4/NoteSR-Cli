@@ -17,7 +17,7 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Set;
 
-import static app.notesr.cli.util.DateTimeUtils.dateTimeToString;
+import static app.notesr.cli.core.util.DateTimeUtils.dateTimeToString;
 
 @Slf4j
 @CommandLine.Command(name = "list-notes",

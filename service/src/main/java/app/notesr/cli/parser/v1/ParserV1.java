@@ -1,8 +1,8 @@
 package app.notesr.cli.parser.v1;
 
 import app.notesr.cli.data.DbConnection;
-import app.notesr.cli.exception.BackupDbException;
-import app.notesr.cli.exception.BackupIOException;
+import app.notesr.cli.core.exception.BackupDbException;
+import app.notesr.cli.core.exception.BackupIOException;
 import app.notesr.cli.parser.FilesJsonParser;
 import app.notesr.cli.parser.NotesJsonParser;
 import app.notesr.cli.parser.Parser;

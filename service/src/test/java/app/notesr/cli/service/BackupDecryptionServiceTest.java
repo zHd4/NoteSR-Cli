@@ -1,7 +1,7 @@
 package app.notesr.cli.service;
 
-import app.notesr.cli.exception.BackupDecryptionException;
-import app.notesr.cli.security.crypto.dto.CryptoSecrets;
+import app.notesr.cli.core.exception.BackupDecryptionException;
+import app.notesr.cli.core.security.dto.CryptoSecrets;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -11,8 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureRandom;
 
-import static app.notesr.cli.util.test.FixtureUtils.getFixturePath;
-import static app.notesr.cli.util.KeyUtils.getKeyBytesFromHex;
+import static app.notesr.cli.core.util.test.FixtureUtils.getFixturePath;
+import static app.notesr.cli.core.util.KeyUtils.getKeyBytesFromHex;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

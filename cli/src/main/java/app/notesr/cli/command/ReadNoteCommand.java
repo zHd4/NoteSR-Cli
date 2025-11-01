@@ -3,7 +3,7 @@ package app.notesr.cli.command;
 import app.notesr.cli.data.ConnectionException;
 import app.notesr.cli.data.DbConnection;
 import app.notesr.cli.data.dto.NoteOutputDto;
-import app.notesr.cli.exception.NoteNotFoundException;
+import app.notesr.cli.core.exception.NoteNotFoundException;
 import app.notesr.cli.data.model.Note;
 import app.notesr.cli.service.NoteReadingService;
 import lombok.AccessLevel;
@@ -18,7 +18,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static app.notesr.cli.util.DateTimeUtils.dateTimeToString;
+import static app.notesr.cli.core.util.DateTimeUtils.dateTimeToString;
 
 @Slf4j
 @CommandLine.Command(name = "read-note",

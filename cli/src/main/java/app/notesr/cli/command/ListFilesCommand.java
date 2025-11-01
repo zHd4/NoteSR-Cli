@@ -3,7 +3,7 @@ package app.notesr.cli.command;
 import app.notesr.cli.data.ConnectionException;
 import app.notesr.cli.data.DbConnection;
 import app.notesr.cli.data.dto.FilesTableRowDto;
-import app.notesr.cli.exception.NoteNotFoundException;
+import app.notesr.cli.core.exception.NoteNotFoundException;
 import app.notesr.cli.service.FilesListingService;
 import lombok.AccessLevel;
 import lombok.Setter;
@@ -17,8 +17,8 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Set;
 
-import static app.notesr.cli.util.DateTimeUtils.dateTimeToString;
-import static app.notesr.cli.util.FileUtils.getReadableSize;
+import static app.notesr.cli.core.util.DateTimeUtils.dateTimeToString;
+import static app.notesr.cli.core.util.FileUtils.getReadableSize;
 
 @Slf4j
 @CommandLine.Command(name = "list-files",

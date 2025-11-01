@@ -1,7 +1,7 @@
 package app.notesr.cli.service.workflow;
 
-import app.notesr.cli.security.crypto.dto.CryptoSecrets;
-import app.notesr.cli.exception.BackupIOException;
+import app.notesr.cli.core.security.dto.CryptoSecrets;
+import app.notesr.cli.core.exception.BackupIOException;
 import app.notesr.cli.service.BackupCompilationService;
 import app.notesr.cli.service.BackupEncryptionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-import static app.notesr.cli.util.test.FixtureUtils.getFixturePath;
+import static app.notesr.cli.core.util.test.FixtureUtils.getFixturePath;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;

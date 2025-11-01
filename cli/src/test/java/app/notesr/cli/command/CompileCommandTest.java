@@ -14,8 +14,8 @@ import java.util.Random;
 
 import static app.notesr.cli.command.Command.FILE_RW_ERROR;
 import static app.notesr.cli.command.Command.SUCCESS;
-import static app.notesr.cli.util.test.FixtureUtils.getFixturePath;
-import static app.notesr.cli.util.FileUtils.getNameWithoutExtension;
+import static app.notesr.cli.core.util.test.FixtureUtils.getFixturePath;
+import static app.notesr.cli.core.util.FileUtils.getNameWithoutExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

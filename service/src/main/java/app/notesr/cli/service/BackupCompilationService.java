@@ -1,9 +1,9 @@
 package app.notesr.cli.service;
 
 import app.notesr.cli.compiler.BackupCompiler;
-import app.notesr.cli.security.crypto.dto.CryptoSecrets;
-import app.notesr.cli.exception.BackupEncryptionException;
-import app.notesr.cli.exception.BackupIOException;
+import app.notesr.cli.core.security.dto.CryptoSecrets;
+import app.notesr.cli.core.exception.BackupEncryptionException;
+import app.notesr.cli.core.exception.BackupIOException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
