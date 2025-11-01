@@ -8,7 +8,7 @@ plugins {
 group = 'app.notesr.cli'
 
 ext.appVersion = '1.1.0'
-ext.noteSrVersion = '5.2.3'
+ext.noteSrVersion = '5.2.4'
 
 allprojects {
     repositories {
