@@ -14,10 +14,6 @@ public class DateTimeUtils {
         return dateTime.format(DATETIME_FORMATTER);
     }
 
-    public static LocalDateTime parseDateTime(String dateTimeStr) {
-        return LocalDateTime.parse(dateTimeStr, DATETIME_FORMATTER);
-    }
-
     public static LocalDateTime truncateDateTime(LocalDateTime dateTime) {
         return LocalDateTime.parse(dateTime.format(DATETIME_FORMATTER), DATETIME_FORMATTER);
     }
