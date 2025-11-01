@@ -2,7 +2,7 @@ package app.notesr.cli.util;
 
 import static java.util.Objects.requireNonNull;
 
-import app.notesr.cli.crypto.dto.CryptoSecrets;
+import app.notesr.cli.security.crypto.dto.CryptoSecrets;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

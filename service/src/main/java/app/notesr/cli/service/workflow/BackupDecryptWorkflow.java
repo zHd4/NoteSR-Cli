@@ -1,7 +1,7 @@
 package app.notesr.cli.service.workflow;
 
 import app.notesr.cli.exception.BackupDecryptionException;
-import app.notesr.cli.crypto.dto.CryptoSecrets;
+import app.notesr.cli.security.crypto.dto.CryptoSecrets;
 import app.notesr.cli.service.BackupDecryptionService;
 import app.notesr.cli.service.BackupParsingService;
 import lombok.RequiredArgsConstructor;

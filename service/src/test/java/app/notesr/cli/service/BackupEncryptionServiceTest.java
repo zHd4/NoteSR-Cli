@@ -1,6 +1,6 @@
 package app.notesr.cli.service;
 
-import app.notesr.cli.crypto.dto.CryptoSecrets;
+import app.notesr.cli.security.crypto.dto.CryptoSecrets;
 import app.notesr.cli.exception.BackupIOException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

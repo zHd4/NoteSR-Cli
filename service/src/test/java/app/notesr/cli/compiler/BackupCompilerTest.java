@@ -1,6 +1,6 @@
 package app.notesr.cli.compiler;
 
-import app.notesr.cli.crypto.dto.CryptoSecrets;
+import app.notesr.cli.security.crypto.dto.CryptoSecrets;
 import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.util.ZipUtils;
 import org.junit.jupiter.api.BeforeEach;

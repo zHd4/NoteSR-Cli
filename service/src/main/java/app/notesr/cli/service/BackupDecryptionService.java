@@ -1,9 +1,9 @@
 package app.notesr.cli.service;
 
-import app.notesr.cli.crypto.AesCbcCryptor;
-import app.notesr.cli.crypto.AesGcmCryptor;
+import app.notesr.cli.security.crypto.AesCbcCryptor;
+import app.notesr.cli.security.crypto.AesGcmCryptor;
 import app.notesr.cli.exception.BackupDecryptionException;
-import app.notesr.cli.crypto.dto.CryptoSecrets;
+import app.notesr.cli.security.crypto.dto.CryptoSecrets;
 import app.notesr.cli.exception.BackupIOException;
 import lombok.extern.slf4j.Slf4j;
 

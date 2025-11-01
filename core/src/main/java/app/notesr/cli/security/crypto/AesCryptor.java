@@ -1,4 +1,4 @@
-package app.notesr.cli.crypto;
+package app.notesr.cli.security.crypto;
 
 import java.io.IOException;
 import java.io.InputStream;

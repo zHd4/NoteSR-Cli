@@ -1,4 +1,4 @@
-package app.notesr.cli.crypto.dto;
+package app.notesr.cli.security.crypto.dto;
 
 import java.io.Serializable;
 import java.util.Arrays;

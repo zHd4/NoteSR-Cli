@@ -1,7 +1,7 @@
 package app.notesr.cli.parser;
 
 import app.notesr.cli.data.DbConnection;
-import app.notesr.cli.crypto.dto.CryptoSecrets;
+import app.notesr.cli.security.crypto.dto.CryptoSecrets;
 import app.notesr.cli.data.model.DataBlock;
 import app.notesr.cli.data.model.FileInfo;
 import app.notesr.cli.data.model.Note;

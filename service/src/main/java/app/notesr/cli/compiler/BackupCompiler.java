@@ -1,12 +1,12 @@
 package app.notesr.cli.compiler;
 
-import app.notesr.cli.crypto.AesCryptor;
-import app.notesr.cli.crypto.AesGcmCryptor;
+import app.notesr.cli.security.crypto.AesCryptor;
+import app.notesr.cli.security.crypto.AesGcmCryptor;
 import app.notesr.cli.data.DbConnection;
 import app.notesr.cli.data.dao.DataBlockEntityDao;
 import app.notesr.cli.data.dao.FileInfoEntityDao;
 import app.notesr.cli.data.dao.NoteEntityDao;
-import app.notesr.cli.crypto.dto.CryptoSecrets;
+import app.notesr.cli.security.crypto.dto.CryptoSecrets;
 import app.notesr.cli.exception.BackupEncryptionException;
 import app.notesr.cli.exception.BackupIOException;
 import app.notesr.cli.data.model.DataBlock;
