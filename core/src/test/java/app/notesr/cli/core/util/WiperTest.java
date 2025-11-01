@@ -1,6 +1,5 @@
 package app.notesr.cli.core.util;
 
-import app.notesr.cli.core.util.Wiper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

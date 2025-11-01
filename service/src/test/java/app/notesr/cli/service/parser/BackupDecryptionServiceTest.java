@@ -2,7 +2,6 @@ package app.notesr.cli.service.parser;
 
 import app.notesr.cli.core.exception.BackupDecryptionException;
 import app.notesr.cli.core.security.dto.CryptoSecrets;
-import app.notesr.cli.service.parser.BackupDecryptionService;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

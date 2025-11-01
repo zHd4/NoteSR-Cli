@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import app.notesr.cli.core.security.dto.CryptoSecrets;
-import app.notesr.cli.core.util.KeyUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

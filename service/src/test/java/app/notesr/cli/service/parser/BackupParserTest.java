@@ -9,7 +9,6 @@ import app.notesr.cli.data.mapper.DataBlocksJsonMapper;
 import app.notesr.cli.data.mapper.FilesInfosJsonMapper;
 import app.notesr.cli.data.mapper.NotesJsonMapper;
 import app.notesr.cli.core.util.test.DbUtils;
-import app.notesr.cli.service.parser.BackupParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;

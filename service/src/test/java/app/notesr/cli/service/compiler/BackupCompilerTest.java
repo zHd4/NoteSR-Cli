@@ -3,7 +3,6 @@ package app.notesr.cli.service.compiler;
 import app.notesr.cli.core.security.dto.CryptoSecrets;
 import app.notesr.cli.core.exception.BackupIOException;
 import app.notesr.cli.core.util.ZipUtils;
-import app.notesr.cli.service.compiler.BackupCompiler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

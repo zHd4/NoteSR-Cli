@@ -1,7 +1,6 @@
 package app.notesr.cli.core.util;
 
 import app.notesr.cli.core.exception.ThumbnailExtractionException;
-import app.notesr.cli.core.util.MediaThumbnailUtils;
 import org.jcodec.api.JCodecException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
