@@ -11,9 +11,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static app.notesr.cli.validation.BackupValidator.isV1Format;
-import static app.notesr.cli.validation.BackupValidator.isV2Format;
-import static app.notesr.cli.validation.BackupValidator.isV3Format;
+import static app.notesr.cli.util.BackupValidator.isV1Format;
+import static app.notesr.cli.util.BackupValidator.isV2Format;
+import static app.notesr.cli.util.BackupValidator.isV3Format;
 
 @Getter
 public final class BackupParser implements Runnable {

@@ -1,4 +1,4 @@
-package app.notesr.cli.validation;
+package app.notesr.cli.util;
 
 import app.notesr.cli.exception.BackupIOException;
 import lombok.NoArgsConstructor;

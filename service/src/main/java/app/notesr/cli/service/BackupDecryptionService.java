@@ -19,7 +19,7 @@ import java.security.GeneralSecurityException;
 
 import static app.notesr.cli.util.KeyUtils.getIvFromSecrets;
 import static app.notesr.cli.util.KeyUtils.getSecretKeyFromSecrets;
-import static app.notesr.cli.validation.BackupValidator.isValid;
+import static app.notesr.cli.util.BackupValidator.isValid;
 
 @Slf4j
 public final class BackupDecryptionService {
