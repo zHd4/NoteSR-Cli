@@ -133,7 +133,12 @@ Attaches a local file to a specific note.
 
 ---
 
-## ⚖️ Requirements
+## ⚖️ License
+[MIT](https://raw.githubusercontent.com/zHd4/NoteSR-Cli/refs/heads/master/LICENSE)
+
+---
+
+## 📜 Requirements
 
 * Java 21+
 * Gradle (optional — project includes wrapper)
