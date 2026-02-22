@@ -9,6 +9,7 @@ group = 'app.notesr.cli'
 
 ext.appVersion = '1.1.1'
 ext.noteSrVersion = '5.2.4'
+ext.noteSrVersion = '5.2.5'
 
 allprojects {
     repositories {
