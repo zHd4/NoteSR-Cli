@@ -22,13 +22,16 @@ import java.io.IOException;
         description = "Attaches a file to a specific note stored in a NoteSR Backup Database.")
 public final class PutFileCommand extends Command {
 
-    @CommandLine.Parameters(index = "0", paramLabel = "db_path", description = "path to NoteSR Backup Database")
+    @CommandLine.Parameters(index = "0", paramLabel = "db_path",
+        description = "path to NoteSR Backup Database")
     private String dbPath;
 
-    @CommandLine.Parameters(index = "1", paramLabel = "note_id", description = "note id")
+    @CommandLine.Parameters(index = "1", paramLabel = "note_id",
+        description = "note id")
     private String noteId;
 
-    @CommandLine.Parameters(index = "2", paramLabel = "file_path", description = "path to file to attach")
+    @CommandLine.Parameters(index = "2", paramLabel = "file_path",
+        description = "path to file to attach")
     private String filePath;
 
     public PutFileCommand() {
