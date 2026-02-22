@@ -25,17 +25,20 @@ import java.util.List;
 
 @Slf4j
 @CommandLine.Command(name = "decrypt",
-        description = "Decrypts exported NoteSR .notesr.bak file and converts it to a SQLite database.")
+        description = "Decrypts exported NoteSR .notesr.bak file and converts it to"
+            + " a SQLite database.")
 public final class DecryptCommand extends Command {
 
     @CommandLine.Parameters(index = "0", paramLabel = "file_path",
             description = "path to encrypted NoteSR .notesr.bak file")
     private String encryptedBackupPath;
 
-    @CommandLine.Parameters(index = "1", paramLabel = "key_path", description = "path to exported key (text file)")
+    @CommandLine.Parameters(index = "1", paramLabel = "key_path",
+        description = "path to exported key (text file)")
     private String keyPath;
 
-    @CommandLine.Option(names = { "-o", "--output" }, description = "output SQLite database path")
+    @CommandLine.Option(names = { "-o", "--output" },
+        description = "output SQLite database path")
     private String outputFilePath;
 
     public DecryptCommand() {
@@ -52,8 +55,10 @@ public final class DecryptCommand extends Command {
         try {
             File encryptedFile = getFile(encryptedBackupPath);
             File keyFile = getFile(keyPath);
-            outputFile = getOutputFile(encryptedFile,
-                    outputFilePath != null ? Path.of(outputFilePath) : null, ".notesr.db");
+            outputFile = getOutputFile(
+                encryptedFile, outputFilePath != null ? Path.of(outputFilePath) : null,
+                ".notesr.db"
+            );
 
             decrypt(encryptedFile, keyFile, outputFile, tempFiles);
             exitCode = SUCCESS;
