@@ -25,10 +25,12 @@ import java.nio.file.Path;
         description = "Saves a file attached to a specific note stored in a NoteSR Backup Database.")
 public final class GetFileCommand extends Command {
 
-    @CommandLine.Parameters(index = "0", paramLabel = "db_path", description = "path to NoteSR Backup Database")
+    @CommandLine.Parameters(index = "0", paramLabel = "db_path",
+        description = "path to NoteSR Backup Database")
     private String dbPath;
 
-    @CommandLine.Parameters(index = "1", paramLabel = "file_id", description = "file id")
+    @CommandLine.Parameters(index = "1", paramLabel = "file_id",
+        description = "file id")
     private String fileId;
 
     @CommandLine.Option(names = {"-o", "--output"}, description = "output file path")
