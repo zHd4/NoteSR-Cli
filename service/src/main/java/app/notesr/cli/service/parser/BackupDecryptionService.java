@@ -28,7 +28,8 @@ import static app.notesr.cli.core.util.BackupValidator.isValid;
 
 @Slf4j
 public final class BackupDecryptionService {
-    public File decrypt(File encryptedBackup, CryptoSecrets secrets) throws BackupDecryptionException, IOException {
+    public File decrypt(File encryptedBackup, CryptoSecrets secrets)
+        throws BackupDecryptionException, IOException {
         File decryptedBackup = new File(encryptedBackup.getAbsolutePath() + "_decrypted");
 
         try (FileInputStream inputStream = new FileInputStream(encryptedBackup);
