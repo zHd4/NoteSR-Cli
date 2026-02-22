@@ -60,8 +60,11 @@ abstract class Command implements Callable<Integer> {
         return file;
     }
 
-    protected final File getOutputFile(File inputFile, Path outputFilePath, String outputFileExtension)
-            throws CommandHandlingException {
+    protected final File getOutputFile(
+        File inputFile,
+        Path outputFilePath,
+        String outputFileExtension
+    ) throws CommandHandlingException {
         File outputFile = null;
 
         try {
@@ -81,7 +84,8 @@ abstract class Command implements Callable<Integer> {
                 throw new FileAlreadyExistsException(outputFile.getAbsolutePath());
             }
         } catch (FileAlreadyExistsException e) {
-            log.error("{}: file already exists", outputFile != null ? outputFile.getAbsolutePath() : outputFilePath);
+            log.error("{}: file already exists",
+                outputFile != null ? outputFile.getAbsolutePath() : outputFilePath);
             log.debug("E: ", e);
             throw new CommandHandlingException(FILE_RW_ERROR);
         }
