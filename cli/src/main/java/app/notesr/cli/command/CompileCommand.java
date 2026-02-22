@@ -30,7 +30,8 @@ public final class CompileCommand extends Command {
             description = "path to NoteSR Backup Database")
     private String dbPath;
 
-    @CommandLine.Parameters(index = "1", paramLabel = "key_path", description = "path to exported key (text file)")
+    @CommandLine.Parameters(index = "1", paramLabel = "key_path",
+        description = "path to exported key (text file)")
     private String keyPath;
 
     @CommandLine.Option(names = {"-o", "--output"}, description = "output file path")
