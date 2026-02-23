@@ -19,6 +19,8 @@ cd build/notesr-cli/bin
 ./notesr-cli --help
 ```
 
+Or download the [latest version](https://github.com/zHd4/NoteSR-Cli/releases/tag/v1.1.2) from the [Releases page](https://github.com/zHd4/NoteSR-Cli/releases).
+
 ---
 
 ## 🎯 What It Does
