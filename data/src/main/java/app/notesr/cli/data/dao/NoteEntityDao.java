@@ -2,7 +2,7 @@
  * Copyright (c) 2026 zHd4
  * SPDX-License-Identifier: MIT
  */
- 
+
 package app.notesr.cli.data.dao;
 
 import app.notesr.cli.data.model.Note;
