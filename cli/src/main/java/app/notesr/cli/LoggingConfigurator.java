@@ -39,8 +39,9 @@ public final class LoggingConfigurator {
     console.start();
 
     Logger root = context.getLogger(Logger.ROOT_LOGGER_NAME);
+    Level loggingLevel = trace ? Level.TRACE : Level.INFO;
 
-    root.setLevel(trace ? Level.TRACE : Level.INFO);
+    root.setLevel(loggingLevel);
     root.addAppender(console);
   }
 }
