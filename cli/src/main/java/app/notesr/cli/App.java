@@ -20,34 +20,28 @@ import java.util.concurrent.Callable;
         versionProvider = VersionProvider.class,
         description = "Decrypts and manages exported NoteSR backups",
         mixinStandardHelpOptions = true,
-        subcommands = {DecryptCommand.class, CompileCommand.class, ListNotesCommand.class, ReadNoteCommand.class,
-            ListFilesCommand.class, GetFileCommand.class, PutFileCommand.class})
+        subcommands = {
+                DecryptCommand.class,
+                CompileCommand.class,
+                ListNotesCommand.class,
+                ReadNoteCommand.class,
+                ListFilesCommand.class,
+                GetFileCommand.class,
+                PutFileCommand.class
+        })
 public final class App implements Callable<Integer> {
     @CommandLine.Spec
     private CommandLine.Model.CommandSpec spec;
+
+    @CommandLine.Option(names = "--trace", description = "Enable TRACE logging")
+    private boolean trace;
 
     public static void main(String[] args) {
         CommandLine cmd = new CommandLine(new App());
 
         cmd.setUnmatchedArgumentsAllowed(true);
-        cmd.setExecutionStrategy(parseResult -> {
-            if (parseResult.isUsageHelpRequested()) {
-                printUsage(cmd);
-                return 0;
-            }
-
-            return new CommandLine.RunLast().execute(parseResult);
-        });
-
-        cmd.setExecutionExceptionHandler((ex, commandLine, parseResult) -> {
-            if (ex instanceof CommandLine.UnmatchedArgumentException) {
-                System.err.println("Unknown command or argument: " + ex.getMessage());
-            } else {
-                System.err.println("Error: " + ex.getMessage());
-            }
-
-            return commandLine.getCommandSpec().exitCodeOnInvalidInput();
-        });
+        cmd.setExecutionStrategy(getExecutionStrategy(cmd));
+        cmd.setExecutionExceptionHandler(getExecutionExceptionHandler());
 
         int exitCode;
 
@@ -71,5 +65,37 @@ public final class App implements Callable<Integer> {
 
     public static void printUsage(CommandLine cmd) {
         cmd.usage(System.out);
+    }
+
+    private static CommandLine.IExecutionStrategy getExecutionStrategy(CommandLine cmd) {
+        return parseResult -> {
+            if (parseResult.isUsageHelpRequested()) {
+                printUsage(cmd);
+                return 0;
+            }
+
+            App app = (App) parseResult.commandSpec().root().userObject();
+
+            LoggingConfigurator.configure(app.trace);
+
+            if (parseResult.isUsageHelpRequested()) {
+                printUsage(cmd);
+                return 0;
+            }
+
+            return new CommandLine.RunLast().execute(parseResult);
+        };
+    }
+
+    private static CommandLine.IExecutionExceptionHandler getExecutionExceptionHandler() {
+        return (ex, commandLine, parseResult) -> {
+            if (ex instanceof CommandLine.UnmatchedArgumentException) {
+                System.err.println("Unknown command or argument: " + ex.getMessage());
+            } else {
+                System.err.println("Error: " + ex.getMessage());
+            }
+
+            return commandLine.getCommandSpec().exitCodeOnInvalidInput();
+        };
     }
 }
